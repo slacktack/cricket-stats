@@ -9,15 +9,15 @@ export function BallMark({ className }: { className?: string }) {
       aria-hidden="true"
       className={className}
     >
-      <circle cx="16" cy="16" r="12.6" stroke="currentColor" strokeWidth="2.4" />
+      <circle cx="16" cy="16" r="13" stroke="currentColor" strokeWidth="2.4" />
       <path
-        d="M10.4 6.7c4.3 5.4 4.3 13.2 0 18.6M21.6 6.7c-4.3 5.4-4.3 13.2 0 18.6"
+        d="M14.6 3.2c2.6 8.4 2.6 17.2 0 25.6"
         stroke="currentColor"
-        strokeWidth="2.1"
+        strokeWidth="2"
         strokeLinecap="round"
       />
       <path
-        d="m13.2 10.4 1.7.6M12.1 13.3l1.8.3M11.8 16.2l1.8-.1M12.1 19.1l1.8-.4M13.2 22l1.7-.7"
+        d="M11.70 8h2.5M17.40 8h2.5M12.20 11.5h2.5M17.90 11.5h2.5M12.45 15h2.5M18.15 15h2.5M12.35 18.5h2.5M18.05 18.5h2.5M11.95 22h2.5M17.65 22h2.5M11.30 25.2h2.5M17.00 25.2h2.5"
         stroke="currentColor"
         strokeWidth="1.8"
         strokeLinecap="round"
