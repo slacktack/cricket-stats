@@ -1,6 +1,59 @@
 import type { MatchDetail } from "@/lib/types";
 import { formatOvers } from "@/lib/utils";
 import { LiveDot, TonePill } from "@/components/ui/pills";
+import { WinProbabilityBar } from "@/components/match/match-numbers";
+
+function ChaseBar({
+  target,
+  scored,
+  remainingRuns,
+  remainingBalls,
+  currentRate,
+  requiredRate,
+}: {
+  target: number;
+  scored: number;
+  remainingRuns?: number;
+  remainingBalls?: number;
+  currentRate?: number;
+  requiredRate?: number;
+}) {
+  const percent = Math.min(100, Math.max(0, (scored / target) * 100));
+  const ahead =
+    currentRate !== undefined && requiredRate !== undefined && currentRate >= requiredRate;
+  return (
+    <div className="border-b border-line px-4 py-4">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+        <p className="text-[13px] font-bold">
+          Target <span className="mono text-[17px]">{target}</span>
+        </p>
+        {remainingRuns !== undefined ? (
+          <p className="text-[13px] font-semibold text-muted">
+            Need <strong className="mono text-[17px] text-ink">{remainingRuns}</strong> from{" "}
+            <strong className="mono text-ink">{remainingBalls ?? 0}</strong> balls
+          </p>
+        ) : null}
+      </div>
+      <div className="mt-3 h-3 overflow-hidden rounded-full bg-surface2" role="img" aria-label={`${scored} of ${target} runs`}>
+        <span
+          className="block h-full rounded-full bg-accent transition-[width] duration-700"
+          style={{ width: `${percent}%` }}
+        />
+      </div>
+      <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs">
+        <span className="text-faint">
+          {scored} of {target}
+        </span>
+        {requiredRate !== undefined ? (
+          <span className={ahead ? "font-bold text-win" : "font-bold text-live"}>
+            {ahead ? "Ahead of the rate" : "Behind the rate"} · need {requiredRate.toFixed(2)}
+            {currentRate ? ` vs ${currentRate.toFixed(2)}` : ""}
+          </span>
+        ) : null}
+      </div>
+    </div>
+  );
+}
 
 function ballTone(ball: string): string {
   if (ball === "W") return "border border-live bg-live text-white";
@@ -84,15 +137,20 @@ export function LivePanel({ detail }: { detail: MatchDetail }) {
       </div>
 
       {live.target ? (
-        <p className="border-b border-line px-4 py-2.5 text-[11px] font-medium text-muted">
-          Target <strong className="text-ink">{live.target}</strong>
-          {live.remainingRuns !== undefined
-            ? ` · Need ${live.remainingRuns} from ${live.remainingBalls ?? 0} balls`
-            : null}
-          {live.requiredRunRate
-            ? ` · RRR ${live.requiredRunRate.toFixed(2)}`
-            : null}
-        </p>
+        <ChaseBar
+          target={live.target}
+          scored={currentInnings?.runs ?? 0}
+          remainingRuns={live.remainingRuns}
+          remainingBalls={live.remainingBalls}
+          currentRate={live.currentRunRate}
+          requiredRate={live.requiredRunRate}
+        />
+      ) : null}
+
+      {detail.winProbability ? (
+        <div className="border-b border-line px-4 py-4">
+          <WinProbabilityBar probability={detail.winProbability} />
+        </div>
       ) : null}
 
       <div className="grid lg:grid-cols-[minmax(0,1.15fr)_minmax(280px,0.85fr)]">
