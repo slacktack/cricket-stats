@@ -54,7 +54,7 @@ function StatsTable({ stats }: { stats: SeriesStats }) {
   return (
     <div className="card overflow-hidden">
       <div className="border-b border-line bg-surface2/60 px-4 py-3">
-        <h2 className="text-sm font-bold">{stats.title}</h2>
+        <h2 className="text-sm font-extrabold">{stats.title}</h2>
       </div>
       <div className="table-scroll">
         <table className="w-full min-w-[620px] text-left text-xs">
@@ -127,7 +127,7 @@ function PointsTab({ series }: { series: SeriesInfo }) {
       {series.pointsTable.map((group) => (
         <section key={group.groupName} className="card overflow-hidden">
           <div className="flex items-center justify-between gap-3 border-b border-line bg-surface2/60 px-4 py-3">
-            <h2 className="text-sm font-bold">{group.groupName}</h2>
+            <h2 className="text-sm font-extrabold">{group.groupName}</h2>
             {series.pointsUpdatedAt ? <span className="text-[11px] text-faint">Updated {timeAgo(series.pointsUpdatedAt)}</span> : null}
           </div>
           <div className="table-scroll">
@@ -147,7 +147,7 @@ function PointsTab({ series }: { series: SeriesInfo }) {
               </thead>
               <tbody>
                 {group.rows.map((row) => (
-                  <tr key={row.teamId || row.teamName} className="border-b border-line/70 last:border-0">
+                  <tr key={row.teamId || row.teamName} className="border-b border-line/70 transition-colors last:border-0 hover:bg-accent/[0.035]">
                     <td className="px-4 py-2.5">
                       <Link href={row.teamId ? `/teams/${row.teamId}` : `/search?q=${encodeURIComponent(row.teamName)}`} className="flex items-center gap-2 font-semibold transition-colors hover:text-accent">
                         <TeamBadge team={{ name: row.teamFullName, shortName: row.teamName, imageId: row.imageId }} size={22} />
@@ -233,7 +233,6 @@ export default async function SeriesDetailPage({ params, searchParams }: SeriesP
     <div className="container-page py-5">
       <Breadcrumbs items={[{ label: "Series", href: "/series" }, { label: series.name }]} />
       <PageHeader
-        className="border-b-0 pb-2"
         eyebrow={
           <div className="flex flex-wrap items-center gap-2">
             {series.format ? <FormatPill format={series.format.toUpperCase()} /> : null}
@@ -266,25 +265,25 @@ export default async function SeriesDetailPage({ params, searchParams }: SeriesP
         </div>
       </PageHeader>
 
-      <div className="table-scroll -mx-4 border-y border-line bg-bg/95 px-4 sm:mx-0 sm:rounded-lg sm:border">
-        <div className="flex min-w-max items-center gap-1 py-1.5" role="tablist" aria-label="Series sections">
-          {TABS.map((item) => {
-            const active = tab === item.key;
-            return (
-              <Link
-                key={item.key}
-                href={`/series/${seriesId}?tab=${item.key}`}
-                role="tab"
-                aria-selected={active}
-                className={cn(
-                  "flex h-9 items-center rounded-md px-3 text-xs font-semibold transition-colors",
-                  active ? "bg-accent text-accent-ink" : "text-muted hover:bg-surface2 hover:text-ink"
-                )}
-              >
-                {item.label}
-              </Link>
-            );
-          })}
+      <div className="sticky top-[68px] z-20 mt-1 rounded-xl border border-line bg-bg p-1.5">
+        <div className="table-scroll no-scrollbar" role="tablist" aria-label="Series sections">
+          <div className="flex min-w-max items-center gap-1">
+            {TABS.map((item) => {
+              const active = tab === item.key;
+              return (
+                <Link
+                  key={item.key}
+                  href={`/series/${seriesId}?tab=${item.key}`}
+                  role="tab"
+                  aria-selected={active}
+                  data-active={active}
+                  className="tab-link"
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
+          </div>
         </div>
       </div>
 

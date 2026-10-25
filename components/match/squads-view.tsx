@@ -30,7 +30,7 @@ export function SquadsView({ detail }: { detail: MatchDetail }) {
           <div className="divide-y divide-line/70">
             {squad.players.map((player) => (
               <div key={player.id} className="flex items-center gap-3 px-4 py-2.5">
-                <PlayerAvatar player={{ id: player.id, name: player.name, faceImageId: player.faceImageId }} size={34} />
+                <PlayerAvatar player={{ id: player.id, name: player.name, faceImageId: player.faceImageId }} size={40} />
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-1.5">
                     {player.id ? (

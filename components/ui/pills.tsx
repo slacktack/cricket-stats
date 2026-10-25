@@ -1,16 +1,5 @@
 import { cn } from "@/lib/utils";
 
-const FORMAT_STYLES: Record<string, string> = {
-  TEST: "bg-amber-100 text-amber-800 dark:bg-amber-400/15 dark:text-amber-300",
-  ODI: "bg-sky-100 text-sky-800 dark:bg-sky-400/15 dark:text-sky-300",
-  T20I: "bg-fuchsia-100 text-fuchsia-800 dark:bg-fuchsia-400/15 dark:text-fuchsia-300",
-  T20: "bg-fuchsia-100 text-fuchsia-800 dark:bg-fuchsia-400/15 dark:text-fuchsia-300",
-  T10: "bg-emerald-100 text-emerald-800 dark:bg-emerald-400/15 dark:text-emerald-300",
-  "LIST A": "bg-sky-100 text-sky-800 dark:bg-sky-400/15 dark:text-sky-300",
-  FC: "bg-amber-100 text-amber-800 dark:bg-amber-400/15 dark:text-amber-300",
-  "100B": "bg-lime-100 text-lime-800 dark:bg-lime-400/15 dark:text-lime-300",
-};
-
 export function FormatPill({
   format,
   className,
@@ -21,8 +10,7 @@ export function FormatPill({
   return (
     <span
       className={cn(
-        "inline-flex h-5 items-center rounded-md px-1.5 text-[10px] font-bold",
-        FORMAT_STYLES[format] ?? "bg-surface2 text-muted",
+        "inline-flex h-5 items-center rounded bg-ink/[0.06] px-1.5 text-[10px] font-bold text-muted",
         className
       )}
     >

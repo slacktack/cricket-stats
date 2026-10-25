@@ -44,14 +44,13 @@ export function DesktopNav() {
             href={item.href}
             aria-current={isActive ? "page" : undefined}
             className={cn(
-              "relative flex items-center px-4 text-[13px] font-semibold transition-colors",
-              isActive ? "text-header-ink" : "text-header-muted hover:text-header-ink"
+              "relative my-auto flex h-9 items-center border-b-2 px-3.5 text-[13px] font-bold transition-colors duration-150",
+              isActive
+                ? "border-accent text-header-ink"
+                : "border-transparent text-header-muted hover:text-header-ink"
             )}
           >
             {item.label}
-            {isActive ? (
-              <span className="absolute inset-x-4 bottom-0 h-[3px] rounded-t-full bg-gold" />
-            ) : null}
           </Link>
         );
       })}
@@ -64,7 +63,7 @@ export function MobileNav() {
   return (
     <nav
       aria-label="Primary"
-      className="fixed inset-x-0 bottom-0 z-50 border-t border-line bg-surface lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-50 border-t border-line bg-surface/92 shadow-[0_-12px_35px_-24px_rgba(12,20,35,0.5)] backdrop-blur-xl lg:hidden"
       style={{ paddingBottom: "max(0.3rem, env(safe-area-inset-bottom))" }}
     >
       <div className="mx-auto grid max-w-md grid-cols-4">
@@ -77,14 +76,19 @@ export function MobileNav() {
               href={item.href}
               aria-current={isActive ? "page" : undefined}
               className={cn(
-                "relative flex min-h-[58px] flex-col items-center justify-center gap-1 text-[10px] font-semibold transition-colors",
+                "relative flex min-h-[58px] flex-col items-center justify-center gap-1 text-[10px] font-bold transition-colors",
                 isActive ? "text-accent" : "text-muted hover:text-ink"
               )}
             >
-              {isActive ? (
-                <span className="absolute inset-x-5 top-0 h-[3px] rounded-b-full bg-accent" />
-              ) : null}
-              <Icon className="h-[19px] w-[19px]" strokeWidth={isActive ? 2.4 : 1.9} />
+              <span className="grid h-7 w-10 place-items-center">
+                <Icon
+                  className={cn(
+                    "h-[19px] w-[19px]",
+                    isActive && "animate-pop"
+                  )}
+                  strokeWidth={isActive ? 2.4 : 1.9}
+                />
+              </span>
               {item.label}
             </Link>
           );

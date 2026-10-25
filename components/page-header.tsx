@@ -45,15 +45,31 @@ export function PageHeader({
   className?: string;
 }) {
   return (
-    <header className={cn("border-b border-line pb-5 pt-5 sm:pb-7 sm:pt-7", className)}>
+    <header className={cn("border-b border-line pb-5 sm:pb-6", className)}>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
-          {eyebrow ? <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-faint">{eyebrow}</div> : null}
-          <h1 className="mt-2 text-2xl font-bold leading-tight tracking-[-0.035em] sm:text-3xl">{title}</h1>
-          {description ? <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">{description}</p> : null}
-          {meta ? <div className="mt-3 text-xs text-faint">{meta}</div> : null}
+          {eyebrow ? (
+            <div className="flex flex-wrap items-center gap-2 text-[10px] font-extrabold uppercase tracking-[0.14em] text-faint">
+              {eyebrow}
+            </div>
+          ) : null}
+          <h1 className="mt-2.5 text-[clamp(2rem,4.6vw,3.4rem)] font-extrabold leading-[1.02] tracking-[-0.045em]">
+            {title}
+          </h1>
+          {description ? (
+            <p className="mt-2.5 max-w-2xl text-[13px] font-medium leading-relaxed text-muted sm:text-sm">
+              {description}
+            </p>
+          ) : null}
+          {meta ? (
+            <div className="mt-3 text-[11px] font-medium text-faint">{meta}</div>
+          ) : null}
         </div>
-        {actions ? <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div> : null}
+        {actions ? (
+          <div className="flex shrink-0 flex-wrap items-center gap-2">
+            {actions}
+          </div>
+        ) : null}
       </div>
       {children ? <div className="mt-5">{children}</div> : null}
     </header>

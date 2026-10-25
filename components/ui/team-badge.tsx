@@ -30,13 +30,13 @@ export function TeamBadge({
     >
       {team.imageId ? (
         <img
-          src={teamImageUrl(team.imageId, "100x100")}
+          src={teamImageUrl(team.imageId, "200x200")}
           alt=""
           width={width}
           height={size}
           loading="lazy"
           decoding="async"
-          className="h-full w-full object-cover"
+          className="absolute inset-0 h-full w-full object-contain"
         />
       ) : (
         <span
@@ -73,13 +73,13 @@ export function PlayerAvatar({
     >
       {player.faceImageId ? (
         <img
-          src={playerImageUrl(player.faceImageId, "100x100")}
+          src={playerImageUrl(player.faceImageId, "200x200")}
           alt=""
           width={size}
           height={size}
           loading="lazy"
           decoding="async"
-          className="h-full w-full object-cover object-top"
+          className="absolute inset-0 h-full w-full object-cover object-top"
         />
       ) : (
         <span

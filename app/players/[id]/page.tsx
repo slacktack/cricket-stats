@@ -118,11 +118,10 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
     <div className="container-page py-5">
       <Breadcrumbs items={[{ label: "Matches", href: "/" }, { label: "Players" }, { label: player.name }]} />
       <PageHeader
-        className="border-b-0 pb-2"
         eyebrow={[player.role, player.intlTeam].filter(Boolean).join(" · ") || "Player profile"}
         title={
           <span className="flex items-center gap-3">
-            <PlayerAvatar player={{ id: player.id, name: player.name, faceImageId: player.imageId }} size={58} />
+            <PlayerAvatar player={{ id: player.id, name: player.name, faceImageId: player.imageId }} size={76} />
             <span className="min-w-0">
               <span className="block truncate">{player.name}</span>
               {player.fullName !== player.name ? (

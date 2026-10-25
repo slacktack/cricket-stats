@@ -53,7 +53,6 @@ export default async function TeamPage({ params }: TeamPageProps) {
     <div className="container-page py-5">
       <Breadcrumbs items={[{ label: "Matches", href: "/" }, { label: "Teams" }, { label: data.team.shortName }]} />
       <PageHeader
-        className="border-b-0 pb-2"
         eyebrow="Team"
         title={
           <span className="flex items-center gap-3">

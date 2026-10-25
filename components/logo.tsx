@@ -36,7 +36,9 @@ export function Logo({ className }: { className?: string }) {
         className
       )}
     >
-      <BallMark className="h-[26px] w-[26px] text-live transition-transform duration-200 group-hover:-rotate-12" />
+      <span className="grid h-9 w-9 place-items-center rounded-lg bg-accent text-accent-ink">
+        <BallMark className="h-[22px] w-[22px]" />
+      </span>
       <span className="text-[23px] font-extrabold leading-none tracking-[-0.04em]">
         chauka
       </span>

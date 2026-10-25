@@ -117,53 +117,62 @@ export default async function RankingsPage({
         meta={<span>Loaded {timeAgo(Date.now())} · ICC rankings update weekly</span>}
       />
 
-      <div className="mt-5 space-y-4">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="text-[11px] font-semibold uppercase tracking-wide text-faint">Category</span>
-          {(["men", "women"] as const).map((value) => (
-            <Link
-              key={value}
-              href={hrefFor(value, category, format)}
-              className={cn(
-                "inline-flex h-8 items-center rounded-full border px-3 text-xs font-semibold transition-colors",
-                gender === value ? "border-accent bg-accent text-accent-ink" : "border-line bg-surface text-muted hover:text-ink"
-              )}
-            >
-              {value === "men" ? "Men" : "Women"}
-            </Link>
-          ))}
+      <section className="mt-4 rounded-2xl border border-line bg-surface p-2.5 sm:p-3">
+        <div className="flex flex-col gap-2 xl:flex-row xl:items-center xl:justify-between">
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
+            <span className="eyebrow shrink-0 pl-1">Gender</span>
+            <div className="flex gap-1 rounded-2xl border border-line bg-surface2/80 p-1">
+              {(["men", "women"] as const).map((value) => (
+                <Link
+                  key={value}
+                  href={hrefFor(value, category, format)}
+                  data-active={gender === value}
+                  aria-current={gender === value ? "page" : undefined}
+                  className="segmented-item h-9 px-4"
+                >
+                  {value === "men" ? "Men" : "Women"}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
+            <span className="eyebrow shrink-0 pl-1">Format</span>
+            <div className="flex gap-1">
+              {FORMATS.map((item) => (
+                <Link
+                  key={item.key}
+                  href={hrefFor(gender, category, item.key)}
+                  aria-current={format === item.key ? "page" : undefined}
+                  className={cn(
+                    "inline-flex h-9 shrink-0 items-center rounded-full border px-3.5 text-[11px] font-extrabold transition-all duration-200",
+                    format === item.key
+                      ? "border-transparent bg-ink text-bg"
+                      : "border-line bg-surface text-muted hover:border-line-strong hover:text-ink"
+                  )}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+          </div>
         </div>
 
-        <div className="flex flex-wrap gap-1.5">
+        <div className="mt-2.5 flex items-center gap-2 overflow-x-auto border-t border-line pt-2.5 no-scrollbar">
+          <span className="eyebrow shrink-0 pl-1">Category</span>
           {CATEGORIES.map((item) => (
             <Link
               key={item.key}
               href={hrefFor(gender, item.key, format)}
-              className={cn(
-                "inline-flex h-9 items-center rounded-lg px-3 text-xs font-semibold transition-colors",
-                category === item.key ? "bg-ink text-bg" : "bg-surface2 text-muted hover:text-ink"
-              )}
+              aria-current={category === item.key ? "page" : undefined}
+              data-active={category === item.key}
+              className="chip-filter"
             >
               {item.label}
             </Link>
           ))}
         </div>
-
-        <div className="flex flex-wrap gap-1.5 border-b border-line pb-3">
-          {FORMATS.map((item) => (
-            <Link
-              key={item.key}
-              href={hrefFor(gender, category, item.key)}
-              className={cn(
-                "inline-flex h-8 items-center rounded-md px-3 text-xs font-semibold transition-colors",
-                format === item.key ? "bg-accent-soft text-accent" : "text-muted hover:bg-surface2 hover:text-ink"
-              )}
-            >
-              {item.label}
-            </Link>
-          ))}
-        </div>
-      </div>
+      </section>
 
       {entries.length === 0 ? (
         <EmptyState
@@ -175,6 +184,19 @@ export default async function RankingsPage({
         />
       ) : (
         <div className="card mt-4 overflow-hidden">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line bg-surface2/60 px-4 py-3">
+            <div>
+              <p className="text-[9px] font-extrabold uppercase tracking-[0.12em] text-faint">
+                Live table
+              </p>
+              <h2 className="mt-0.5 text-sm font-extrabold">
+                {formatLabel} · {categoryLabel}
+              </h2>
+            </div>
+            <span className="rounded-full bg-surface/80 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.08em] text-faint">
+              Updated weekly
+            </span>
+          </div>
           <div className="table-scroll">
             <table className="w-full min-w-[680px] text-left text-xs">
               <thead className="border-b border-line bg-surface2/60 text-[10px] uppercase tracking-wide text-faint">
@@ -190,9 +212,18 @@ export default async function RankingsPage({
               </thead>
               <tbody>
                 {entries.map((entry) => (
-                  <tr key={entry.id} className="border-b border-line/70 last:border-0">
+                  <tr
+                    key={entry.id}
+                    className="group border-b border-line/70 transition-colors last:border-0 hover:bg-accent/[0.035]"
+                  >
                     <td className="px-4 py-3 text-right font-bold tabular-nums">
-                      <span className={cn(entry.rank <= 3 && "text-accent")}>{entry.rank}</span>
+                      {entry.rank <= 3 ? (
+                        <span className="rank-medal ml-auto" data-rank={entry.rank}>
+                          {entry.rank}
+                        </span>
+                      ) : (
+                        <span className="text-muted">{entry.rank}</span>
+                      )}
                     </td>
                     <td className="px-3 py-3">
                       <Link
@@ -202,15 +233,17 @@ export default async function RankingsPage({
                         {isTeams ? (
                           <TeamBadge
                             team={{ name: entry.name, shortName: entry.name, imageId: entry.imageId }}
-                            size={28}
+                            size={34}
                           />
                         ) : (
                           <PlayerAvatar
                             player={{ id: entry.id, name: entry.name, faceImageId: entry.faceImageId }}
-                            size={30}
+                            size={42}
                           />
                         )}
-                        <span className="truncate">{entry.name}</span>
+                        <span className="truncate transition-colors group-hover:text-accent">
+                          {entry.name}
+                        </span>
                       </Link>
                     </td>
                     {!isTeams ? <td className="px-2 py-3 text-muted">{entry.country ?? "—"}</td> : null}

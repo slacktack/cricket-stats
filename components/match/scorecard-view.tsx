@@ -25,23 +25,24 @@ function InningsCard({ innings }: { innings: InningsDetail }) {
     .join(", ");
 
   return (
-    <section className="card overflow-hidden">
-      <div className="flex flex-wrap items-center gap-3 border-b border-line bg-surface2/60 px-4 py-3">
-        <TeamBadge team={innings.battingTeam} size={28} />
+    <section className="overflow-hidden border border-line bg-surface">
+      <div className="flex flex-wrap items-center gap-3 bg-[#0a111c] px-4 py-3 text-white">
+        <TeamBadge team={innings.battingTeam} size={32} className="rounded-md border-white/20 bg-white" />
         <div className="min-w-0 flex-1">
-          <Link href={`/teams/${innings.battingTeam.id}`} className="truncate text-sm font-bold transition-colors hover:text-accent">
+          <Link href={`/teams/${innings.battingTeam.id}`} className="truncate text-sm font-bold transition-colors hover:text-white/75">
             {innings.battingTeam.name}
           </Link>
-          <p className="text-[11px] text-faint">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.06em] text-white/35">
             {innings.declared ? "Declared" : innings.followOn ? "Following on" : "Innings"}
             {innings.target ? ` · Target ${innings.target}` : ""}
+            {innings.isCurrent ? " · Current" : ""}
           </p>
         </div>
         <div className="text-right">
-          <p className="text-xl font-bold tabular-nums">
+          <p className="text-2xl font-extrabold tabular-nums">
             {innings.runs}/{innings.wickets}
           </p>
-          <p className="text-[11px] text-faint">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.06em] text-white/35">
             {formatOvers(innings.overs)} ov · RR {innings.runRate.toFixed(2)}
           </p>
         </div>
@@ -62,7 +63,7 @@ function InningsCard({ innings }: { innings: InningsDetail }) {
             </thead>
             <tbody>
               {innings.batsmen.map((batter, index) => (
-                <tr key={`${batter.id}-${index}`} className="border-b border-line/70 last:border-0">
+                <tr key={`${batter.id}-${index}`} className="border-b border-line/70 transition-colors last:border-0 hover:bg-accent/[0.03]">
                   <td className="px-4 py-2.5">
                     <div className="flex items-center gap-1.5">
                       <PlayerLink id={batter.id} name={batter.name} />
@@ -118,7 +119,7 @@ function InningsCard({ innings }: { innings: InningsDetail }) {
             </thead>
             <tbody>
               {innings.bowlers.map((bowler, index) => (
-                <tr key={`${bowler.id}-${index}`} className="border-b border-line/70 last:border-0">
+                <tr key={`${bowler.id}-${index}`} className="border-b border-line/70 transition-colors last:border-0 hover:bg-accent/[0.03]">
                   <td className="px-4 py-2.5">
                     <PlayerLink id={bowler.id} name={bowler.name} />
                   </td>

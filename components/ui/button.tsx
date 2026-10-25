@@ -1,11 +1,13 @@
 import { cn } from "@/lib/utils";
 
 const VARIANTS = {
-  primary: "bg-accent text-accent-ink hover:bg-accent/90",
+  primary:
+    "bg-accent text-accent-ink hover:bg-accent/90",
   secondary:
-    "border border-line bg-surface text-ink hover:border-accent/40 hover:bg-surface2",
+    "border border-line bg-surface text-ink hover:border-line-strong hover:bg-surface2",
   ghost: "text-muted hover:bg-surface2 hover:text-ink",
-  outline: "border border-line-strong text-ink hover:bg-surface2",
+  outline:
+    "border border-line-strong bg-surface text-ink hover:border-accent hover:bg-surface2",
 };
 
 const SIZES = {
@@ -25,7 +27,7 @@ export function buttonClass({
   className?: string;
 } = {}) {
   return cn(
-    "inline-flex shrink-0 items-center justify-center rounded-lg font-semibold transition-colors duration-150 disabled:pointer-events-none disabled:opacity-50",
+    "inline-flex shrink-0 items-center justify-center rounded-lg font-bold transition-colors duration-150 disabled:pointer-events-none disabled:opacity-50",
     VARIANTS[variant],
     SIZES[size],
     className

@@ -14,14 +14,14 @@ export function SiteHeader() {
         </div>
         <DesktopNav />
         <div className="ml-auto flex items-center gap-2">
-          <span className="hidden items-center gap-1.5 text-[12px] font-medium text-header-muted md:flex">
+          <span className="hidden h-8 items-center gap-1.5 rounded-full border border-line bg-surface2/80 px-2.5 text-[11px] font-bold text-header-muted md:flex">
             <LiveDot />
             Live scores
           </span>
           <Link
             href="/search"
             aria-label="Search players, teams, matches and series"
-            className="grid h-9 w-9 place-items-center rounded-lg border border-header-ink/25 text-header-ink transition-colors hover:bg-header-ink/10 lg:hidden"
+            className="grid h-9 w-9 place-items-center rounded-full border border-header-ink/15 bg-surface2/70 text-header-ink transition-all duration-200 hover:-translate-y-0.5 hover:border-accent/40 hover:text-accent lg:hidden"
           >
             <Search className="h-[18px] w-[18px]" />
           </Link>
