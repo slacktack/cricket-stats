@@ -441,18 +441,36 @@ export interface SearchTeam {
   imageId?: number;
 }
 
+export interface SearchSeries {
+  id: number;
+  name: string;
+  matches: number;
+  live: number;
+  format?: string;
+}
+
 export interface SearchIndex {
   players: SearchPlayer[];
   teams: SearchTeam[];
   matches: MatchSummary[];
-  series: {
-    id: number;
-    name: string;
-    matches: number;
-    live: number;
-    format?: string;
-  }[];
+  series: SearchSeries[];
   trending: SearchPlayer[];
+}
+
+export interface SearchResults {
+  query: string;
+  players: SearchPlayer[];
+  teams: SearchTeam[];
+  matches: MatchSummary[];
+  series: SearchSeries[];
+  total: number;
+}
+
+export interface TeamOverview {
+  team: TeamRef;
+  matches: MatchSummary[];
+  series: SearchSeries[];
+  updatedAt: number;
 }
 
 export interface ApiError {

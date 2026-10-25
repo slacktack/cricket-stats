@@ -186,11 +186,7 @@ async function loadSeriesInfo(seriesId: number): Promise<SeriesInfo> {
   const matchesFlight = extractFlight(matchesResult.value);
   const rawMatches = findLastJSON<Raw>(matchesFlight, "matchesData");
   if (!rawMatches) {
-    throw new CricbuzzError(
-      "Unable to read the series schedule",
-      502,
-      "PARSE_ERROR"
-    );
+    throw new CricbuzzError("Series not found", 404, "NOT_FOUND");
   }
 
   const { groups, matches } = buildGroups(rawMatches);

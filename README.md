@@ -14,10 +14,10 @@ A fast, mobile-first cricket live score and stats experience. Built with Next.js
 
 ## Tech stack
 
-- Next.js 14 (App Router) + React 18 + TypeScript
+- Next.js 16 (App Router) + React 19 + TypeScript
 - Tailwind CSS
 - Server-side data providers with caching and graceful fallbacks
-- Data sources: Cricbuzz and ESPNcricinfo public pages/APIs
+- Data source: Cricbuzz public pages/APIs
 
 ## Getting started
 
@@ -37,6 +37,20 @@ npm run start      # run production build
 npm run lint       # lint
 npm run typecheck  # type-check
 ```
+
+## Routes
+
+- `/` — live, upcoming and completed matches
+- `/match/:id` — scorecard, commentary, squads and match info
+- `/series` and `/series/:id` — schedules, points tables and stats
+- `/rankings` — ICC men's and women's rankings
+- `/players/:id` — player profiles and career stats
+- `/teams/:id` — team matches and series
+- `/search` — players, teams, matches and series
+
+## API
+
+See [`docs/API.md`](docs/API.md).
 
 ## Deploy
 
