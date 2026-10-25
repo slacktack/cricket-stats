@@ -1,6 +1,7 @@
 import { cachedValue } from "@/lib/cricbuzz/http";
 import { getHomeFeed } from "@/lib/data/home";
 import { getRankings } from "@/lib/data/rankings";
+import { getScheduleMatches } from "@/lib/data/schedule";
 import { getSeriesList } from "@/lib/data/series";
 import type {
   RankingCategory,
@@ -57,12 +58,15 @@ function formatList(categories: Record<RankingCategory, Record<RankingFormat, an
 }
 
 async function loadSearchIndex(): Promise<SearchIndex> {
-  const [feed, series, menResult, womenResult] = await Promise.all([
+  const [feed, schedule, series, menResult, womenResult] = await Promise.all([
     getHomeFeed(),
+    getScheduleMatches().catch(() => []),
     getSeriesList(),
     getRankings("men").catch(() => null),
     getRankings("women").catch(() => null),
   ]);
+
+  const matches = uniqueBy([...feed.matches, ...schedule], (match) => match.id);
 
   const players = [
     ...(menResult ? formatList(menResult.categories) : []),
@@ -109,7 +113,7 @@ async function loadSearchIndex(): Promise<SearchIndex> {
       (player) => player.id
     ).sort((a, b) => a.name.localeCompare(b.name)),
     teams: uniqueBy(teams, (team) => team.id),
-    matches: feed.matches,
+    matches,
     series: series.map((item) => ({
       id: item.id,
       name: item.name,

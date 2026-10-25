@@ -26,7 +26,13 @@ export function BallMark({ className }: { className?: string }) {
   );
 }
 
-export function Logo({ className }: { className?: string }) {
+export function Logo({
+  className,
+  variant = "default",
+}: {
+  className?: string;
+  variant?: "default" | "panel";
+}) {
   return (
     <Link
       href="/"
@@ -36,10 +42,17 @@ export function Logo({ className }: { className?: string }) {
         className
       )}
     >
-      <span className="grid h-9 w-9 place-items-center rounded-lg bg-accent text-accent-ink">
+      <span
+        className={cn(
+          "grid h-9 w-9 place-items-center rounded",
+          variant === "panel"
+            ? "bg-panel-ink text-panel"
+            : "bg-accent text-accent-ink"
+        )}
+      >
         <BallMark className="h-[22px] w-[22px]" />
       </span>
-      <span className="text-[23px] font-extrabold leading-none tracking-[-0.04em]">
+      <span className="font-display text-[26px] font-bold leading-none tracking-[-0.05em]">
         chauka
       </span>
     </Link>

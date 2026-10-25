@@ -39,16 +39,21 @@ function StatsTable({ title, table }: { title: string; table: PlayerStatsTable }
   if (table.formats.length === 0 || table.rows.length === 0) return null;
   return (
     <section className="card overflow-hidden">
-      <div className="border-b border-line bg-surface2/60 px-4 py-3">
-        <h2 className="text-sm font-bold">{title}</h2>
+      <div className="flex items-center justify-between gap-3 border-b-2 border-panel-ink/25 bg-panel px-4 py-3 text-panel-ink">
+        <h2 className="display text-[18px] font-bold leading-none tracking-[-0.02em]">
+          {title}
+        </h2>
+        <span className="mono text-[9px] uppercase tracking-[0.06em] text-panel-muted">
+          {table.formats.length} formats
+        </span>
       </div>
       <div className="table-scroll">
-        <table className="w-full min-w-[520px] text-left text-xs">
-          <thead className="border-b border-line text-[10px] uppercase tracking-wide text-faint">
+        <table className="w-full table-fixed text-left text-[11px] sm:text-xs">
+          <thead className="border-b border-line-strong bg-surface2/45 text-[9px] font-bold uppercase tracking-[0.1em] text-faint">
             <tr>
-              <th className="px-4 py-2 font-semibold">Stat</th>
+              <th className="px-3 py-2 font-semibold sm:px-4">Stat</th>
               {table.formats.map((format) => (
-                <th key={format} className="px-3 py-2 text-right font-semibold last:pr-4">
+                <th key={format} className="w-[52px] px-1.5 py-2 text-right font-semibold sm:w-[64px] sm:px-3">
                   {format.toUpperCase()}
                 </th>
               ))}
@@ -56,10 +61,10 @@ function StatsTable({ title, table }: { title: string; table: PlayerStatsTable }
           </thead>
           <tbody>
             {table.rows.map((row) => (
-              <tr key={row.label} className="border-b border-line/70 last:border-0">
-                <td className="px-4 py-2.5 font-medium text-muted">{row.label}</td>
+              <tr key={row.label} className="border-b border-line/60 last:border-0 hover:bg-accent/[0.04]">
+                <td className="px-3 py-2.5 font-medium text-muted sm:px-4">{row.label}</td>
                 {table.formats.map((format) => (
-                  <td key={`${row.label}-${format}`} className="px-3 py-2.5 text-right tabular-nums last:pr-4">
+                  <td key={`${row.label}-${format}`} className="px-1.5 py-2.5 text-right tabular-nums sm:px-3">
                     {row.values[format] ?? "—"}
                   </td>
                 ))}
@@ -120,12 +125,12 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
       <PageHeader
         eyebrow={[player.role, player.intlTeam].filter(Boolean).join(" · ") || "Player profile"}
         title={
-          <span className="flex items-center gap-3">
-            <PlayerAvatar player={{ id: player.id, name: player.name, faceImageId: player.imageId }} size={76} />
+          <span className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+            <PlayerAvatar player={{ id: player.id, name: player.name, faceImageId: player.imageId }} size={108} />
             <span className="min-w-0">
-              <span className="block truncate">{player.name}</span>
+              <span className="block break-words">{player.name}</span>
               {player.fullName !== player.name ? (
-                <span className="mt-0.5 block truncate text-sm font-medium text-muted">{player.fullName}</span>
+                <span className="mt-1 block break-words text-sm font-medium text-muted">{player.fullName}</span>
               ) : null}
             </span>
           </span>
@@ -156,24 +161,29 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
 
         {player.career.length > 0 ? (
           <section className="card overflow-hidden">
-            <div className="border-b border-line bg-surface2/60 px-4 py-3">
-              <h2 className="text-sm font-bold">Career</h2>
+            <div className="flex items-center justify-between gap-3 border-b-2 border-panel-ink/25 bg-panel px-4 py-3 text-panel-ink">
+              <h2 className="display text-[18px] font-bold leading-none tracking-[-0.02em]">
+                Career
+              </h2>
+              <span className="mono text-[9px] uppercase tracking-[0.06em] text-panel-muted">
+                {player.career.length} formats
+              </span>
             </div>
             <div className="table-scroll">
-              <table className="w-full min-w-[440px] text-left text-xs">
-                <thead className="border-b border-line text-[10px] uppercase tracking-wide text-faint">
+              <table className="w-full text-left text-[11px] sm:text-xs">
+                <thead className="border-b border-line-strong bg-surface2/45 text-[9px] font-bold uppercase tracking-[0.1em] text-faint">
                   <tr>
-                    <th className="px-4 py-2 font-semibold">Format</th>
+                    <th className="px-3 py-2 font-semibold sm:px-4">Format</th>
                     <th className="px-3 py-2 font-semibold">Debut</th>
-                    <th className="px-4 py-2 text-right font-semibold">Last played</th>
+                    <th className="px-3 py-2 text-right font-semibold sm:px-4">Last played</th>
                   </tr>
                 </thead>
                 <tbody>
                   {player.career.map((entry) => (
-                    <tr key={entry.format} className="border-b border-line/70 last:border-0">
-                      <td className="px-4 py-2.5 font-semibold">{entry.format}</td>
+                    <tr key={entry.format} className="border-b border-line/60 last:border-0 hover:bg-accent/[0.04]">
+                      <td className="px-3 py-2.5 font-semibold sm:px-4">{entry.format}</td>
                       <td className="px-3 py-2.5 text-muted">{entry.debut ?? "—"}</td>
-                      <td className="px-4 py-2.5 text-right text-muted">{entry.lastPlayed ?? "—"}</td>
+                      <td className="px-3 py-2.5 text-right text-muted sm:px-4">{entry.lastPlayed ?? "—"}</td>
                     </tr>
                   ))}
                 </tbody>

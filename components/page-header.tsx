@@ -10,7 +10,13 @@ export function Breadcrumbs({
   className?: string;
 }) {
   return (
-    <nav aria-label="Breadcrumb" className={cn("flex flex-wrap items-center gap-1.5 text-xs text-faint", className)}>
+    <nav
+      aria-label="Breadcrumb"
+      className={cn(
+        "flex flex-wrap items-center gap-1.5 text-[11px] font-medium text-faint",
+        className
+      )}
+    >
       {items.map((item, index) => (
         <span key={`${item.label}-${index}`} className="flex items-center gap-1.5">
           {index > 0 ? <ChevronRight className="h-3 w-3 shrink-0" /> : null}
@@ -45,19 +51,22 @@ export function PageHeader({
   className?: string;
 }) {
   return (
-    <header className={cn("border-b border-line pb-5 sm:pb-6", className)}>
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+    <header className={cn("border-b border-line-strong pb-6 pt-2 sm:pb-7", className)}>
+      <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
           {eyebrow ? (
-            <div className="flex flex-wrap items-center gap-2 text-[10px] font-extrabold uppercase tracking-[0.14em] text-faint">
-              {eyebrow}
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="h-px w-5 bg-accent" />
+              <div className="flex flex-wrap items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em] text-accent">
+                {eyebrow}
+              </div>
             </div>
           ) : null}
-          <h1 className="mt-2.5 text-[clamp(2rem,4.6vw,3.4rem)] font-extrabold leading-[1.02] tracking-[-0.045em]">
+          <h1 className="display mt-3 text-[clamp(2rem,6vw,4.5rem)] leading-[0.96] tracking-[-0.035em]">
             {title}
           </h1>
           {description ? (
-            <p className="mt-2.5 max-w-2xl text-[13px] font-medium leading-relaxed text-muted sm:text-sm">
+            <p className="mt-3 max-w-2xl text-[13px] font-medium leading-relaxed text-muted sm:text-sm">
               {description}
             </p>
           ) : null}
@@ -66,7 +75,7 @@ export function PageHeader({
           ) : null}
         </div>
         {actions ? (
-          <div className="flex shrink-0 flex-wrap items-center gap-2">
+          <div className="flex shrink-0 flex-wrap items-center gap-2 pt-1">
             {actions}
           </div>
         ) : null}

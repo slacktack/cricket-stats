@@ -7,7 +7,7 @@ const VARIANTS = {
     "border border-line bg-surface text-ink hover:border-line-strong hover:bg-surface2",
   ghost: "text-muted hover:bg-surface2 hover:text-ink",
   outline:
-    "border border-line-strong bg-surface text-ink hover:border-accent hover:bg-surface2",
+    "border border-line-strong bg-transparent text-ink hover:border-accent hover:text-accent",
 };
 
 const SIZES = {
@@ -27,7 +27,7 @@ export function buttonClass({
   className?: string;
 } = {}) {
   return cn(
-    "inline-flex shrink-0 items-center justify-center rounded-lg font-bold transition-colors duration-150 disabled:pointer-events-none disabled:opacity-50",
+    "inline-flex shrink-0 items-center justify-center rounded-md font-bold transition-colors duration-150 disabled:pointer-events-none disabled:opacity-50",
     VARIANTS[variant],
     SIZES[size],
     className

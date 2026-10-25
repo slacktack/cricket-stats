@@ -8,6 +8,18 @@ import type {
 } from "@/lib/types";
 import { normalizeSearch, uniqueBy } from "@/lib/utils";
 
+const STOP_WORDS = new Set(["vs", "v", "versus"]);
+
+function termScore(value: string, terms: string[]): number {
+  const haystack = normalizeSearch(value);
+  let wordStarts = 0;
+  for (const term of terms) {
+    if (haystack === term || haystack.startsWith(term)) wordStarts += 2;
+    else if (haystack.includes(` ${term}`)) wordStarts += 1;
+  }
+  return 35 + wordStarts * 7 + Math.min(terms.length, 4) * 2;
+}
+
 function scoreText(primary: string, secondary: string, query: string): number {
   const one = normalizeSearch(primary);
   const two = normalizeSearch(secondary);
@@ -32,7 +44,8 @@ function rankPlayers(players: SearchPlayer[], query: string, terms: string[]) {
     .map((player) => ({
       player,
       score: hasEveryTerm(`${player.name} ${player.country ?? ""}`, terms)
-        ? scoreText(player.name, player.country ?? "", query)
+        ? scoreText(player.name, player.country ?? "", query) ||
+          termScore(`${player.name} ${player.country ?? ""}`, terms)
         : 0,
     }))
     .filter((entry) => entry.score > 0)
@@ -45,7 +58,8 @@ function rankTeams(teams: SearchTeam[], query: string, terms: string[]) {
     .map((team) => ({
       team,
       score: hasEveryTerm(`${team.name} ${team.shortName}`, terms)
-        ? scoreText(team.name, team.shortName, query)
+        ? scoreText(team.name, team.shortName, query) ||
+          termScore(`${team.name} ${team.shortName}`, terms)
         : 0,
     }))
     .filter((entry) => entry.score > 0)
@@ -79,7 +93,7 @@ function rankMatches(matches: MatchSummary[], query: string, terms: string[]) {
             `${match.teams[0]?.name ?? ""} ${match.teams[1]?.name ?? ""}`,
             `${match.seriesName} ${match.description} ${match.venue?.city ?? ""}`,
             query
-          )
+          ) || termScore(matchHaystack(match), terms)
         : 0,
     }))
     .filter((entry) => entry.score > 0)
@@ -95,7 +109,8 @@ function rankSeries(series: SearchSeries[], query: string, terms: string[]) {
     .map((item) => ({
       item,
       score: hasEveryTerm(`${item.name} ${item.format ?? ""}`, terms)
-        ? scoreText(item.name, item.format ?? "", query)
+        ? scoreText(item.name, item.format ?? "", query) ||
+          termScore(`${item.name} ${item.format ?? ""}`, terms)
         : 0,
     }))
     .filter((entry) => entry.score > 0)
@@ -108,7 +123,12 @@ export function querySearchIndex(
   rawQuery: string,
   limit = 10
 ): SearchResults {
-  const query = normalizeSearch(rawQuery);
+  const normalized = normalizeSearch(rawQuery);
+  const terms = normalized
+    .split(/[\s,]+/)
+    .filter(Boolean)
+    .filter((term) => !STOP_WORDS.has(term));
+  const query = terms.join(" ");
   if (!query) {
     return {
       query: "",
@@ -119,7 +139,6 @@ export function querySearchIndex(
       total: 0,
     };
   }
-  const terms = query.split(/\s+/).filter(Boolean);
   const players = rankPlayers(index.players, query, terms).slice(0, limit);
   const teams = rankTeams(index.teams, query, terms).slice(0, Math.min(limit, 8));
   const matches = rankMatches(index.matches, query, terms).slice(0, limit);

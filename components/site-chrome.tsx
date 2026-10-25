@@ -1,31 +1,27 @@
 import Link from "next/link";
-import { ArrowUpRight, Search } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { Logo } from "@/components/logo";
-import { DesktopNav } from "@/components/nav";
+import { DesktopNav, MobileMenu } from "@/components/nav";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { LiveDot } from "@/components/ui/pills";
 
 export function SiteHeader() {
   return (
-    <header className="site-header sticky top-0 z-50 shadow-[0_1px_0_rgba(0,0,0,0.12)]">
-      <div className="container-page flex h-16 items-stretch gap-3 sm:gap-6">
+    <header className="site-header sticky top-0 z-50">
+      <div className="container-page flex h-16 items-stretch gap-4 sm:gap-8">
         <div className="flex items-center text-header-ink">
-          <Logo />
+          <Logo variant="panel" />
         </div>
         <DesktopNav />
-        <div className="ml-auto flex items-center gap-2">
-          <span className="hidden h-8 items-center gap-1.5 rounded-full border border-line bg-surface2/80 px-2.5 text-[11px] font-bold text-header-muted md:flex">
+        <div className="ml-auto flex items-center gap-2.5">
+          <span className="hidden h-7 items-center gap-2 border-l border-header-ink/25 pl-4 text-[10px] font-bold uppercase tracking-[0.13em] text-header-muted md:flex">
             <LiveDot />
             Live scores
           </span>
-          <Link
-            href="/search"
-            aria-label="Search players, teams, matches and series"
-            className="grid h-9 w-9 place-items-center rounded-full border border-header-ink/15 bg-surface2/70 text-header-ink transition-all duration-200 hover:-translate-y-0.5 hover:border-accent/40 hover:text-accent lg:hidden"
-          >
-            <Search className="h-[18px] w-[18px]" />
-          </Link>
-          <ThemeToggle />
+          <div className="hidden lg:block">
+            <ThemeToggle />
+          </div>
+          <MobileMenu />
         </div>
       </div>
     </header>
@@ -34,46 +30,46 @@ export function SiteHeader() {
 
 export function SiteFooter() {
   return (
-    <footer className="mt-14 border-t border-line bg-surface pb-24 pt-10 lg:pb-10">
-      <div className="container-page">
-        <div className="flex flex-col gap-8 sm:flex-row sm:justify-between">
-          <div className="max-w-sm text-ink">
-            <Logo />
-            <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted">
-              Cricket, without the noise. Live scores, scorecards and the
-              stories behind them.
+    <footer className="grain mt-16 border-t-[3px] border-ink bg-panel text-panel-ink">
+      <div className="container-page py-10">
+        <div className="grid gap-10 sm:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
+          <div>
+            <Logo variant="panel" />
+            <p className="mt-4 max-w-sm text-sm leading-relaxed text-panel-muted">
+              Live scores, full scorecards and the day&apos;s cricket from
+              around the world. Built for the game, without the noise.
             </p>
           </div>
-          <div className="flex flex-wrap gap-x-12 gap-y-6">
+          <div className="grid grid-cols-2 gap-8 sm:justify-items-end">
             <div>
-              <p className="mb-2.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-faint">
-                Explore
+              <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.17em] text-panel-muted">
+                Cricket
               </p>
-              <div className="grid gap-2 text-sm text-muted">
-                <Link href="/" className="transition-colors hover:text-accent">
+              <div className="grid gap-2.5 text-sm text-panel-ink/80">
+                <Link href="/" className="transition-colors hover:text-panel-ink">
                   Live matches
                 </Link>
-                <Link href="/series" className="transition-colors hover:text-accent">
+                <Link href="/series" className="transition-colors hover:text-panel-ink">
                   Series
                 </Link>
-                <Link href="/rankings" className="transition-colors hover:text-accent">
+                <Link href="/rankings" className="transition-colors hover:text-panel-ink">
                   ICC rankings
                 </Link>
-                <Link href="/search" className="transition-colors hover:text-accent">
+                <Link href="/search" className="transition-colors hover:text-panel-ink">
                   Search
                 </Link>
               </div>
             </div>
             <div>
-              <p className="mb-2.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-faint">
+              <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.17em] text-panel-muted">
                 Data
               </p>
-              <div className="grid gap-2 text-sm text-muted">
+              <div className="grid gap-2.5 text-sm text-panel-ink/80">
                 <a
                   href="https://www.cricbuzz.com"
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-1 transition-colors hover:text-accent"
+                  className="inline-flex items-center gap-1 transition-colors hover:text-panel-ink"
                 >
                   Cricbuzz
                   <ArrowUpRight className="h-3 w-3" />
@@ -84,12 +80,14 @@ export function SiteFooter() {
             </div>
           </div>
         </div>
-        <div className="mt-9 flex flex-col gap-2 border-t border-line pt-4 text-xs leading-relaxed text-faint sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-10 flex flex-col gap-2 border-t border-panel-ink/15 pt-4 text-[11px] leading-relaxed text-panel-muted sm:flex-row sm:items-center sm:justify-between">
           <p>
-            Built for the love of the game. Not affiliated with the ICC, BCCI or
-            Cricbuzz.
+            Not affiliated with the ICC, BCCI or Cricbuzz. Scores are provided
+            as-is.
           </p>
-          <p className="font-semibold text-muted">chauka · 2026</p>
+          <p className="font-semibold uppercase tracking-[0.12em]">
+            Chauka · 2026
+          </p>
         </div>
       </div>
     </footer>

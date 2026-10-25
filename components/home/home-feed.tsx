@@ -6,6 +6,7 @@ import {
   ArrowUpRight,
   CalendarDays,
   CheckCheck,
+  ChevronDown,
   Heart,
   Radio,
   RefreshCw,
@@ -19,6 +20,7 @@ import { formatDate, timeAgo, cn } from "@/lib/utils";
 import { useFavorites } from "@/components/providers/favorites-provider";
 import { useToast } from "@/components/providers/toast-provider";
 import { MatchCard } from "@/components/match-card";
+import { FallingBall } from "@/components/falling-ball";
 import { FeaturedMatch } from "@/components/home/featured-match";
 import { EmptyState } from "@/components/ui/empty-state";
 import { LiveDot } from "@/components/ui/pills";
@@ -284,44 +286,49 @@ export function HomeFeed({
 
   return (
     <div>
-      <section className="hero-shell mt-4 overflow-hidden rounded-[1.75rem] border border-line p-5 sm:p-7">
-        <div className="relative grid items-end gap-6 xl:grid-cols-[minmax(0,1.1fr)_minmax(290px,0.9fr)]">
-          <div>
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="eyebrow-chip bg-surface/75">
-                {formatDate(feed.updatedAt, {
-                  weekday: "long",
-                  day: "numeric",
-                  month: "long",
-                })}
-              </span>
-              <span className="eyebrow-chip hidden bg-surface/60 sm:inline-flex">
-                Est. 2026
-              </span>
+      <section className="grain relative mt-5 overflow-hidden border border-panel-ink/20 bg-panel text-panel-ink">
+        <FallingBall className="absolute -right-24 -top-32 z-0 hidden h-[640px] w-[640px] text-panel-ink opacity-20 sm:block" />
+        <div className="relative z-10 grid xl:grid-cols-[minmax(0,1.02fr)_minmax(330px,0.78fr)]">
+          <div className="flex flex-col justify-between px-5 py-7 sm:px-8 sm:py-10">
+            <div>
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+                <span className="font-mono text-[9px] font-medium uppercase tracking-[0.13em] text-panel-ink/75">
+                  {formatDate(feed.updatedAt, {
+                    weekday: "long",
+                    day: "numeric",
+                    month: "long",
+                  })}
+                </span>
+                <span className="h-3 w-px bg-panel-ink/30" />
+                <span className="font-mono text-[9px] font-medium uppercase tracking-[0.13em] text-panel-muted">
+                  Live from around the world
+                </span>
+              </div>
+
+              <h1 className="display mt-6 max-w-[680px] text-[clamp(2.4rem,7vw,5.9rem)] uppercase leading-[0.86]">
+                The day&apos;s
+                <span className="block">cricket.</span>
+              </h1>
+
+              <p className="mt-6 max-w-md text-[13px] font-medium leading-relaxed text-panel-ink/70 sm:text-sm">
+                Live scores, full scorecards and the day&apos;s results from
+                around the world.
+              </p>
             </div>
 
-            <h1 className="display mt-4 max-w-[720px] text-[clamp(3rem,8.2vw,5.2rem)] font-medium leading-[0.9] tracking-[-0.045em] sm:mt-5">
-              The day&apos;s <em className="italic text-accent">play.</em>
-            </h1>
-
-            <p className="mt-4 max-w-md text-[13px] font-medium leading-relaxed text-muted sm:text-sm">
-              Every match, every ball. Live scores, full scorecards and the
-              day&apos;s cricket in one place.
-            </p>
-
-            <div className="mt-5 flex flex-wrap items-center gap-2.5">
-              <span className="inline-flex h-9 items-center gap-2 rounded-full bg-live px-3.5 text-[11px] font-extrabold text-white">
-                <LiveDot className="bg-white" />
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <span className="inline-flex h-9 items-center gap-2 bg-panel-ink px-3.5 font-mono text-[9px] font-medium uppercase tracking-[0.12em] text-panel">
+                <LiveDot />
                 {liveCount ? `${liveCount} live` : `${counts.upcoming} upcoming`}
               </span>
               <span
-                className="inline-flex h-9 items-center gap-1.5 rounded-full border border-line bg-surface/70 px-3 text-[10px] font-bold uppercase tracking-[0.08em] text-faint"
+                className="inline-flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.08em] text-panel-muted"
                 suppressHydrationWarning
               >
                 <span
                   className={cn(
                     "h-1.5 w-1.5 rounded-full",
-                    stale ? "bg-warn" : "bg-win"
+                    stale ? "bg-warn" : "bg-panel-ink"
                   )}
                 />
                 {stale ? "Reconnecting" : `Updated ${timeAgo(feed.updatedAt)}`}
@@ -331,35 +338,41 @@ export function HomeFeed({
                 onClick={() => void refresh(false)}
                 disabled={refreshing}
                 aria-label="Refresh matches"
-                className="group grid h-9 w-9 place-items-center rounded-full border border-line bg-surface text-muted transition-colors duration-150 hover:border-accent hover:text-accent disabled:opacity-50"
+                className="grid h-8 w-8 place-items-center border border-panel-ink/30 text-panel-ink/70 transition-colors duration-150 hover:border-panel-ink hover:text-panel-ink disabled:opacity-50"
               >
                 <RefreshCw
                   className={cn(
-                    "h-3.5 w-3.5 transition-transform",
-                    refreshing ? "animate-spin" : "group-hover:rotate-45"
+                    "h-3.5 w-3.5",
+                    refreshing && "animate-spin"
                   )}
                 />
               </button>
             </div>
           </div>
 
-          {featured ? (
-            <FeaturedMatch match={featured} />
-          ) : (
-            <div className="rounded-2xl border border-line bg-surface/70 p-5">
-              <span className="eyebrow-chip">Quiet field</span>
-              <p className="mt-3 text-sm font-semibold leading-snug text-muted">
-                No live match on the board. The next one will land here.
-              </p>
+          <div className="border-t border-panel-ink/20 px-4 py-4 xl:border-l xl:border-t-0 sm:px-5 sm:py-5">
+            <div className="mb-2.5 flex items-center justify-between font-mono text-[8px] font-medium uppercase tracking-[0.12em] text-panel-muted">
+              <span>The live board</span>
+              <span>Scorecard / 01</span>
             </div>
-          )}
+            {featured ? (
+              <FeaturedMatch match={featured} />
+            ) : (
+              <div className="flex h-full min-h-44 flex-col justify-center border-[5px] border-panel-ink bg-bg p-5 text-ink">
+                <span className="eyebrow">Quiet field</span>
+                <p className="mt-2 max-w-xs text-sm font-semibold leading-snug text-muted">
+                  No live match on the board. The next one will land here.
+                </p>
+              </div>
+            )}
+          </div>
         </div>
       </section>
 
-      <section className="mt-3 rounded-2xl border border-line bg-surface p-2.5 sm:mt-4 sm:p-3">
+      <section className="mt-4 rounded-xl border border-line bg-surface p-2.5 sm:p-3">
         <div className="flex flex-col gap-2 xl:flex-row xl:items-center">
           <div
-            className="grid grid-cols-2 gap-1 rounded-2xl border border-line bg-surface2/80 p-1 sm:grid-cols-4"
+            className="grid grid-cols-4 gap-0.5 rounded-lg border border-line bg-surface2 p-0.5"
             role="tablist"
             aria-label="Match state"
           >
@@ -375,7 +388,7 @@ export function HomeFeed({
                   data-active={active}
                   data-live={item.key === "live"}
                   onClick={() => setTab(item.key)}
-                  className="segmented-item w-full justify-between px-3 sm:justify-center sm:px-2.5"
+                  className="segmented-item w-full justify-between px-1.5 text-[10px] sm:justify-center sm:px-2.5 sm:text-[11px]"
                 >
                   <span className="inline-flex items-center gap-1.5">
                     {item.key === "live" ? (
@@ -383,10 +396,7 @@ export function HomeFeed({
                     ) : null}
                     {item.label}
                   </span>
-                  <span
-                    className="count-badge"
-                    data-active={active}
-                  >
+                  <span className="count-badge" data-active={active}>
                     {count}
                   </span>
                 </button>
@@ -396,44 +406,61 @@ export function HomeFeed({
 
           <div className="hidden items-center gap-2 xl:ml-auto xl:flex">
             <span
-              className="text-[10px] font-bold uppercase tracking-[0.1em] text-faint"
+              className="text-[9px] font-bold uppercase tracking-[0.12em] text-faint"
               suppressHydrationWarning
             >
               {stale ? "Offline · showing last update" : "Live feed connected"}
             </span>
             <span
               className={cn(
-                "h-2 w-2 rounded-full",
+                "h-1.5 w-1.5 rounded-full",
                 stale ? "bg-warn" : "bg-win animate-pulse-dot"
               )}
             />
           </div>
         </div>
 
-        <div className="mt-2.5 flex flex-wrap items-center gap-x-2 gap-y-1.5 border-t border-line pt-2.5">
-          <span className="eyebrow shrink-0 pl-1">Filter</span>
-          {CATEGORIES.map((item) => {
-            const active = category === item;
-            const count = categoryCount(item);
-            return (
-              <button
-                key={item}
-                type="button"
-                onClick={() => setCategory(item)}
-                aria-pressed={active}
-                data-active={active}
-                className="chip-filter"
-              >
-                {item}
-                <span
-                  className="text-[9px] font-extrabold tabular-nums opacity-65"
+        <div className="mt-2.5 flex flex-wrap items-center gap-x-1.5 gap-y-1.5 border-t border-line pt-2.5">
+          <span className="eyebrow hidden shrink-0 pl-1 pr-1 sm:inline">Type</span>
+          <div className="hidden flex-wrap items-center gap-1.5 sm:flex">
+            {CATEGORIES.map((item) => {
+              const active = category === item;
+              const count = categoryCount(item);
+              return (
+                <button
+                  key={item}
+                  type="button"
+                  onClick={() => setCategory(item)}
+                  aria-pressed={active}
+                  data-active={active}
+                  className="chip-filter"
                 >
-                  {count}
-                </span>
-              </button>
-            );
-          })}
-          <span className="h-5 w-px shrink-0 bg-line" />
+                  {item}
+                  <span className="font-mono text-[9px] font-medium tabular-nums opacity-60">
+                    {count}
+                  </span>
+                </button>
+              );
+            })}
+            <span className="h-4 w-px shrink-0 bg-line" />
+          </div>
+          <label className="relative min-w-0 sm:hidden">
+            <span className="sr-only">Match type</span>
+            <select
+              value={category}
+              onChange={(event) =>
+                setCategory(event.target.value as MatchCategory)
+              }
+              className="h-8 max-w-[154px] appearance-none truncate rounded-md border border-line bg-surface pl-3 pr-8 text-[11px] font-bold text-ink"
+            >
+              {CATEGORIES.map((item) => (
+                <option key={item} value={item}>
+                  {item} ({categoryCount(item)})
+                </option>
+              ))}
+            </select>
+            <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-faint" />
+          </label>
           <button
             type="button"
             onClick={() => setFollowing((value) => !value)}
@@ -446,23 +473,23 @@ export function HomeFeed({
             <span
               aria-hidden="true"
               className={cn(
-                "relative h-4 w-7 rounded-full transition-colors duration-200",
-                following ? "bg-white/30" : "bg-line-strong/60"
+                "relative h-3.5 w-6 rounded-full transition-colors duration-200",
+                following ? "bg-bg/25" : "bg-line-strong/50"
               )}
             >
               <span
                 className={cn(
-                  "absolute left-0.5 top-0.5 h-3 w-3 rounded-full bg-white shadow-sm transition-transform duration-200",
-                  following && "translate-x-3"
+                  "absolute left-0.5 top-0.5 h-2.5 w-2.5 rounded-full bg-surface shadow-sm transition-transform duration-200",
+                  following && "translate-x-2.5"
                 )}
               />
             </span>
             <Heart
-              className={cn("h-3.5 w-3.5", following && "fill-current")}
+              className={cn("h-3 w-3", following && "fill-current")}
             />
             Following
             {favorites.hasFavorites ? (
-              <span className="text-[9px] font-extrabold tabular-nums opacity-65">
+              <span className="font-mono text-[9px] font-medium opacity-60">
                 {favorites.teams.length + favorites.series.length}
               </span>
             ) : null}
@@ -471,17 +498,17 @@ export function HomeFeed({
       </section>
 
       {teamFilter ? (
-        <div className="mt-3 flex items-center gap-3 rounded-xl border border-accent/20 bg-accent/[0.055] px-3.5 py-2.5">
+        <div className="mt-3 flex items-center gap-3 rounded-lg border border-accent/25 bg-accent-soft/70 px-3.5 py-2.5">
           <span className="text-[12px] text-muted">
             Showing matches for{" "}
-            <strong className="font-extrabold text-ink">
+            <strong className="font-bold text-ink">
               {selectedTeam?.name ?? `team #${teamFilter}`}
             </strong>
           </span>
           <button
             type="button"
             onClick={clearTeamFilter}
-            className="ml-auto flex shrink-0 items-center gap-1 rounded-full bg-surface px-2.5 py-1.5 text-[10px] font-bold text-muted shadow-sm transition-colors hover:text-accent"
+            className="ml-auto flex shrink-0 items-center gap-1 rounded border border-line bg-surface px-2.5 py-1 text-[10px] font-bold text-muted transition-colors hover:text-accent"
           >
             Clear
             <X className="h-3 w-3" />
@@ -489,41 +516,41 @@ export function HomeFeed({
         </div>
       ) : null}
 
-      <div className="mt-5 sm:mt-6">
+      <div className="mt-7">
         {groups.length === 0 ? (
           emptyState()
         ) : (
-          <div className="stagger space-y-7">
-            {groups.map((group) => (
+          <div className="stagger space-y-8">
+            {groups.map((group, groupIndex) => (
               <section key={group.key} aria-label={group.name}>
-                <div className="flex items-center gap-2.5">
-                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-accent-soft text-accent">
-                    <Trophy className="h-4 w-4" />
+                <div className="flex items-end gap-3 border-b border-line-strong pb-2.5">
+                  <span className="mono pb-0.5 text-[10px] font-medium text-faint">
+                    {String(groupIndex + 1).padStart(2, "0")}
                   </span>
                   <div className="min-w-0 flex-1">
                     {group.seriesId ? (
                       <Link
                         href={`/series/${group.seriesId}`}
                         title={group.name}
-                        className="block truncate text-[16px] font-extrabold leading-tight tracking-[-0.02em] transition-colors hover:text-accent sm:text-[19px]"
+                        className="display block truncate text-[21px] font-bold leading-tight tracking-[-0.025em] transition-colors hover:text-accent sm:text-[24px]"
                       >
                         {group.name}
                       </Link>
                     ) : (
                       <span
                         title={group.name}
-                        className="block truncate text-[16px] font-extrabold leading-tight tracking-[-0.02em] sm:text-[19px]"
+                        className="display block truncate text-[21px] font-bold leading-tight tracking-[-0.025em] sm:text-[24px]"
                       >
                         {group.name}
                       </span>
                     )}
-                    <p className="mt-0.5 text-[9px] font-bold uppercase tracking-[0.08em] text-faint">
+                    <p className="mt-1 font-mono text-[9px] font-medium uppercase tracking-[0.08em] text-faint">
                       {group.matches.length}{" "}
                       {group.matches.length === 1 ? "match" : "matches"}
                     </p>
                   </div>
                   {group.live > 0 ? (
-                    <span className="inline-flex h-6 shrink-0 items-center gap-1 rounded-full bg-live/10 px-2 text-[9px] font-extrabold uppercase tracking-[0.08em] text-live">
+                    <span className="inline-flex h-5 shrink-0 items-center gap-1.5 text-[9px] font-bold uppercase tracking-[0.1em] text-live">
                       <LiveDot />
                       {group.live} live
                     </span>
@@ -532,13 +559,13 @@ export function HomeFeed({
                     <Link
                       href={`/series/${group.seriesId}`}
                       aria-label={`View ${group.name}`}
-                      className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-surface2 text-faint transition-all duration-200 hover:bg-accent hover:text-accent-ink"
+                      className="grid h-7 w-7 shrink-0 place-items-center rounded border border-line bg-surface text-faint transition-colors duration-150 hover:border-accent hover:text-accent"
                     >
                       <ArrowUpRight className="h-3.5 w-3.5" />
                     </Link>
                   ) : null}
                 </div>
-                <div className="mt-2.5 grid gap-2">
+                <div className="mt-0 grid">
                   {group.matches.map((match) => (
                     <MatchCard key={match.id} match={match} />
                   ))}

@@ -23,12 +23,12 @@ function PlayerList({ players }: { players: MatchDetail["playersOfMatch"] }) {
             href={`/players/${player.id}`}
             className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-2 py-1 text-[11px] transition-colors hover:border-accent/40"
           >
-            <PlayerAvatar player={{ id: player.id, name: player.name, faceImageId: player.faceImageId }} size={18} />
+            <PlayerAvatar player={{ id: player.id, name: player.name, faceImageId: player.faceImageId }} size={30} />
             {player.name}
           </Link>
         ) : (
           <span key={`${player.id}-${player.name}`} className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-2 py-1 text-[11px]">
-            <PlayerAvatar player={{ id: player.id, name: player.name, faceImageId: player.faceImageId }} size={18} />
+            <PlayerAvatar player={{ id: player.id, name: player.name, faceImageId: player.faceImageId }} size={30} />
             {player.name}
           </span>
         )

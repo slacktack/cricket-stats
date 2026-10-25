@@ -16,80 +16,87 @@ export function FeaturedMatch({ match }: { match: MatchSummary }) {
   return (
     <Link
       href={`/match/${match.id}`}
-      className="featured-card group relative overflow-hidden rounded-2xl border border-white/10 p-4 text-white transition-transform duration-300 hover:-translate-y-1 sm:p-5"
+      className="grain group block h-full border-[5px] border-panel-ink bg-bg text-ink shadow-[10px_10px_0_rgba(7,9,18,0.18)] transition-transform duration-200 hover:-translate-y-0.5"
     >
-      <div className="relative flex items-center gap-2">
+      <div className="flex items-center gap-3 border-b border-ink/15 px-4 py-3">
         <span
           className={cn(
-            "inline-flex h-6 items-center gap-1.5 rounded-full px-2 text-[9px] font-extrabold uppercase tracking-[0.1em]",
-            "bg-white/10 text-white/75 ring-1 ring-inset ring-white/15"
+            "inline-flex h-5 items-center gap-1.5 font-mono text-[9px] font-medium uppercase tracking-[0.1em]",
+            live ? "text-live" : "text-warn"
           )}
         >
           {live ? <LiveDot /> : null}
           {live ? "Live now" : "Next up"}
         </span>
-        <span className="text-[9px] font-bold uppercase tracking-[0.12em] text-white/50">
+        <span className="font-mono text-[9px] uppercase tracking-[0.08em] text-ink/50">
           {matchFormat(match)}
         </span>
-        <ArrowUpRight className="ml-auto h-4 w-4 text-white/45 transition-all duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-white" />
+        <ArrowUpRight className="ml-auto h-4 w-4 text-ink/45 transition-colors group-hover:text-accent" />
       </div>
 
-      <div className="relative mt-3 space-y-1">
-        {match.teams.map((team) => {
-          const score = teamScoreText(match, team);
-          const overs = teamOversText(match, team);
-          const current =
-            live && match.currentBattingTeamId === team.id;
-          const winner =
-            match.state === "completed" && match.winnerTeamId === team.id;
-          return (
-            <div
-              key={team.id}
-              className={cn(
-                "flex items-center gap-2.5 rounded-lg px-1 py-1",
-                current && "bg-white/[0.06]"
-              )}
-            >
-              <TeamBadge
-                team={team}
-                size={20}
-                className="rounded-md ring-1 ring-white/20"
-              />
-              <span className="min-w-0 truncate text-sm font-extrabold">
-                {team.shortName}
-              </span>
-              <span className="hidden min-w-0 truncate text-[10px] text-white/45 2xl:inline">
-                {team.name}
-              </span>
-              {winner ? (
-                <span className="rounded-full bg-white/12 px-1.5 py-0.5 text-[7px] font-extrabold uppercase tracking-wide text-white/75">
-                  Won
-                </span>
-              ) : null}
-              <span className="ml-auto flex shrink-0 items-baseline gap-1.5 whitespace-nowrap">
-                <span
-                  className={cn(
-                    "text-lg font-extrabold tabular-nums sm:text-xl",
-                    current && "text-white"
+      <div className="flex-1 px-4 py-4">
+        <div className="space-y-1">
+          {match.teams.map((team) => {
+            const score = teamScoreText(match, team);
+            const overs = teamOversText(match, team);
+            const current = live && match.currentBattingTeamId === team.id;
+            const winner =
+              match.state === "completed" && match.winnerTeamId === team.id;
+            const yetToBat = score === "Yet to bat";
+            const placeholder = score === "—";
+            return (
+              <div key={team.id} className="flex items-center gap-3 py-1">
+                <TeamBadge
+                  team={team}
+                  size={28}
+                  className="rounded-[2px] border-ink/10 bg-white"
+                />
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-[15px] font-bold leading-tight">
+                    {team.shortName}
+                  </p>
+                  <p
+                    className={cn(
+                      "mt-0.5 truncate font-mono text-[8px] uppercase tracking-[0.06em]",
+                      current ? "text-accent" : "text-ink/50"
+                    )}
+                  >
+                    {winner ? "Won" : current ? "Batting" : team.name}
+                  </p>
+                </div>
+                <span className="flex shrink-0 items-baseline gap-1.5">
+                  {yetToBat ? (
+                    <span className="font-mono text-[8px] font-bold uppercase tracking-[0.08em] text-ink/45">
+                      Yet to bat
+                    </span>
+                  ) : (
+                    <span
+                      className={cn(
+                        "mono text-[20px] font-medium leading-none tracking-[-0.04em] sm:text-[24px]",
+                        placeholder && "text-[13px] text-ink/45",
+                        current ? "text-accent" : "text-ink"
+                      )}
+                    >
+                      {score}
+                    </span>
                   )}
-                >
-                  {score}
+                  {overs ? (
+                    <span className="mono text-[8px] uppercase tracking-[0.04em] text-ink/45">
+                      {overs}
+                    </span>
+                  ) : null}
                 </span>
-                {overs ? (
-                  <span className="text-[9px] font-medium tabular-nums text-white/40">
-                    {overs}
-                  </span>
-                ) : null}
-              </span>
-            </div>
-          );
-        })}
+              </div>
+            );
+          })}
+        </div>
+
+        <p className="mt-4 border-t border-ink/15 pt-3 text-[11px] font-medium leading-snug text-ink/65">
+          {matchStatusText(match)}
+        </p>
       </div>
 
-      <p className="relative mt-3 line-clamp-1 text-[11px] font-medium text-white/65">
-        {matchStatusText(match)}
-      </p>
-      <div className="relative mt-2 flex items-center gap-1.5 border-t border-white/10 pt-2 text-[9px] font-semibold uppercase tracking-[0.08em] text-white/40">
+      <div className="flex items-center gap-1.5 border-t border-ink/15 px-4 py-2.5 font-mono text-[8px] font-medium uppercase tracking-[0.08em] text-ink/50">
         {match.venue?.city ? (
           <>
             <MapPin className="h-3 w-3" />
@@ -98,8 +105,8 @@ export function FeaturedMatch({ match }: { match: MatchSummary }) {
         ) : (
           <span>Match centre</span>
         )}
-        <span className="ml-auto text-white/65 transition-colors group-hover:text-white">
-          Open match
+        <span className="ml-auto text-accent transition-colors group-hover:text-ink">
+          Open scorecard
         </span>
       </div>
     </Link>

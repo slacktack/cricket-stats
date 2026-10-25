@@ -22,16 +22,16 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        "card-vivid flex flex-col items-center justify-center rounded-2xl border border-dashed px-6 py-14 text-center",
+        "flex flex-col items-center justify-center rounded-xl border border-dashed border-line-strong bg-surface px-6 py-14 text-center",
         className
       )}
     >
       {icon ? (
-        <div className="mb-4 grid h-11 w-11 place-items-center rounded-lg bg-accent-soft text-accent">
+        <div className="mb-4 grid h-10 w-10 place-items-center rounded-md border border-accent/15 bg-accent-soft text-accent">
           {icon}
         </div>
       ) : null}
-      <h3 className="display text-[24px] font-extrabold leading-tight tracking-[-0.03em]">
+      <h3 className="display text-[26px] font-bold leading-tight tracking-[-0.025em]">
         {title}
       </h3>
       {description ? (

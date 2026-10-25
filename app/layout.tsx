@@ -1,14 +1,27 @@
 import type { Metadata, Viewport } from "next";
-import { Manrope } from "next/font/google";
+import { DM_Mono, Manrope, Montserrat } from "next/font/google";
 import "./globals.css";
 import { FavoritesProvider } from "@/components/providers/favorites-provider";
 import { ToastProvider } from "@/components/providers/toast-provider";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
-import { MobileNav } from "@/components/nav";
 
 const sans = Manrope({
   subsets: ["latin"],
   variable: "--font-sans",
+  display: "swap",
+});
+
+const display = Montserrat({
+  subsets: ["latin"],
+  variable: "--font-display",
+  weight: ["600", "700", "800"],
+  display: "swap",
+});
+
+const mono = DM_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+  weight: ["400", "500"],
   display: "swap",
 });
 
@@ -80,7 +93,10 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#F4F7FB",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#1F30B4" },
+    { media: "(prefers-color-scheme: dark)", color: "#121939" },
+  ],
   colorScheme: "light dark",
 };
 
@@ -89,7 +105,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth">
-      <body className={`${sans.variable} font-sans`}>
+      <body className={`${sans.variable} ${display.variable} ${mono.variable} font-sans`}>
         <script
           dangerouslySetInnerHTML={{
             __html:
@@ -109,7 +125,6 @@ export default function RootLayout({
               {children}
             </main>
             <SiteFooter />
-            <MobileNav />
           </FavoritesProvider>
         </ToastProvider>
       </body>

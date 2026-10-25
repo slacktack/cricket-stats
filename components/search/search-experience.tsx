@@ -2,9 +2,10 @@
 
 import { useDeferredValue, useMemo, useState } from "react";
 import Link from "next/link";
-import { Search, X } from "lucide-react";
+import { ArrowUpRight, Search, X } from "lucide-react";
 import type { SearchIndex } from "@/lib/types";
 import { querySearchIndex } from "@/lib/search";
+import { normalizeSearch } from "@/lib/utils";
 import { MatchCard } from "@/components/match-card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { FormatPill } from "@/components/ui/pills";
@@ -22,12 +23,12 @@ const FILTERS: { key: Filter; label: string }[] = [
 
 function SectionTitle({ children, count }: { children: React.ReactNode; count?: number }) {
   return (
-    <div className="flex items-center gap-2 border-b border-line pb-2">
-      <span className="h-4 w-1 rounded-full bg-accent" />
-      <h2 className="text-sm font-extrabold">{children}</h2>
+    <div className="flex items-end gap-2 border-b border-line-strong pb-2">
+      <span className="mb-1 h-2 w-2 rounded-full bg-accent" />
+      <h2 className="display text-[22px] font-bold leading-none tracking-[-0.025em]">{children}</h2>
       {count !== undefined ? (
-        <span className="rounded-full bg-surface2 px-1.5 py-0.5 text-[9px] font-extrabold tabular-nums text-faint">
-          {count}
+        <span className="mono ml-auto text-[9px] font-medium uppercase tracking-[0.06em] text-faint">
+          {String(count).padStart(2, "0")}
         </span>
       ) : null}
     </div>
@@ -54,6 +55,40 @@ export function SearchExperience({
   };
   const trimmed = query.trim();
   const show = (key: Exclude<Filter, "all">) => filter === "all" || filter === key;
+  const suggestedTeams = useMemo(() => {
+    const terms = normalizeSearch(trimmed)
+      .split(/[\s,]+/)
+      .filter(Boolean)
+      .filter((term) => !["vs", "v", "versus"].includes(term));
+    if (terms.length === 0) return [];
+
+    const scored = index.teams
+      .map((team) => {
+        const name = normalizeSearch(team.name);
+        const short = normalizeSearch(team.shortName);
+        let score = 0;
+        for (const term of terms) {
+          if (name === term || short === term) score += 5;
+          else if (name.startsWith(term)) score += 3;
+          else if (name.includes(term)) score += 2;
+          else if (short.includes(term)) score += 1;
+        }
+        return { team, score };
+      })
+      .filter((entry) => entry.score > 0)
+      .sort((a, b) => b.score - a.score);
+
+    const seen = new Set<string>();
+    const picked: typeof index.teams = [];
+    for (const { team } of scored) {
+      const key = normalizeSearch(team.shortName);
+      if (seen.has(key)) continue;
+      seen.add(key);
+      picked.push(team);
+      if (picked.length === 4) break;
+    }
+    return picked;
+  }, [index, trimmed]);
 
   function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -63,20 +98,24 @@ export function SearchExperience({
   }
 
   return (
-    <div className="mt-4">
+    <div className="mt-5">
       <form onSubmit={submit} role="search">
-        <div className="flex items-center rounded-xl border border-line bg-surface p-1.5 transition-colors duration-150 focus-within:border-accent">
-          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-accent text-accent-ink">
+        <div className="flex items-center rounded-xl border border-line-strong bg-surface p-1.5 transition-colors duration-150 focus-within:border-accent">
+          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-md bg-accent text-accent-ink">
             <Search className="h-[18px] w-[18px]" />
           </span>
           <input
-            type="search"
+            type="text"
+            inputMode="search"
+            enterKeyHint="search"
+            autoComplete="off"
+            spellCheck={false}
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search players, teams, matches or series"
             autoFocus
             aria-label="Search players, teams, matches and series"
-            className="h-12 min-w-0 flex-1 bg-transparent px-3 text-sm font-semibold text-ink outline-none placeholder:font-medium placeholder:text-faint"
+            className="h-12 min-w-0 flex-1 bg-transparent px-3.5 text-[15px] font-semibold text-ink outline-none placeholder:font-medium placeholder:text-faint"
           />
           {query ? (
             <button
@@ -123,21 +162,42 @@ export function SearchExperience({
               title={`No results for “${trimmed}”`}
               description="Try a shorter name, a team code like IND, or search for a series."
               action={
-                <button type="button" onClick={() => setQuery("")} className="text-xs font-semibold text-accent hover:underline">
-                  Clear search
-                </button>
+                <div className="flex flex-col items-center gap-5">
+                  {suggestedTeams.length > 0 ? (
+                    <div className="space-y-2">
+                      <p className="font-mono text-[9px] uppercase tracking-[0.1em] text-faint">
+                        Teams in this search
+                      </p>
+                      <div className="flex flex-wrap justify-center gap-1.5">
+                        {suggestedTeams.map((team) => (
+                          <Link
+                            key={team.id}
+                            href={`/teams/${team.id}`}
+                            className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface2 px-2.5 py-1 text-[11px] font-semibold transition-colors hover:border-accent/40 hover:text-accent"
+                          >
+                            <TeamBadge team={team} size={18} />
+                            {team.name}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
+                  <button type="button" onClick={() => setQuery("")} className="text-xs font-semibold text-accent hover:underline">
+                    Clear search
+                  </button>
+                </div>
               }
               className="mt-4"
             />
           ) : (
-            <div className="mt-5 space-y-6">
+            <div className="mt-6 space-y-7">
               {show("players") && results.players.length > 0 ? (
                 <section>
                   <SectionTitle count={results.players.length}>Players</SectionTitle>
                   <div className="stagger mt-2 grid gap-2 sm:grid-cols-2">
                     {results.players.map((player) => (
                       <Link key={player.id} href={`/players/${player.id}`} className="card card-hover flex items-center gap-3 p-3">
-                        <PlayerAvatar player={{ id: player.id, name: player.name, faceImageId: player.imageId }} size={42} className="ring-2 ring-surface" />
+                        <PlayerAvatar player={{ id: player.id, name: player.name, faceImageId: player.imageId }} size={60} className="ring-2 ring-surface" />
                         <div className="min-w-0">
                           <p className="truncate text-sm font-semibold">{player.name}</p>
                           <p className="truncate text-[11px] text-faint">{player.country ?? "Player"}</p>
@@ -198,13 +258,13 @@ export function SearchExperience({
           )}
         </>
       ) : (
-        <div className="mt-6 space-y-6">
+        <div className="mt-7 space-y-7">
           <section>
             <SectionTitle>Trending players</SectionTitle>
             <div className="stagger mt-2 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
               {index.trending.map((player) => (
                 <Link key={player.id} href={`/players/${player.id}`} className="card card-hover flex items-center gap-3 p-3">
-                  <PlayerAvatar player={{ id: player.id, name: player.name, faceImageId: player.imageId }} size={36} className="ring-2 ring-surface" />
+                  <PlayerAvatar player={{ id: player.id, name: player.name, faceImageId: player.imageId }} size={52} className="ring-2 ring-surface" />
                   <div className="min-w-0">
                     <p className="truncate text-sm font-semibold">{player.name}</p>
                     <p className="truncate text-[11px] text-faint">{player.country ?? "Player"}</p>
@@ -218,16 +278,17 @@ export function SearchExperience({
             <SectionTitle>Browse</SectionTitle>
             <div className="mt-2 grid gap-2 sm:grid-cols-3">
               {[
-                { href: "/series", label: "All series" },
-                { href: "/rankings", label: "ICC rankings" },
-                { href: "/", label: "Live matches" },
+                { href: "/series", label: "All series", className: "bg-clay" },
+                { href: "/rankings", label: "ICC rankings", className: "bg-sage" },
+                { href: "/", label: "Live matches", className: "bg-accent-soft" },
               ].map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="rounded-lg border border-line bg-surface px-3.5 py-3 text-xs font-extrabold text-ink transition-colors duration-150 hover:border-line-strong hover:bg-surface2"
+                  className={`flex items-center justify-between rounded-lg border border-line px-3.5 py-3 text-xs font-bold text-ink transition-colors duration-150 hover:border-line-strong ${item.className}`}
                 >
                   {item.label}
+                  <ArrowUpRight className="h-3.5 w-3.5 text-faint" />
                 </Link>
               ))}
             </div>

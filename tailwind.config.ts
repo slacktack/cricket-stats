@@ -26,19 +26,30 @@ module.exports = {
         header: "rgb(var(--header) / <alpha-value>)",
         "header-ink": "rgb(var(--header-ink) / <alpha-value>)",
         "header-muted": "rgb(var(--header-muted) / <alpha-value>)",
+        panel: "rgb(var(--panel) / <alpha-value>)",
+        "panel-ink": "rgb(var(--panel-ink) / <alpha-value>)",
+        "panel-muted": "rgb(var(--panel-muted) / <alpha-value>)",
         gold: "rgb(var(--gold) / <alpha-value>)",
         pop: "rgb(var(--pop) / <alpha-value>)",
         coral: "rgb(var(--coral) / <alpha-value>)",
         aqua: "rgb(var(--aqua) / <alpha-value>)",
         sun: "rgb(var(--sun) / <alpha-value>)",
+        sage: "rgb(var(--sage) / <alpha-value>)",
+        clay: "rgb(var(--clay) / <alpha-value>)",
       },
       fontFamily: {
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "system-ui", "sans-serif"],
+        mono: ["var(--font-mono)", "ui-monospace", "monospace"],
+      },
+      borderRadius: {
+        xl: "0.5rem",
+        "2xl": "0.625rem",
       },
       boxShadow: {
-        card: "0 1px 2px rgba(12, 20, 35, 0.04), 0 18px 40px -30px rgba(12, 20, 35, 0.22)",
-        lift: "0 22px 55px -24px rgba(12, 20, 35, 0.32)",
-        glow: "0 0 0 4px rgb(var(--accent) / 0.14)",
+        card: "0 1px 2px rgba(12, 20, 35, 0.04), 0 16px 36px -34px rgba(12, 20, 35, 0.4)",
+        lift: "0 18px 46px -30px rgba(12, 20, 35, 0.4)",
+        glow: "0 0 0 3px rgb(var(--accent) / 0.14)",
       },
       keyframes: {
         "pulse-dot": {

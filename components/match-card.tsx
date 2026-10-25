@@ -9,7 +9,7 @@ import {
   teamScoreText,
 } from "@/lib/match-display";
 import { cn } from "@/lib/utils";
-import { FormatPill, LiveDot } from "@/components/ui/pills";
+import { LiveDot } from "@/components/ui/pills";
 import { TeamBadge } from "@/components/ui/team-badge";
 
 export function MatchCard({
@@ -34,33 +34,30 @@ export function MatchCard({
       aria-label={`${matchTitle(match)} — ${matchStatusText(match)}`}
       className={cn(
         "match-card-shell group block",
-        compact ? "p-3" : "p-3.5 sm:p-4",
+        compact ? "px-2 py-2.5" : "px-2 py-3.5 sm:px-3",
         className
       )}
     >
-      <div className="relative flex items-center gap-2">
-        <FormatPill format={matchFormat(match)} className="shrink-0" />
-        <span className="min-w-0 flex-1 truncate text-[10px] font-medium text-faint sm:text-[11px]">
+      <div className="flex items-center gap-2">
+        <span className="shrink-0 font-mono text-[9px] font-medium uppercase tracking-[0.1em] text-accent">
+          {matchFormat(match)}
+        </span>
+        <span className="min-w-0 flex-1 truncate font-mono text-[9px] font-medium uppercase tracking-[0.04em] text-faint sm:text-[10px]">
           {meta}
         </span>
         {live ? (
-          <span className="inline-flex h-6 shrink-0 items-center gap-1.5 rounded-full bg-live/10 px-2 text-[9px] font-extrabold uppercase tracking-[0.08em] text-live ring-1 ring-inset ring-live/15">
+          <span className="inline-flex h-5 shrink-0 items-center gap-1.5 text-[9px] font-bold uppercase tracking-[0.13em] text-live">
             <LiveDot />
             Live
           </span>
         ) : (
-          <span
-            className={cn(
-              "inline-flex h-6 shrink-0 items-center rounded-full px-2 text-[9px] font-extrabold uppercase tracking-[0.08em]",
-              "bg-surface2 text-muted"
-            )}
-          >
+          <span className="shrink-0 text-[9px] font-bold uppercase tracking-[0.12em] text-faint">
             {match.state === "upcoming" ? "Upcoming" : "Result"}
           </span>
         )}
       </div>
 
-      <div className={cn("relative", compact ? "mt-2" : "mt-2.5")}>
+      <div className={cn("space-y-0.5", compact ? "mt-2" : "mt-2.5")}>
         {match.teams.map((team) => {
           const score = teamScoreText(match, team);
           const overs = teamOversText(match, team);
@@ -73,24 +70,23 @@ export function MatchCard({
             <div
               key={team.id}
               className={cn(
-                "flex min-h-[34px] items-center gap-2.5 rounded-lg px-1 py-0.5 transition-colors",
-                isCurrent && "bg-accent/[0.055]",
-                live && !isCurrent && "opacity-85"
+                "flex min-h-[38px] items-center gap-2.5 px-1 py-0.5",
+                isCurrent && "bg-accent-soft/70"
               )}
             >
               <TeamBadge
                 team={team}
-                size={compact ? 18 : 21}
-                className="rounded-[0.45rem] shadow-sm ring-1 ring-ink/5"
+                size={compact ? 19 : 22}
+                className="rounded-[4px] bg-surface ring-1 ring-line/70"
               />
               <span
                 className={cn(
-                  "min-w-0 truncate text-[13px] font-extrabold leading-tight tracking-[-0.01em] sm:text-sm",
+                  "min-w-0 truncate text-[13px] font-bold leading-tight tracking-[-0.01em] sm:text-[14px]",
                   isCurrent || isWinner
                     ? "text-ink"
                     : match.state === "upcoming"
                       ? "text-muted"
-                      : "text-ink/90"
+                      : "text-ink/85"
                 )}
               >
                 {team.shortName}
@@ -105,7 +101,7 @@ export function MatchCard({
                 />
               ) : null}
               {isWinner ? (
-                <span className="shrink-0 rounded-full bg-win/10 px-1.5 py-0.5 text-[7px] font-extrabold uppercase tracking-[0.08em] text-win">
+                <span className="shrink-0 font-mono text-[8px] font-medium uppercase tracking-[0.08em] text-win">
                   Won
                 </span>
               ) : null}
@@ -117,7 +113,7 @@ export function MatchCard({
                 ) : (
                   <span
                     className={cn(
-                      "whitespace-nowrap text-[17px] font-extrabold leading-none tnum sm:text-[19px]",
+                      "mono whitespace-nowrap text-[18px] font-medium leading-none tracking-[-0.03em] sm:text-[20px]",
                       placeholder && "text-[13px] text-faint",
                       !placeholder &&
                         (isCurrent || isWinner
@@ -131,7 +127,7 @@ export function MatchCard({
                   </span>
                 )}
                 {overs ? (
-                  <span className="hidden text-[9px] font-medium uppercase tracking-[0.04em] text-faint tnum sm:inline">
+                  <span className="hidden text-[9px] font-medium uppercase tracking-[0.04em] text-faint mono sm:inline">
                     {overs}
                   </span>
                 ) : null}
@@ -141,7 +137,7 @@ export function MatchCard({
         })}
       </div>
 
-      <div className="relative mt-2.5 flex items-center gap-2 border-t border-line/70 pt-2">
+      <div className="mt-2.5 flex items-center gap-2 border-t border-line/70 pt-2">
         {live ? <LiveDot className="shrink-0" /> : null}
         <p
           className={cn(
@@ -157,7 +153,8 @@ export function MatchCard({
             {match.venue.city}
           </span>
         ) : null}
-        <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-surface2 text-faint transition-all duration-200 group-hover:bg-accent group-hover:text-accent-ink">
+        <span className="inline-flex shrink-0 items-center gap-1 font-mono text-[8px] font-medium uppercase tracking-[0.1em] text-accent">
+          Score
           <ChevronRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
         </span>
       </div>

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { InningsDetail, MatchDetail } from "@/lib/types";
-import { formatOvers } from "@/lib/utils";
+import { cn, formatOvers } from "@/lib/utils";
 import { EmptyState } from "@/components/ui/empty-state";
 import { TeamBadge } from "@/components/ui/team-badge";
 
@@ -10,6 +10,21 @@ function PlayerLink({ id, name }: { id: number; name: string }) {
     <Link href={`/players/${id}`} className="font-semibold transition-colors hover:text-accent">
       {name}
     </Link>
+  );
+}
+
+function Tag({ children, tone = "muted" }: { children: React.ReactNode; tone?: "muted" | "accent" }) {
+  return (
+    <span
+      className={cn(
+        "mono inline-flex h-[17px] items-center rounded px-1.5 text-[8px] font-medium uppercase tracking-[0.08em]",
+        tone === "accent"
+          ? "bg-accent/10 text-accent"
+          : "border border-line-strong text-faint"
+      )}
+    >
+      {children}
+    </span>
   );
 }
 
@@ -23,76 +38,103 @@ function InningsCard({ innings }: { innings: InningsDetail }) {
   ]
     .filter(Boolean)
     .join(", ");
+  const topScore = Math.max(0, ...innings.batsmen.map((batter) => batter.runs));
+  const topBatter = innings.batsmen.find((batter) => batter.runs === topScore);
 
   return (
-    <section className="overflow-hidden border border-line bg-surface">
-      <div className="flex flex-wrap items-center gap-3 bg-[#0a111c] px-4 py-3 text-white">
-        <TeamBadge team={innings.battingTeam} size={32} className="rounded-md border-white/20 bg-white" />
+    <section className="overflow-hidden rounded-xl border border-line bg-surface">
+      <div className="flex flex-wrap items-center gap-3 border-b-2 border-panel-ink/25 bg-panel px-4 py-3.5 text-panel-ink">
+        <TeamBadge team={innings.battingTeam} size={34} className="rounded-md border-panel-ink/20 bg-panel-ink" />
         <div className="min-w-0 flex-1">
-          <Link href={`/teams/${innings.battingTeam.id}`} className="truncate text-sm font-bold transition-colors hover:text-white/75">
+          <Link href={`/teams/${innings.battingTeam.id}`} className="truncate text-sm font-semibold text-panel-ink transition-colors hover:text-panel-muted">
             {innings.battingTeam.name}
           </Link>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.06em] text-white/35">
+          <p className="mt-0.5 font-mono text-[9px] uppercase tracking-[0.08em] text-panel-muted">
             {innings.declared ? "Declared" : innings.followOn ? "Following on" : "Innings"}
             {innings.target ? ` · Target ${innings.target}` : ""}
             {innings.isCurrent ? " · Current" : ""}
           </p>
         </div>
         <div className="text-right">
-          <p className="text-2xl font-extrabold tabular-nums">
+          <p className="mono text-[26px] font-medium leading-none tracking-[-0.04em] text-panel-ink">
             {innings.runs}/{innings.wickets}
           </p>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.06em] text-white/35">
+          <p className="mono mt-1.5 text-[8px] uppercase tracking-[0.06em] text-panel-muted">
             {formatOvers(innings.overs)} ov · RR {innings.runRate.toFixed(2)}
           </p>
         </div>
       </div>
 
       {innings.batsmen.length > 0 ? (
-        <div className="table-scroll">
-          <table className="w-full min-w-[680px] text-left text-xs">
-            <thead className="border-b border-line text-[10px] uppercase tracking-wide text-faint">
-              <tr>
-                <th className="px-4 py-2 font-semibold">Batter</th>
-                <th className="px-2 py-2 text-right font-semibold">R</th>
-                <th className="px-2 py-2 text-right font-semibold">B</th>
-                <th className="px-2 py-2 text-right font-semibold">4s</th>
-                <th className="px-2 py-2 text-right font-semibold">6s</th>
-                <th className="px-4 py-2 text-right font-semibold">SR</th>
-              </tr>
-            </thead>
-            <tbody>
-              {innings.batsmen.map((batter, index) => (
-                <tr key={`${batter.id}-${index}`} className="border-b border-line/70 transition-colors last:border-0 hover:bg-accent/[0.03]">
-                  <td className="px-4 py-2.5">
-                    <div className="flex items-center gap-1.5">
-                      <PlayerLink id={batter.id} name={batter.name} />
-                      {batter.isCaptain ? <span className="text-[10px] text-faint">(c)</span> : null}
-                      {batter.isKeeper ? <span className="text-[10px] text-faint">(wk)</span> : null}
-                      {batter.isOut ? null : <span className="text-[10px] font-semibold text-win">not out</span>}
-                    </div>
-                    <p className="mt-0.5 text-[11px] leading-snug text-faint">{batter.outDesc}</p>
-                  </td>
-                  <td className="px-2 py-2.5 text-right font-bold tabular-nums">{batter.runs}</td>
-                  <td className="px-2 py-2.5 text-right tabular-nums text-muted">{batter.balls}</td>
-                  <td className="px-2 py-2.5 text-right tabular-nums text-muted">{batter.fours}</td>
-                  <td className="px-2 py-2.5 text-right tabular-nums text-muted">{batter.sixes}</td>
-                  <td className="px-4 py-2.5 text-right tabular-nums text-muted">{batter.strikeRate.toFixed(2)}</td>
+        <>
+          <div className="flex items-center justify-between gap-3 border-b border-line bg-sage/40 px-4 py-2">
+            <span className="mono text-[9px] font-medium uppercase tracking-[0.14em] text-accent">
+              Batting
+            </span>
+            {topBatter && topScore > 0 ? (
+              <span className="mono min-w-0 truncate text-[9px] uppercase tracking-[0.05em] text-faint">
+                Top <span className="font-medium text-ink">{topScore}</span> · {topBatter.name}
+              </span>
+            ) : null}
+          </div>
+          <div className="table-scroll">
+            <table className="w-full table-fixed text-left text-[11px] sm:text-xs">
+              <thead className="border-b border-line-strong bg-surface2/35 text-[9px] font-bold uppercase tracking-[0.1em] text-faint">
+                <tr>
+                  <th className="px-3 py-2 font-semibold sm:px-4">Batter</th>
+                  <th className="w-[52px] px-1.5 py-2 text-right font-semibold sm:px-2">R</th>
+                  <th className="w-[52px] px-1.5 py-2 text-right font-semibold sm:px-2">B</th>
+                  <th className="hidden w-[44px] px-1.5 py-2 text-right font-semibold sm:table-cell sm:px-2">4s</th>
+                  <th className="hidden w-[44px] px-1.5 py-2 text-right font-semibold sm:table-cell sm:px-2">6s</th>
+                  <th className="w-[68px] px-3 py-2 text-right font-semibold sm:px-4">SR</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {innings.batsmen.map((batter, index) => {
+                  const isTop = topScore > 0 && batter.runs === topScore;
+                  return (
+                    <tr
+                      key={`${batter.id}-${index}`}
+                      className={cn(
+                        "border-b border-line/60 transition-colors last:border-0 hover:bg-accent/[0.04]",
+                        isTop && "bg-accent/[0.035]"
+                      )}
+                    >
+                      <td className="px-3 py-3 sm:px-4">
+                        <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 [&_a]:text-[13px] [&_a]:font-bold [&_a]:text-ink sm:[&_a]:text-[14px]">
+                          <PlayerLink id={batter.id} name={batter.name} />
+                          {batter.isCaptain ? <Tag>C</Tag> : null}
+                          {batter.isKeeper ? <Tag>WK</Tag> : null}
+                          {batter.isOut ? null : <Tag tone="accent">Not out</Tag>}
+                        </div>
+                        <p className="mt-1 truncate text-[10px] leading-snug text-faint sm:text-[11px]">
+                          {batter.outDesc}
+                        </p>
+                      </td>
+                      <td className="mono px-1.5 py-3 text-right text-[15px] font-medium leading-none sm:px-2 sm:text-[17px]">
+                        {batter.runs}
+                      </td>
+                      <td className="px-1.5 py-3 text-right tabular-nums text-muted sm:px-2">{batter.balls}</td>
+                      <td className="hidden px-1.5 py-3 text-right tabular-nums text-muted sm:table-cell sm:px-2">{batter.fours}</td>
+                      <td className="hidden px-1.5 py-3 text-right tabular-nums text-muted sm:table-cell sm:px-2">{batter.sixes}</td>
+                      <td className="px-3 py-3 text-right tabular-nums text-muted sm:px-4">{batter.strikeRate.toFixed(2)}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </>
       ) : null}
 
-      <div className="border-t border-line px-4 py-3 text-xs text-muted">
+      <div className="border-t border-line bg-sage/35 px-4 py-3 text-[11px] text-muted">
         <div className="flex flex-wrap justify-between gap-2">
           <span>
             Extras <strong className="text-ink">{innings.extras.total}</strong>
             {extras ? <span className="text-faint"> ({extras})</span> : null}
           </span>
           <span>
-            Total <strong className="text-ink">{innings.runs}/{innings.wickets}</strong>
+            Total <strong className="mono font-medium text-ink">{innings.runs}/{innings.wickets}</strong>
             <span className="text-faint"> ({formatOvers(innings.overs)} ov)</span>
           </span>
         </div>
@@ -105,34 +147,46 @@ function InningsCard({ innings }: { innings: InningsDetail }) {
       </div>
 
       {innings.bowlers.length > 0 ? (
-        <div className="table-scroll border-t border-line">
-          <table className="w-full min-w-[560px] text-left text-xs">
-            <thead className="border-b border-line text-[10px] uppercase tracking-wide text-faint">
-              <tr>
-                <th className="px-4 py-2 font-semibold">Bowler</th>
-                <th className="px-2 py-2 text-right font-semibold">O</th>
-                <th className="px-2 py-2 text-right font-semibold">M</th>
-                <th className="px-2 py-2 text-right font-semibold">R</th>
-                <th className="px-2 py-2 text-right font-semibold">W</th>
-                <th className="px-4 py-2 text-right font-semibold">Econ</th>
-              </tr>
-            </thead>
-            <tbody>
-              {innings.bowlers.map((bowler, index) => (
-                <tr key={`${bowler.id}-${index}`} className="border-b border-line/70 transition-colors last:border-0 hover:bg-accent/[0.03]">
-                  <td className="px-4 py-2.5">
-                    <PlayerLink id={bowler.id} name={bowler.name} />
-                  </td>
-                  <td className="px-2 py-2.5 text-right tabular-nums text-muted">{formatOvers(bowler.overs)}</td>
-                  <td className="px-2 py-2.5 text-right tabular-nums text-muted">{bowler.maidens}</td>
-                  <td className="px-2 py-2.5 text-right tabular-nums text-muted">{bowler.runs}</td>
-                  <td className="px-2 py-2.5 text-right font-bold tabular-nums">{bowler.wickets}</td>
-                  <td className="px-4 py-2.5 text-right tabular-nums text-muted">{bowler.economy.toFixed(2)}</td>
+        <>
+          <div className="flex items-center justify-between gap-3 border-y border-line bg-sage/40 px-4 py-2">
+            <span className="mono text-[9px] font-medium uppercase tracking-[0.14em] text-accent">
+              Bowling
+            </span>
+            <span className="mono text-[9px] uppercase tracking-[0.05em] text-faint">
+              {innings.bowlers.length} bowlers
+            </span>
+          </div>
+          <div className="table-scroll">
+            <table className="w-full table-fixed text-left text-[11px] sm:text-xs">
+              <thead className="border-b border-line-strong bg-surface2/35 text-[9px] font-bold uppercase tracking-[0.1em] text-faint">
+                <tr>
+                  <th className="px-3 py-2 font-semibold sm:px-4">Bowler</th>
+                  <th className="w-[52px] px-1.5 py-2 text-right font-semibold sm:px-2">O</th>
+                  <th className="hidden w-[44px] px-1.5 py-2 text-right font-semibold sm:table-cell sm:px-2">M</th>
+                  <th className="w-[52px] px-1.5 py-2 text-right font-semibold sm:px-2">R</th>
+                  <th className="w-[44px] px-1.5 py-2 text-right font-semibold sm:px-2">W</th>
+                  <th className="w-[68px] px-3 py-2 text-right font-semibold sm:px-4">Econ</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {innings.bowlers.map((bowler, index) => (
+                  <tr key={`${bowler.id}-${index}`} className="border-b border-line/60 transition-colors last:border-0 hover:bg-accent/[0.04]">
+                    <td className="px-3 py-3 sm:px-4">
+                      <div className="[&_a]:text-[12.5px] [&_a]:font-semibold [&_a]:text-ink sm:[&_a]:text-[13px]">
+                        <PlayerLink id={bowler.id} name={bowler.name} />
+                      </div>
+                    </td>
+                    <td className="px-1.5 py-3 text-right tabular-nums text-muted sm:px-2">{formatOvers(bowler.overs)}</td>
+                    <td className="hidden px-1.5 py-3 text-right tabular-nums text-muted sm:table-cell sm:px-2">{bowler.maidens}</td>
+                    <td className="px-1.5 py-3 text-right tabular-nums text-muted sm:px-2">{bowler.runs}</td>
+                    <td className="mono px-1.5 py-3 text-right text-[15px] font-medium leading-none sm:px-2">{bowler.wickets}</td>
+                    <td className="px-3 py-3 text-right tabular-nums text-muted sm:px-4">{bowler.economy.toFixed(2)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
       ) : null}
     </section>
   );

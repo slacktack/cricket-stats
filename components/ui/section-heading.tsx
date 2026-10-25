@@ -20,7 +20,7 @@ export function SectionHeading({
       <div className="flex items-baseline justify-between gap-4 border-b border-line pb-2">
         <div className="min-w-0">
           {eyebrow ? <p className="eyebrow mb-1.5">{eyebrow}</p> : null}
-          <h2 className="display truncate text-[20px] font-medium leading-tight tracking-[-0.02em]">
+          <h2 className="display truncate text-[20px] font-bold leading-tight tracking-[-0.02em]">
             {title}
           </h2>
         </div>

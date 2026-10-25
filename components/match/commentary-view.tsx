@@ -65,7 +65,7 @@ export function CommentaryView({ detail }: { detail: MatchDetail }) {
           {commentary.talk.length > 0 ? (
             <div className="mt-3 space-y-3">
               {commentary.talk.map((item) => (
-                <p key={item.id} className="border-l-2 border-line pl-3 text-xs leading-relaxed text-muted">
+                <p key={item.id} className="rounded bg-surface2/60 px-3 py-2 text-xs leading-relaxed text-muted">
                   {item.text}
                 </p>
               ))}

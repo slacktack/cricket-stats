@@ -3,10 +3,10 @@ import { formatOvers } from "@/lib/utils";
 import { LiveDot, TonePill } from "@/components/ui/pills";
 
 function ballTone(ball: string): string {
-  if (ball === "W") return "bg-live text-white";
-  if (ball === "4" || ball === "6") return "bg-accent text-accent-ink";
-  if (ball === "wd" || ball === "nb") return "bg-sun/20 text-warn";
-  return "bg-surface2 text-muted";
+  if (ball === "W") return "border border-live bg-live text-white";
+  if (ball === "4" || ball === "6") return "border border-win/25 bg-win/12 text-win";
+  if (ball === "wd" || ball === "nb") return "border border-gold/30 bg-gold/12 text-warn";
+  return "border border-line bg-surface2 text-muted";
 }
 
 export function LivePanel({ detail }: { detail: MatchDetail }) {
@@ -25,25 +25,25 @@ export function LivePanel({ detail }: { detail: MatchDetail }) {
 
   return (
     <section
-      className="mt-4 border-y border-line bg-surface"
+      className="mt-4 overflow-hidden rounded-xl border border-line bg-surface"
       aria-label="Live match state"
     >
-      <div className="flex flex-wrap items-center gap-2 py-3">
+      <div className="flex flex-wrap items-center gap-2 border-b border-line px-4 py-3">
         <TonePill tone="live">
           <LiveDot />
           Live
         </TonePill>
-        <p className="min-w-0 flex-1 text-sm font-extrabold leading-snug">
+        <p className="min-w-0 flex-1 text-[13px] font-bold leading-snug">
           {live.status}
         </p>
         {live.event ? (
-          <span className="rounded bg-live/10 px-2 py-1 text-[9px] font-extrabold uppercase tracking-[0.06em] text-live">
+          <span className="rounded border border-live/20 bg-live/10 px-2 py-1 text-[9px] font-bold uppercase tracking-[0.08em] text-live">
             {live.event}
           </span>
         ) : null}
       </div>
 
-      <div className="grid grid-cols-3 border-y border-line">
+      <div className="grid grid-cols-3 border-b border-line bg-sage/55">
         {[
           {
             label: "Score",
@@ -67,15 +67,15 @@ export function LivePanel({ detail }: { detail: MatchDetail }) {
             key={metric.label}
             className={
               index < 2
-                ? "border-r border-line px-4 py-3"
-                : "px-4 py-3"
+                ? "border-r border-line px-4 py-3.5"
+                : "px-4 py-3.5"
             }
           >
-            <p className="text-[9px] font-extrabold uppercase tracking-[0.1em] text-faint">
+            <p className="text-[9px] font-bold uppercase tracking-[0.13em] text-faint">
               {metric.label}
             </p>
             <p
-              className={`mt-1 text-[22px] font-extrabold leading-none tabular-nums sm:text-[26px] ${metric.tone}`}
+              className={`mono mt-1.5 text-[22px] font-medium leading-none tracking-[-0.03em] sm:text-[26px] ${metric.tone}`}
             >
               {metric.value}
             </p>
@@ -84,7 +84,7 @@ export function LivePanel({ detail }: { detail: MatchDetail }) {
       </div>
 
       {live.target ? (
-        <p className="border-b border-line px-4 py-2.5 text-xs font-medium text-muted">
+        <p className="border-b border-line px-4 py-2.5 text-[11px] font-medium text-muted">
           Target <strong className="text-ink">{live.target}</strong>
           {live.remainingRuns !== undefined
             ? ` · Need ${live.remainingRuns} from ${live.remainingBalls ?? 0} balls`
@@ -98,15 +98,15 @@ export function LivePanel({ detail }: { detail: MatchDetail }) {
       <div className="grid lg:grid-cols-[minmax(0,1.15fr)_minmax(280px,0.85fr)]">
         <div className="px-4 py-4 lg:border-r lg:border-line">
           {live.batters.length > 0 ? (
-            <table className="w-full text-left text-[11px]">
+            <table className="w-full text-left text-[10.5px] sm:text-[11px]">
               <thead>
-                <tr className="border-b border-line text-[9px] uppercase tracking-[0.08em] text-faint">
-                  <th className="pb-1.5 font-semibold">Batter</th>
-                  <th className="w-9 pb-1.5 text-right font-semibold">R</th>
-                  <th className="w-9 pb-1.5 text-right font-semibold">B</th>
-                  <th className="w-9 pb-1.5 text-right font-semibold">4s</th>
-                  <th className="w-9 pb-1.5 text-right font-semibold">6s</th>
-                  <th className="w-12 pb-1.5 text-right font-semibold">SR</th>
+                <tr className="border-b border-line-strong text-[9px] font-bold uppercase tracking-[0.1em] text-faint">
+                  <th className="pb-2 font-semibold">Batter</th>
+                  <th className="w-8 pb-2 text-right font-semibold sm:w-9">R</th>
+                  <th className="w-8 pb-2 text-right font-semibold sm:w-9">B</th>
+                  <th className="hidden w-9 pb-2 text-right font-semibold sm:table-cell">4s</th>
+                  <th className="hidden w-9 pb-2 text-right font-semibold sm:table-cell">6s</th>
+                  <th className="w-11 pb-2 text-right font-semibold sm:w-12">SR</th>
                 </tr>
               </thead>
               <tbody>
@@ -118,16 +118,16 @@ export function LivePanel({ detail }: { detail: MatchDetail }) {
                         <span className="ml-1 text-accent">*</span>
                       ) : null}
                     </td>
-                    <td className="py-2 text-right font-bold tabular-nums">
+                    <td className="mono py-2 text-right font-medium">
                       {batter.runs}
                     </td>
                     <td className="py-2 text-right tabular-nums text-muted">
                       {batter.balls}
                     </td>
-                    <td className="py-2 text-right tabular-nums text-muted">
+                    <td className="hidden py-2 text-right tabular-nums text-muted sm:table-cell">
                       {batter.fours}
                     </td>
-                    <td className="py-2 text-right tabular-nums text-muted">
+                    <td className="hidden py-2 text-right tabular-nums text-muted sm:table-cell">
                       {batter.sixes}
                     </td>
                     <td className="py-2 text-right tabular-nums text-muted">
@@ -140,15 +140,15 @@ export function LivePanel({ detail }: { detail: MatchDetail }) {
           ) : null}
 
           {live.bowlers.length > 0 ? (
-            <table className="mt-4 w-full text-left text-[11px]">
+            <table className="mt-4 w-full text-left text-[10.5px] sm:text-[11px]">
               <thead>
-                <tr className="border-b border-line text-[9px] uppercase tracking-[0.08em] text-faint">
-                  <th className="pb-1.5 font-semibold">Bowler</th>
-                  <th className="w-9 pb-1.5 text-right font-semibold">O</th>
-                  <th className="w-9 pb-1.5 text-right font-semibold">M</th>
-                  <th className="w-9 pb-1.5 text-right font-semibold">R</th>
-                  <th className="w-9 pb-1.5 text-right font-semibold">W</th>
-                  <th className="w-12 pb-1.5 text-right font-semibold">Econ</th>
+                <tr className="border-b border-line-strong text-[9px] font-bold uppercase tracking-[0.1em] text-faint">
+                  <th className="pb-2 font-semibold">Bowler</th>
+                  <th className="w-8 pb-2 text-right font-semibold sm:w-9">O</th>
+                  <th className="hidden w-9 pb-2 text-right font-semibold sm:table-cell">M</th>
+                  <th className="w-8 pb-2 text-right font-semibold sm:w-9">R</th>
+                  <th className="w-8 pb-2 text-right font-semibold sm:w-9">W</th>
+                  <th className="w-11 pb-2 text-right font-semibold sm:w-12">Econ</th>
                 </tr>
               </thead>
               <tbody>
@@ -158,13 +158,13 @@ export function LivePanel({ detail }: { detail: MatchDetail }) {
                     <td className="py-2 text-right tabular-nums text-muted">
                       {formatOvers(bowler.overs)}
                     </td>
-                    <td className="py-2 text-right tabular-nums text-muted">
+                    <td className="hidden py-2 text-right tabular-nums text-muted sm:table-cell">
                       {bowler.maidens}
                     </td>
                     <td className="py-2 text-right tabular-nums text-muted">
                       {bowler.runs}
                     </td>
-                    <td className="py-2 text-right font-bold tabular-nums">
+                    <td className="mono py-2 text-right font-medium">
                       {bowler.wickets}
                     </td>
                     <td className="py-2 text-right tabular-nums text-muted">
@@ -179,7 +179,7 @@ export function LivePanel({ detail }: { detail: MatchDetail }) {
 
         <div className="border-t border-line px-4 py-4 lg:border-t-0">
           <div className="flex items-center justify-between gap-2">
-            <p className="text-[9px] font-extrabold uppercase tracking-[0.1em] text-faint">
+            <p className="text-[9px] font-bold uppercase tracking-[0.13em] text-faint">
               Recent balls
             </p>
             {live.partnership ? (
@@ -199,7 +199,7 @@ export function LivePanel({ detail }: { detail: MatchDetail }) {
                 ) : (
                   <span
                     key={`${ball}-${index}`}
-                    className={`grid h-7 min-w-7 place-items-center rounded px-1 text-[11px] font-extrabold ${ballTone(ball)}`}
+                    className={`mono grid h-7 min-w-7 place-items-center rounded px-1 text-[11px] font-medium ${ballTone(ball)}`}
                   >
                     {ball}
                   </span>
@@ -213,7 +213,7 @@ export function LivePanel({ detail }: { detail: MatchDetail }) {
           </div>
 
           {live.lastWicket ? (
-            <p className="mt-4 border-l-2 border-live pl-3 text-xs leading-relaxed text-muted">
+            <p className="mt-4 rounded border border-line bg-sage/35 px-3 py-2 text-[11px] leading-relaxed text-muted">
               {live.lastWicket}
             </p>
           ) : null}

@@ -70,7 +70,7 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
     : fallback;
 
   return (
-    <div className="container-page py-5">
+    <div className="container-page py-5 sm:py-6">
       <Breadcrumbs
         items={[
           { label: "Matches", href: "/" },
@@ -81,7 +81,7 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
         ]}
       />
 
-      <div className="mt-3 flex flex-wrap items-center gap-2">
+      <div className="mt-4 flex flex-wrap items-center gap-2">
         <FormatPill format={matchFormat(summary)} />
         <StatePill state={summary.state} />
         {detail.series.id ? (
@@ -104,29 +104,27 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
 
       <LivePanel detail={detail} />
 
-      <div className="sticky top-16 z-20 mt-4 border-b border-line bg-bg/95 backdrop-blur-sm">
-        <div className="table-scroll no-scrollbar" role="tablist" aria-label="Match sections">
-          <div className="flex min-w-max items-center">
-            {TABS.map((item) => {
-              const active = tab === item.key;
-              return (
-                <Link
-                  key={item.key}
-                  href={`/match/${matchId}?tab=${item.key}`}
-                  role="tab"
-                  aria-selected={active}
-                  className={cn(
-                    "flex h-11 items-center border-b-2 px-4 text-xs font-bold transition-colors",
-                    active
-                      ? "border-ink text-ink"
-                      : "border-transparent text-muted hover:text-ink"
-                  )}
-                >
-                  {item.label}
-                </Link>
-              );
-            })}
-          </div>
+      <div className="sticky top-16 z-20 mt-5 border-b border-line-strong bg-bg/95 backdrop-blur-sm">
+        <div className="flex flex-wrap items-center gap-x-1" role="tablist" aria-label="Match sections">
+          {TABS.map((item) => {
+            const active = tab === item.key;
+            return (
+              <Link
+                key={item.key}
+                href={`/match/${matchId}?tab=${item.key}`}
+                role="tab"
+                aria-selected={active}
+                className={cn(
+                  "flex h-10 items-center border-b-2 px-3 text-[10px] font-bold uppercase tracking-[0.07em] transition-colors sm:h-11 sm:px-4 sm:text-[11px] sm:tracking-[0.08em]",
+                  active
+                    ? "border-accent text-accent"
+                    : "border-transparent text-muted hover:text-ink"
+                )}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
         </div>
       </div>
 

@@ -63,7 +63,7 @@ export default async function TeamPage({ params }: TeamPageProps) {
             </span>
           </span>
         }
-        description={`${data.matches.length} matches in the current feed${live ? ` · ${live} live` : ""}${upcoming ? ` · ${upcoming} upcoming` : ""}${completed ? ` · ${completed} completed` : ""}.`}
+        description={`${data.matches.length} matches on the radar${live ? ` · ${live} live` : ""}${upcoming ? ` · ${upcoming} upcoming` : ""}${completed ? ` · ${completed} completed` : ""}.`}
         meta={<span>Feed updated {timeAgo(data.updatedAt)}</span>}
         actions={
           <>
@@ -90,8 +90,8 @@ export default async function TeamPage({ params }: TeamPageProps) {
 
       {groups.length === 0 ? (
         <EmptyState
-          title="No current matches"
-          description={`${data.team.name} does not have a match in the current feed. Check back when their next series is announced.`}
+          title="No matches on the radar"
+          description={`${data.team.name} has no live, upcoming or recent match in the feed right now. Check back when their next series is announced.`}
           actionHref="/"
           actionLabel="Back to matches"
           className="mt-4"
