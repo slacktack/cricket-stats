@@ -53,7 +53,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
       <div
         aria-live="polite"
         aria-atomic="true"
-        className="pointer-events-none fixed inset-x-0 bottom-6 z-[70] flex flex-col items-center gap-2 px-4 lg:bottom-8"
+        className="pointer-events-none fixed inset-x-0 bottom-24 z-[70] flex flex-col items-center gap-2 px-4 lg:bottom-8"
       >
         {toasts.map((item) => (
           <div
@@ -84,7 +84,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
             <button
               type="button"
               onClick={() => dismiss(item.id)}
-              className="mono ml-auto text-[8px] font-medium uppercase tracking-[0.12em] text-current/60 transition-opacity hover:text-current"
+              className="mono ml-auto text-[10px] font-medium uppercase tracking-[0.12em] text-current/60 transition-opacity hover:text-current"
               aria-label="Dismiss notification"
             >
               Close

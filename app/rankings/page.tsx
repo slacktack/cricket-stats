@@ -113,7 +113,7 @@ export default async function RankingsPage({
       <section className="grain relative overflow-hidden rounded-xl border border-panel-ink/20 bg-panel text-panel-ink">
         <FallingBall className="absolute -left-20 -top-28 z-0 hidden h-[500px] w-[500px] text-panel-ink opacity-15 md:block" />
         <div className="relative z-10 grid lg:grid-cols-[minmax(0,1fr)_248px]">
-          <div className="px-5 py-6 sm:px-8 sm:py-7">
+          <div className="px-5 py-5 sm:px-8 sm:py-7">
             <div className="flex items-center gap-2">
               <span className="h-px w-5 bg-panel-ink/50" />
               <span className="eyebrow text-panel-ink/70">ICC rankings</span>
@@ -124,70 +124,39 @@ export default async function RankingsPage({
                 {formatLabel} {categoryLabel.toLowerCase()}.
               </span>
             </h1>
-            <p className="mt-3 max-w-xl text-[13px] font-medium leading-relaxed text-panel-ink/75 sm:text-sm">
+            <p className="mt-3 hidden max-w-xl text-sm font-medium leading-relaxed text-panel-ink/75 sm:block">
               The official ICC player and team rankings, updated from the live
               rankings feed.
             </p>
           </div>
           <div className="flex items-end justify-between border-t border-panel-ink/20 bg-bg px-5 py-5 text-ink lg:flex-col lg:items-start lg:justify-center lg:border-l lg:border-t-0 lg:px-6">
             <div>
-              <p className="mono text-[40px] font-medium leading-none tracking-[-0.05em]">
-                {String(entries.length).padStart(2, "0")}
+              <p className="mono text-[40px] font-bold leading-none tracking-[-0.04em]">
+                {entries.length}
               </p>
-              <p className="mt-2 text-[9px] font-bold uppercase tracking-[0.13em] text-faint">
+              <p className="mt-2 text-xs font-semibold text-faint">
                 Ranked {isTeams ? "teams" : "players"}
               </p>
             </div>
-            <p className="mb-1 font-mono text-[9px] uppercase tracking-[0.06em] text-faint lg:mt-5">
+            <p className="mb-1 text-xs text-faint lg:mt-5">
               Updated weekly
             </p>
           </div>
         </div>
       </section>
 
-      <section className="mt-4 border-y border-line-strong bg-surface px-3 py-3">
-        <div className="flex flex-col gap-2 xl:flex-row xl:items-center xl:justify-between">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="eyebrow shrink-0 pl-1">Gender</span>
-            <div className="flex gap-0.5 rounded-lg border border-line bg-surface2 p-0.5">
-              {(["men", "women"] as const).map((value) => (
-                <Link
-                  key={value}
-                  href={hrefFor(value, category, format)}
-                  data-active={gender === value}
-                  aria-current={gender === value ? "page" : undefined}
-                  className="segmented-item h-8 px-4"
-                >
-                  {value === "men" ? "Men" : "Women"}
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="eyebrow shrink-0 pl-1">Format</span>
-            <div className="flex gap-1">
-              {FORMATS.map((item) => (
-                <Link
-                  key={item.key}
-                  href={hrefFor(gender, category, item.key)}
-                  aria-current={format === item.key ? "page" : undefined}
-                  data-active={format === item.key}
-                  className="chip-filter"
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-2.5 flex flex-wrap items-center gap-2 border-t border-line pt-2.5">
-          <span className="eyebrow shrink-0 pl-1">Category</span>
+      <section className="mt-4 space-y-2.5 border-y border-line-strong bg-surface px-3 py-3">
+        <div
+          className="no-scrollbar -mx-3 flex items-center gap-1.5 overflow-x-auto px-3"
+          role="tablist"
+          aria-label="Ranking category"
+        >
           {CATEGORIES.map((item) => (
             <Link
               key={item.key}
               href={hrefFor(gender, item.key, format)}
+              role="tab"
+              aria-selected={category === item.key}
               aria-current={category === item.key ? "page" : undefined}
               data-active={category === item.key}
               className="chip-filter"
@@ -195,6 +164,35 @@ export default async function RankingsPage({
               {item.label}
             </Link>
           ))}
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2 border-t border-line pt-2.5">
+          <div className="segmented" role="group" aria-label="Gender">
+            {(["men", "women"] as const).map((value) => (
+              <Link
+                key={value}
+                href={hrefFor(value, category, format)}
+                data-active={gender === value}
+                aria-current={gender === value ? "page" : undefined}
+                className="segmented-item px-4"
+              >
+                {value === "men" ? "Men" : "Women"}
+              </Link>
+            ))}
+          </div>
+          <div className="segmented ml-auto" role="group" aria-label="Format">
+            {FORMATS.map((item) => (
+              <Link
+                key={item.key}
+                href={hrefFor(gender, category, item.key)}
+                aria-current={format === item.key ? "page" : undefined}
+                data-active={format === item.key}
+                className="segmented-item px-3.5"
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -210,21 +208,21 @@ export default async function RankingsPage({
         <div className="mt-4 overflow-hidden rounded-xl border border-line-strong bg-surface">
           <div className="flex flex-wrap items-end justify-between gap-2 border-b-2 border-panel-ink/25 bg-panel px-4 py-3.5 text-panel-ink">
             <div>
-              <p className="font-mono text-[9px] font-medium uppercase tracking-[0.1em] text-panel-muted">
+              <p className="font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-panel-muted">
                 Official table
               </p>
               <h2 className="display mt-1 text-[24px] font-bold leading-none tracking-[-0.025em]">
                 {formatLabel} · {categoryLabel}
               </h2>
             </div>
-            <span className="mono text-[9px] uppercase tracking-[0.08em] text-panel-muted">
+            <span className="mono text-[11px] uppercase tracking-[0.04em] text-panel-muted">
               {entries.length} entries
             </span>
           </div>
           <div className="divide-y divide-line/70 md:hidden">
-            {entries.map((entry) => (
+            {entries.map((entry, index) => (
               <Link
-                key={entry.id}
+                key={`${entry.id}-${index}`}
                 href={isTeams ? `/teams/${entry.id}` : `/players/${entry.id}`}
                 className={cn(
                   "group flex items-center gap-3 px-4 py-3 transition-colors active:bg-accent/[0.04]",
@@ -237,7 +235,7 @@ export default async function RankingsPage({
                       {entry.rank}
                     </span>
                   ) : (
-                    <span className="mono text-[11px] font-medium text-muted">{entry.rank}</span>
+                    <span className="mono text-xs font-semibold text-muted">{entry.rank}</span>
                   )}
                 </span>
                 {isTeams ? (
@@ -248,24 +246,24 @@ export default async function RankingsPage({
                 ) : (
                   <PlayerAvatar
                     player={{ id: entry.id, name: entry.name, faceImageId: entry.faceImageId }}
-                    size={52}
+                    size={44}
                   />
                 )}
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate text-[13px] font-bold">{entry.name}</span>
-                  <span className="mono mt-1 block text-[9px] uppercase tracking-[0.05em] text-faint">
+                  <span className="block truncate text-sm font-bold">{entry.name}</span>
+                  <span className="mt-1 block text-xs text-faint">
                     {isTeams ? "Team" : entry.country ?? "—"} · {entry.matches ?? 0} M
                   </span>
                 </span>
                 <span className="shrink-0 text-right">
-                  <span className="mono block text-[19px] font-medium leading-none tracking-[-0.03em]">
+                  <span className="mono block text-[19px] font-bold leading-none tracking-[-0.03em]">
                     {entry.rating}
                   </span>
-                  <span className="mono mt-1 block text-[8px] uppercase tracking-[0.06em] text-faint">
+                  <span className="mt-1 block text-[11px] text-faint">
                     Rating
                   </span>
                 </span>
-                <span className="w-7 shrink-0 text-right text-[11px]">
+                <span className="w-8 shrink-0 text-right text-xs font-semibold">
                   <Trend direction={entry.trend} value={entry.trendValue} />
                 </span>
               </Link>
@@ -273,7 +271,7 @@ export default async function RankingsPage({
           </div>
           <div className="table-scroll hidden md:block">
             <table className="w-full min-w-[680px] text-left text-xs">
-              <thead className="border-b border-line-strong bg-surface2/60 text-[9px] font-bold uppercase tracking-[0.1em] text-faint">
+              <thead className="border-b border-line-strong bg-surface2/60 text-[10px] font-bold uppercase tracking-[0.1em] text-faint">
                 <tr>
                   <th className="px-4 py-2.5 text-right font-semibold">Rank</th>
                   <th className="px-3 py-2.5 font-semibold">{isTeams ? "Team" : "Player"}</th>
@@ -285,9 +283,9 @@ export default async function RankingsPage({
                 </tr>
               </thead>
               <tbody>
-                {entries.map((entry) => (
+                {entries.map((entry, index) => (
                   <tr
-                    key={entry.id}
+                    key={`${entry.id}-${index}`}
                     className={cn(
                       "group border-b border-line/70 transition-colors last:border-0 hover:bg-accent/[0.035]",
                       entry.rank <= 3 && "bg-gold/[0.06]"
@@ -299,7 +297,7 @@ export default async function RankingsPage({
                           {entry.rank}
                         </span>
                       ) : (
-                        <span className="mono text-[11px] font-medium text-muted">{entry.rank}</span>
+                        <span className="mono text-xs font-semibold text-muted">{entry.rank}</span>
                       )}
                     </td>
                     <td className="px-3 py-3">
@@ -338,7 +336,7 @@ export default async function RankingsPage({
         </div>
       )}
 
-      <div className="mt-4 flex flex-wrap gap-4 text-[11px] font-semibold text-muted">
+      <div className="mt-4 flex flex-wrap gap-5 text-xs font-semibold text-muted">
         <Link href="/series" className="transition-colors hover:text-accent">
           Browse series
         </Link>

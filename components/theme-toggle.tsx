@@ -32,7 +32,7 @@ export function ThemeToggle({ variant = "header" }: { variant?: "header" | "pane
       type="button"
       onClick={toggle}
       className={cn(
-        "group grid h-9 w-9 place-items-center rounded-md border transition-colors duration-150",
+        "group grid h-10 w-10 place-items-center rounded-md border transition-colors duration-150",
         variant === "header"
           ? "border-header-ink/25 text-header-ink hover:border-header-ink hover:bg-header-ink/10"
           : "border-line text-muted hover:border-line-strong hover:bg-surface2 hover:text-ink"

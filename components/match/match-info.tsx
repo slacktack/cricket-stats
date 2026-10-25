@@ -5,7 +5,7 @@ import { PlayerAvatar } from "@/components/ui/team-badge";
 
 function InfoRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="grid grid-cols-[120px_minmax(0,1fr)] gap-3 border-b border-line/70 py-2.5 text-xs last:border-0">
+    <div className="grid grid-cols-[88px_minmax(0,1fr)] gap-3 border-b border-line/70 py-3 text-[13px] last:border-0 sm:grid-cols-[120px_minmax(0,1fr)]">
       <dt className="text-faint">{label}</dt>
       <dd className="min-w-0 text-muted">{children}</dd>
     </div>

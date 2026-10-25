@@ -50,20 +50,27 @@ export default async function TeamPage({ params }: TeamPageProps) {
   const completed = data.matches.filter((match) => match.state === "completed").length;
 
   return (
-    <div className="container-page py-5">
+    <div className="container-page py-4 sm:py-6">
       <Breadcrumbs items={[{ label: "Matches", href: "/" }, { label: "Teams" }, { label: data.team.shortName }]} />
       <PageHeader
         eyebrow="Team"
         title={
-          <span className="flex items-center gap-3">
-            <TeamBadge team={data.team} size={54} />
+          <span className="flex items-center gap-3 sm:gap-4">
+            <TeamBadge team={data.team} size={44} />
             <span className="min-w-0">
-              <span className="block truncate">{data.team.name}</span>
-              <span className="mt-0.5 block text-sm font-medium text-faint">{data.team.shortName}</span>
+              <span className="block text-[0.8em] leading-[1.02] [text-wrap:balance]">{data.team.name}</span>
+              <span className="mt-1 block text-sm font-medium tracking-normal text-faint">{data.team.shortName}</span>
             </span>
           </span>
         }
-        description={`${data.matches.length} matches on the radar${live ? ` · ${live} live` : ""}${upcoming ? ` · ${upcoming} upcoming` : ""}${completed ? ` · ${completed} completed` : ""}.`}
+        description={[
+          `${data.matches.length} ${data.matches.length === 1 ? "match" : "matches"} in the feed`,
+          live ? `${live} live` : "",
+          upcoming ? `${upcoming} upcoming` : "",
+          completed ? `${completed} completed` : "",
+        ]
+          .filter(Boolean)
+          .join(" · ")}
         meta={<span>Feed updated {timeAgo(data.updatedAt)}</span>}
         actions={
           <>
@@ -78,10 +85,10 @@ export default async function TeamPage({ params }: TeamPageProps) {
               <Link
                 key={series.id}
                 href={`/series/${series.id}`}
-                className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-2.5 py-1 text-[11px] text-muted transition-colors hover:border-accent/40 hover:text-ink"
+                className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-line bg-surface px-3 py-1.5 text-xs text-muted transition-colors hover:border-accent/40 hover:text-ink"
               >
                 {series.live > 0 ? <LiveDot /> : null}
-                <span className="max-w-[280px] truncate">{series.name}</span>
+                <span className="max-w-[260px] truncate">{series.name}</span>
               </Link>
             ))}
           </div>
@@ -102,18 +109,20 @@ export default async function TeamPage({ params }: TeamPageProps) {
             <section key={group.key}>
               <div className="flex items-baseline gap-2 border-b border-line-strong pb-2">
                 {group.seriesId ? (
-                  <Link href={`/series/${group.seriesId}`} className="min-w-0 truncate text-sm font-bold transition-colors hover:text-accent">
+                  <Link href={`/series/${group.seriesId}`} className="min-w-0 text-[15px] font-bold leading-snug transition-colors hover:text-accent">
                     {group.name}
                   </Link>
                 ) : (
-                  <h2 className="truncate text-sm font-bold">{group.name}</h2>
+                  <h2 className="text-[15px] font-bold leading-snug">{group.name}</h2>
                 )}
                 {group.live > 0 ? (
-                  <span className="inline-flex shrink-0 items-center gap-1 text-[11px] font-semibold text-live">
+                  <span className="inline-flex shrink-0 items-center gap-1 text-xs font-semibold text-live">
                     <LiveDot /> {group.live} live
                   </span>
                 ) : null}
-                <span className="ml-auto shrink-0 text-[11px] text-faint">{group.matches.length} matches</span>
+                <span className="ml-auto shrink-0 text-xs text-faint">
+                  {group.matches.length} {group.matches.length === 1 ? "match" : "matches"}
+                </span>
               </div>
               <div>
                 {group.matches.map((match) => (

@@ -4,11 +4,11 @@ import { notFound } from "next/navigation";
 import { ArrowUpRight } from "lucide-react";
 import { getSeriesInfo } from "@/lib/data/series";
 import { loadPage } from "@/lib/page-data";
-import { formatDateRange, formatDate, timeAgo, cn } from "@/lib/utils";
+import { formatDateRange, timeAgo, cn } from "@/lib/utils";
 import { Breadcrumbs, PageHeader } from "@/components/page-header";
 import { FollowSeriesButton } from "@/components/follow-buttons";
 import { ShareButton } from "@/components/share-button";
-import { MatchCard } from "@/components/match-card";
+import { SeriesMatches } from "@/components/series/series-matches";
 import { EmptyState } from "@/components/ui/empty-state";
 import { FormatPill, LiveDot, StatePill } from "@/components/ui/pills";
 import { TeamBadge } from "@/components/ui/team-badge";
@@ -57,7 +57,7 @@ function StatsTable({ stats }: { stats: SeriesStats }) {
         <h2 className="display text-[18px] font-bold leading-none tracking-[-0.02em]">
           {stats.title}
         </h2>
-        <span className="mono text-[9px] uppercase tracking-[0.06em] text-panel-muted">
+        <span className="mono text-[10px] uppercase tracking-[0.06em] text-panel-muted">
           {stats.rows.length} entries
         </span>
       </div>
@@ -70,19 +70,19 @@ function StatsTable({ stats }: { stats: SeriesStats }) {
               </span>
               <div className="min-w-0 flex-1">
                 {row.id ? (
-                  <Link href={`/players/${row.id}`} className="block truncate text-[13px] font-bold transition-colors hover:text-accent">
+                  <Link href={`/players/${row.id}`} className="block truncate text-sm font-bold transition-colors hover:text-accent">
                     {row.name}
                   </Link>
                 ) : (
-                  <span className="block truncate text-[13px] font-bold">{row.name}</span>
+                  <span className="block truncate text-sm font-bold">{row.name}</span>
                 )}
                 <div className="mt-2 grid grid-cols-4 gap-x-2 gap-y-2">
                   {stats.headers.map((header, headerIndex) => (
                     <div key={`${row.id}-${header}`} className="min-w-0">
-                      <p className="mono truncate text-[8px] uppercase tracking-[0.06em] text-faint">
+                      <p className="mono truncate text-[10px] uppercase tracking-[0.06em] text-faint">
                         {header}
                       </p>
-                      <p className="mono mt-0.5 truncate text-[11px] font-medium text-ink">
+                      <p className="mono mt-0.5 truncate text-[13px] font-semibold text-ink">
                         {row.values[headerIndex] ?? "—"}
                       </p>
                     </div>
@@ -95,7 +95,7 @@ function StatsTable({ stats }: { stats: SeriesStats }) {
       </div>
       <div className="table-scroll hidden md:block">
         <table className="w-full min-w-[620px] text-left text-xs">
-          <thead className="border-b border-line-strong bg-surface2/45 text-[9px] font-bold uppercase tracking-[0.1em] text-faint">
+          <thead className="border-b border-line-strong bg-surface2/45 text-[10px] font-bold uppercase tracking-[0.1em] text-faint">
             <tr>
               <th className="px-4 py-2 font-semibold">#</th>
               <th className="px-2 py-2 text-right font-semibold last:pr-4">Player</th>
@@ -134,26 +134,7 @@ function StatsTable({ stats }: { stats: SeriesStats }) {
 }
 
 function MatchesTab({ series }: { series: SeriesInfo }) {
-  if (series.matchGroups.length === 0) {
-    return <EmptyState title="No matches" description="The schedule has not been published." className="mt-4" />;
-  }
-  return (
-    <div className="mt-4 space-y-7">
-      {series.matchGroups.map((group) => (
-        <section key={group.label}>
-          <div className="flex items-center gap-2 border-b border-line-strong pb-2">
-            <h2 className="text-sm font-bold">{group.label}</h2>
-            <span className="text-[11px] text-faint">{group.matches.length} matches</span>
-          </div>
-          <div>
-            {group.matches.map((match) => (
-              <MatchCard key={match.id} match={match} />
-            ))}
-          </div>
-        </section>
-      ))}
-    </div>
-  );
+  return <SeriesMatches groups={series.matchGroups} />;
 }
 
 function PointsTab({ series }: { series: SeriesInfo }) {
@@ -162,21 +143,21 @@ function PointsTab({ series }: { series: SeriesInfo }) {
   }
   return (
     <div className="mt-4 space-y-4">
-      {series.pointsTable.map((group) => (
-        <section key={group.groupName} className="card overflow-hidden">
+      {series.pointsTable.map((group, groupIndex) => (
+        <section key={`${group.groupName}-${groupIndex}`} className="card overflow-hidden">
           <div className="flex items-center justify-between gap-3 border-b-2 border-panel-ink/25 bg-panel px-4 py-3 text-panel-ink">
             <h2 className="display truncate text-[18px] font-bold leading-none tracking-[-0.02em]">
               {group.groupName}
             </h2>
             {series.pointsUpdatedAt ? (
-              <span className="mono shrink-0 text-[9px] uppercase tracking-[0.05em] text-panel-muted">
+              <span className="mono shrink-0 text-[10px] uppercase tracking-[0.05em] text-panel-muted">
                 Updated {timeAgo(series.pointsUpdatedAt)}
               </span>
             ) : null}
           </div>
           <div className="table-scroll">
-            <table className="w-full table-fixed text-left text-[11px] sm:text-xs">
-              <thead className="border-b border-line-strong bg-surface2/45 text-[9px] font-bold uppercase tracking-[0.1em] text-faint">
+            <table className="w-full table-fixed text-left text-xs sm:text-[13px]">
+              <thead className="border-b border-line-strong bg-surface2/45 text-[10px] font-bold uppercase tracking-[0.1em] text-faint">
                 <tr>
                   <th className="px-2 py-2 font-semibold sm:px-4">Team</th>
                   <th className="w-8 px-1 py-2 text-right font-semibold sm:w-auto sm:px-2">M</th>
@@ -190,8 +171,8 @@ function PointsTab({ series }: { series: SeriesInfo }) {
                 </tr>
               </thead>
               <tbody>
-                {group.rows.map((row) => (
-                  <tr key={row.teamId || row.teamName} className="border-b border-line/60 transition-colors last:border-0 hover:bg-accent/[0.04]">
+                {group.rows.map((row, rowIndex) => (
+                  <tr key={`${row.teamId || row.teamName}-${rowIndex}`} className="border-b border-line/60 transition-colors last:border-0 hover:bg-accent/[0.04]">
                     <td className="px-2 py-2.5 sm:px-4">
                       <Link href={row.teamId ? `/teams/${row.teamId}` : `/search?q=${encodeURIComponent(row.teamName)}`} className="flex items-center gap-1.5 font-semibold transition-colors hover:text-accent sm:gap-2">
                         <TeamBadge team={{ name: row.teamFullName, shortName: row.teamName, imageId: row.imageId }} size={20} />
@@ -211,7 +192,7 @@ function PointsTab({ series }: { series: SeriesInfo }) {
                           <span
                             key={`${result}-${index}`}
                             className={cn(
-                              "grid h-4 w-4 place-items-center rounded text-[9px] font-bold",
+                              "grid h-4 w-4 place-items-center rounded text-[10px] font-bold",
                               result === "W" ? "bg-win/15 text-win" : result === "L" ? "bg-live/15 text-live" : "bg-surface2 text-faint"
                             )}
                           >
@@ -246,10 +227,10 @@ function StatsTab({ series }: { series: SeriesInfo }) {
 function TeamsTab({ series }: { series: SeriesInfo }) {
   return (
     <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-      {series.teams.map((team) => (
-        <Link key={team.id} href={`/teams/${team.id}`} className="card card-hover flex items-center gap-2.5 p-3">
+      {series.teams.map((team, index) => (
+        <Link key={`${team.id}-${index}`} href={`/teams/${team.id}`} className="card card-hover flex items-center gap-2.5 p-3">
           <TeamBadge team={team} size={30} />
-          <span className="min-w-0 truncate text-xs font-semibold">{team.name}</span>
+          <span className="min-w-0 truncate text-[13px] font-semibold">{team.name}</span>
         </Link>
       ))}
     </div>
@@ -274,7 +255,7 @@ export default async function SeriesDetailPage({ params, searchParams }: SeriesP
       : "completed";
 
   return (
-    <div className="container-page py-5">
+    <div className="container-page py-4 sm:py-6">
       <Breadcrumbs items={[{ label: "Series", href: "/series" }, { label: series.name }]} />
       <PageHeader
         eyebrow={
@@ -286,31 +267,16 @@ export default async function SeriesDetailPage({ params, searchParams }: SeriesP
         }
         title={series.name}
         description={`${formatDateRange(series.startDate, series.endDate)} · ${series.matches.length} matches · ${series.teams.length} teams`}
-        meta={
-          <div className="flex flex-wrap items-center gap-3">
-            <span>Starts {formatDate(series.startDate ?? 0)}</span>
-            {series.endDate ? <span>Ends {formatDate(series.endDate)}</span> : null}
-          </div>
-        }
         actions={
           <>
             <FollowSeriesButton series={series} />
             <ShareButton title={`${series.name} · Chauka`} text="Series schedule, points table and stats" />
           </>
         }
-      >
-        <div className="flex flex-wrap gap-2">
-          {series.teams.map((team) => (
-            <Link key={team.id} href={`/teams/${team.id}`} className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-2 py-1 text-[11px] transition-colors hover:border-accent/40">
-              <TeamBadge team={team} size={18} />
-              {team.shortName}
-            </Link>
-          ))}
-        </div>
-      </PageHeader>
+      />
 
-      <div className="sticky top-[68px] z-20 mt-1 rounded-xl border border-line bg-bg p-1.5">
-        <div className="flex flex-wrap items-center gap-1" role="tablist" aria-label="Series sections">
+      <div className="sticky top-[calc(var(--header-h)+0.25rem)] z-20 mt-1 rounded-xl border border-line bg-bg p-1.5">
+        <div className="flex items-center gap-1" role="tablist" aria-label="Series sections">
           {TABS.map((item) => {
             const active = tab === item.key;
             return (

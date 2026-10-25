@@ -27,7 +27,7 @@ export function SectionHeading({
         {actionHref && actionLabel ? (
           <Link
             href={actionHref}
-            className="mono group inline-flex shrink-0 items-center gap-1 text-[8px] font-medium uppercase tracking-[0.14em] text-muted transition-colors hover:text-accent"
+            className="mono group inline-flex shrink-0 items-center gap-1 text-[10px] font-medium uppercase tracking-[0.14em] text-muted transition-colors hover:text-accent"
           >
             {actionLabel}
             <ArrowUpRight className="h-3 w-3 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />

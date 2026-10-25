@@ -17,7 +17,7 @@ function Tag({ children, tone = "muted" }: { children: React.ReactNode; tone?: "
   return (
     <span
       className={cn(
-        "mono inline-flex h-[17px] items-center rounded px-1.5 text-[8px] font-medium uppercase tracking-[0.08em]",
+        "mono inline-flex h-[19px] items-center rounded px-1.5 text-[10px] font-semibold uppercase tracking-[0.06em]",
         tone === "accent"
           ? "bg-accent/10 text-accent"
           : "border border-line-strong text-faint"
@@ -46,20 +46,20 @@ function InningsCard({ innings }: { innings: InningsDetail }) {
       <div className="flex flex-wrap items-center gap-3 border-b-2 border-panel-ink/25 bg-panel px-4 py-3.5 text-panel-ink">
         <TeamBadge team={innings.battingTeam} size={34} className="rounded-md border-panel-ink/20 bg-panel-ink" />
         <div className="min-w-0 flex-1">
-          <Link href={`/teams/${innings.battingTeam.id}`} className="truncate text-sm font-semibold text-panel-ink transition-colors hover:text-panel-muted">
+          <Link href={`/teams/${innings.battingTeam.id}`} className="line-clamp-2 text-[15px] font-semibold leading-tight text-panel-ink transition-colors hover:text-panel-muted">
             {innings.battingTeam.name}
           </Link>
-          <p className="mt-0.5 font-mono text-[9px] uppercase tracking-[0.08em] text-panel-muted">
+          <p className="mt-0.5 font-mono text-[11px] uppercase tracking-[0.06em] text-panel-muted">
             {innings.declared ? "Declared" : innings.followOn ? "Following on" : "Innings"}
             {innings.target ? ` · Target ${innings.target}` : ""}
             {innings.isCurrent ? " · Current" : ""}
           </p>
         </div>
         <div className="text-right">
-          <p className="mono text-[26px] font-medium leading-none tracking-[-0.04em] text-panel-ink">
+          <p className="mono text-[26px] font-semibold leading-none tracking-[-0.03em] text-panel-ink">
             {innings.runs}/{innings.wickets}
           </p>
-          <p className="mono mt-1.5 text-[8px] uppercase tracking-[0.06em] text-panel-muted">
+          <p className="mono mt-1.5 text-[11px] uppercase tracking-[0.04em] text-panel-muted">
             {formatOvers(innings.overs)} ov · RR {innings.runRate.toFixed(2)}
           </p>
         </div>
@@ -68,18 +68,18 @@ function InningsCard({ innings }: { innings: InningsDetail }) {
       {innings.batsmen.length > 0 ? (
         <>
           <div className="flex items-center justify-between gap-3 border-b border-line bg-sage/40 px-4 py-2">
-            <span className="mono text-[9px] font-medium uppercase tracking-[0.14em] text-accent">
+            <span className="mono text-[10px] font-medium uppercase tracking-[0.14em] text-accent">
               Batting
             </span>
             {topBatter && topScore > 0 ? (
-              <span className="mono min-w-0 truncate text-[9px] uppercase tracking-[0.05em] text-faint">
+              <span className="mono min-w-0 truncate text-[11px] uppercase tracking-[0.04em] text-faint">
                 Top <span className="font-medium text-ink">{topScore}</span> · {topBatter.name}
               </span>
             ) : null}
           </div>
           <div className="table-scroll">
-            <table className="w-full table-fixed text-left text-[11px] sm:text-xs">
-              <thead className="border-b border-line-strong bg-surface2/35 text-[9px] font-bold uppercase tracking-[0.1em] text-faint">
+            <table className="w-full table-fixed text-left text-xs sm:text-[13px]">
+              <thead className="border-b border-line-strong bg-surface2/35 text-[10px] font-bold uppercase tracking-[0.1em] text-faint">
                 <tr>
                   <th className="px-3 py-2 font-semibold sm:px-4">Batter</th>
                   <th className="w-[52px] px-1.5 py-2 text-right font-semibold sm:px-2">R</th>
@@ -107,9 +107,21 @@ function InningsCard({ innings }: { innings: InningsDetail }) {
                           {batter.isKeeper ? <Tag>WK</Tag> : null}
                           {batter.isOut ? null : <Tag tone="accent">Not out</Tag>}
                         </div>
-                        <p className="mt-1 truncate text-[10px] leading-snug text-faint sm:text-[11px]">
-                          {batter.outDesc}
-                        </p>
+                        {(batter.isOut ? batter.outDesc : "") ? (
+                          <p className="mt-1 line-clamp-2 text-[11px] leading-snug text-faint sm:text-xs">
+                            {batter.outDesc}
+                          </p>
+                        ) : null}
+                        {batter.fours > 0 || batter.sixes > 0 ? (
+                          <p className="mt-1 text-[11px] text-faint sm:hidden">
+                            {[
+                              batter.fours > 0 ? `${batter.fours}×4` : "",
+                              batter.sixes > 0 ? `${batter.sixes}×6` : "",
+                            ]
+                              .filter(Boolean)
+                              .join(" · ")}
+                          </p>
+                        ) : null}
                       </td>
                       <td className="mono px-1.5 py-3 text-right text-[15px] font-medium leading-none sm:px-2 sm:text-[17px]">
                         {batter.runs}
@@ -127,7 +139,7 @@ function InningsCard({ innings }: { innings: InningsDetail }) {
         </>
       ) : null}
 
-      <div className="border-t border-line bg-sage/35 px-4 py-3 text-[11px] text-muted">
+      <div className="border-t border-line bg-sage/35 px-4 py-3 text-xs text-muted">
         <div className="flex flex-wrap justify-between gap-2">
           <span>
             Extras <strong className="text-ink">{innings.extras.total}</strong>
@@ -149,16 +161,16 @@ function InningsCard({ innings }: { innings: InningsDetail }) {
       {innings.bowlers.length > 0 ? (
         <>
           <div className="flex items-center justify-between gap-3 border-y border-line bg-sage/40 px-4 py-2">
-            <span className="mono text-[9px] font-medium uppercase tracking-[0.14em] text-accent">
+            <span className="mono text-[10px] font-medium uppercase tracking-[0.14em] text-accent">
               Bowling
             </span>
-            <span className="mono text-[9px] uppercase tracking-[0.05em] text-faint">
+            <span className="mono text-[11px] uppercase tracking-[0.04em] text-faint">
               {innings.bowlers.length} bowlers
             </span>
           </div>
           <div className="table-scroll">
-            <table className="w-full table-fixed text-left text-[11px] sm:text-xs">
-              <thead className="border-b border-line-strong bg-surface2/35 text-[9px] font-bold uppercase tracking-[0.1em] text-faint">
+            <table className="w-full table-fixed text-left text-xs sm:text-[13px]">
+              <thead className="border-b border-line-strong bg-surface2/35 text-[10px] font-bold uppercase tracking-[0.1em] text-faint">
                 <tr>
                   <th className="px-3 py-2 font-semibold sm:px-4">Bowler</th>
                   <th className="w-[52px] px-1.5 py-2 text-right font-semibold sm:px-2">O</th>

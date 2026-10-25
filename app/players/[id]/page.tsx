@@ -43,13 +43,13 @@ function StatsTable({ title, table }: { title: string; table: PlayerStatsTable }
         <h2 className="display text-[18px] font-bold leading-none tracking-[-0.02em]">
           {title}
         </h2>
-        <span className="mono text-[9px] uppercase tracking-[0.06em] text-panel-muted">
+        <span className="mono text-[11px] uppercase tracking-[0.04em] text-panel-muted">
           {table.formats.length} formats
         </span>
       </div>
       <div className="table-scroll">
-        <table className="w-full table-fixed text-left text-[11px] sm:text-xs">
-          <thead className="border-b border-line-strong bg-surface2/45 text-[9px] font-bold uppercase tracking-[0.1em] text-faint">
+        <table className="w-full table-fixed text-left text-xs sm:text-[13px]">
+          <thead className="border-b border-line-strong bg-surface2/45 text-[10px] font-bold uppercase tracking-[0.1em] text-faint">
             <tr>
               <th className="px-3 py-2 font-semibold sm:px-4">Stat</th>
               {table.formats.map((format) => (
@@ -60,8 +60,8 @@ function StatsTable({ title, table }: { title: string; table: PlayerStatsTable }
             </tr>
           </thead>
           <tbody>
-            {table.rows.map((row) => (
-              <tr key={row.label} className="border-b border-line/60 last:border-0 hover:bg-accent/[0.04]">
+            {table.rows.map((row, rowIndex) => (
+              <tr key={`${row.label}-${rowIndex}`} className="border-b border-line/60 last:border-0 hover:bg-accent/[0.04]">
                 <td className="px-3 py-2.5 font-medium text-muted sm:px-4">{row.label}</td>
                 {table.formats.map((format) => (
                   <td key={`${row.label}-${format}`} className="px-1.5 py-2.5 text-right tabular-nums sm:px-3">
@@ -81,34 +81,61 @@ function RankingCards({ player }: { player: PlayerProfile }) {
   if (player.rankings.length === 0) return null;
   return (
     <section>
-      <h2 className="text-sm font-bold">ICC rankings</h2>
-      <div className="mt-2 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+      <h2 className="text-[15px] font-bold">ICC rankings</h2>
+      <div className="mt-2.5 grid grid-cols-2 gap-2.5 lg:grid-cols-4">
         {player.rankings.map((ranking) => (
-          <div key={`${ranking.kind}-${ranking.format}`} className="card p-3">
-            <div className="flex items-center justify-between gap-2">
-              <span className="text-[10px] font-semibold uppercase tracking-wide text-faint">
-                {ranking.format} · {ranking.kind}
-              </span>
-              {ranking.rank ? <span className="text-lg font-bold tabular-nums">#{ranking.rank}</span> : null}
-            </div>
-            <div className="mt-2 flex items-center justify-between gap-2 text-[11px] text-muted">
-              <span>Best #{ranking.bestRank ?? "—"}</span>
+          <Link
+            key={`${ranking.kind}-${ranking.format}`}
+            href={`/rankings?gender=men&format=${ranking.format.toLowerCase()}&category=${ranking.kind === "all-rounder" ? "all-rounder" : ranking.kind}`}
+            className="card card-hover block p-3.5"
+          >
+            <p className="text-xs font-semibold capitalize text-faint">
+              {ranking.format} {ranking.kind}
+            </p>
+            <p className="mono mt-2 text-[28px] font-bold leading-none tabular-nums">
+              {ranking.rank ? `#${ranking.rank}` : "—"}
+            </p>
+            <div className="mt-2.5 flex items-center justify-between gap-2 text-xs text-muted">
+              <span>{ranking.bestRank ? `Best #${ranking.bestRank}` : "Unranked"}</span>
               {ranking.diff ? (
-                <span className={ranking.diff > 0 ? "text-win" : "text-live"}>
+                <span className={ranking.diff > 0 ? "font-semibold text-win" : "font-semibold text-live"}>
                   {ranking.diff > 0 ? `+${ranking.diff}` : ranking.diff}
                 </span>
               ) : null}
             </div>
-            <Link
-              href={`/rankings?gender=men&format=${ranking.format.toLowerCase()}&category=${ranking.kind === "all-rounder" ? "all-rounder" : ranking.kind}`}
-              className="mt-2 inline-flex text-[11px] font-semibold text-accent hover:underline"
-            >
-              View table
-            </Link>
-          </div>
+          </Link>
         ))}
       </div>
     </section>
+  );
+}
+
+function TeamChips({ teams }: { teams: string[] }) {
+  const visible = teams.slice(0, 5);
+  const rest = teams.slice(5);
+  const chip = "rounded-full border border-line bg-surface px-3 py-1.5 text-xs text-muted";
+  return (
+    <div className="flex flex-wrap items-center gap-1.5">
+      {visible.map((team, index) => (
+        <span key={`${team}-${index}`} className={chip}>
+          {team}
+        </span>
+      ))}
+      {rest.length > 0 ? (
+        <details className="group contents">
+          <summary
+            className={`${chip} cursor-pointer list-none font-semibold text-accent marker:hidden group-open:hidden`}
+          >
+            +{rest.length} more
+          </summary>
+          {rest.map((team, index) => (
+            <span key={`${team}-${index}`} className={chip}>
+              {team}
+            </span>
+          ))}
+        </details>
+      ) : null}
+    </div>
   );
 }
 
@@ -120,13 +147,13 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
   const hasStats = player.batting.formats.length > 0 || player.bowling.formats.length > 0;
 
   return (
-    <div className="container-page py-5">
+    <div className="container-page py-4 sm:py-6">
       <Breadcrumbs items={[{ label: "Matches", href: "/" }, { label: "Players" }, { label: player.name }]} />
       <PageHeader
         eyebrow={[player.role, player.intlTeam].filter(Boolean).join(" · ") || "Player profile"}
         title={
           <span className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-            <PlayerAvatar player={{ id: player.id, name: player.name, faceImageId: player.imageId }} size={108} />
+            <PlayerAvatar player={{ id: player.id, name: player.name, faceImageId: player.imageId }} size={96} />
             <span className="min-w-0">
               <span className="block break-words">{player.name}</span>
               {player.fullName !== player.name ? (
@@ -145,52 +172,11 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
         }
         actions={<ShareButton title={`${player.name} · Chauka`} text={`${player.name} profile`} label="Share" />}
       >
-        {player.teams.length > 0 ? (
-          <div className="flex flex-wrap gap-1.5">
-            {player.teams.map((team) => (
-              <span key={team} className="rounded-full border border-line bg-surface px-2.5 py-1 text-[11px] text-muted">
-                {team}
-              </span>
-            ))}
-          </div>
-        ) : null}
+        {player.teams.length > 0 ? <TeamChips teams={player.teams} /> : null}
       </PageHeader>
 
       <div className="mt-4 space-y-5">
         <RankingCards player={player} />
-
-        {player.career.length > 0 ? (
-          <section className="card overflow-hidden">
-            <div className="flex items-center justify-between gap-3 border-b-2 border-panel-ink/25 bg-panel px-4 py-3 text-panel-ink">
-              <h2 className="display text-[18px] font-bold leading-none tracking-[-0.02em]">
-                Career
-              </h2>
-              <span className="mono text-[9px] uppercase tracking-[0.06em] text-panel-muted">
-                {player.career.length} formats
-              </span>
-            </div>
-            <div className="table-scroll">
-              <table className="w-full text-left text-[11px] sm:text-xs">
-                <thead className="border-b border-line-strong bg-surface2/45 text-[9px] font-bold uppercase tracking-[0.1em] text-faint">
-                  <tr>
-                    <th className="px-3 py-2 font-semibold sm:px-4">Format</th>
-                    <th className="px-3 py-2 font-semibold">Debut</th>
-                    <th className="px-3 py-2 text-right font-semibold sm:px-4">Last played</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {player.career.map((entry) => (
-                    <tr key={entry.format} className="border-b border-line/60 last:border-0 hover:bg-accent/[0.04]">
-                      <td className="px-3 py-2.5 font-semibold sm:px-4">{entry.format}</td>
-                      <td className="px-3 py-2.5 text-muted">{entry.debut ?? "—"}</td>
-                      <td className="px-3 py-2.5 text-right text-muted sm:px-4">{entry.lastPlayed ?? "—"}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </section>
-        ) : null}
 
         {hasStats ? (
           <div className="grid gap-4 lg:grid-cols-2">
@@ -202,11 +188,11 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
         {player.recentBatting.length > 0 ? (
           <section className="card overflow-hidden">
             <div className="border-b border-line bg-surface2/60 px-4 py-3">
-              <h2 className="text-sm font-bold">Recent batting</h2>
+              <h2 className="text-[15px] font-bold">Recent batting</h2>
             </div>
             <div className="divide-y divide-line/70">
               {player.recentBatting.map((row, index) => (
-                <div key={`${row.matchId ?? "match"}-${index}`} className="flex items-center gap-3 px-4 py-2.5 text-xs">
+                <div key={`${row.matchId ?? "match"}-${index}`} className="flex items-center gap-3 px-4 py-3 text-[13px]">
                   <span className="min-w-0 flex-1">
                     {row.matchId ? (
                       <Link href={`/match/${row.matchId}`} className="font-semibold transition-colors hover:text-accent">
@@ -219,6 +205,37 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
                   </span>
                   <span className="text-faint">{row.format ?? ""}</span>
                   <span className="hidden text-faint sm:inline">{row.date ?? ""}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
+        {player.career.length > 0 ? (
+          <section className="card overflow-hidden">
+            <div className="flex items-center justify-between gap-3 border-b-2 border-panel-ink/25 bg-panel px-4 py-3 text-panel-ink">
+              <h2 className="display text-[18px] font-bold leading-none tracking-[-0.02em]">
+                Career
+              </h2>
+              <span className="mono text-[11px] uppercase tracking-[0.04em] text-panel-muted">
+                {player.career.length} formats
+              </span>
+            </div>
+            <div className="divide-y divide-line/70">
+              {player.career.map((entry, index) => (
+                <div
+                  key={`${entry.format}-${index}`}
+                  className="grid grid-cols-[56px_minmax(0,1fr)] gap-x-3 px-4 py-3 text-[13px] sm:grid-cols-[72px_minmax(0,1fr)_minmax(0,1fr)]"
+                >
+                  <span className="font-bold">{entry.format}</span>
+                  <p className="min-w-0 leading-snug text-muted">
+                    <span className="block text-[11px] font-semibold text-faint">Debut</span>
+                    {entry.debut ?? "—"}
+                  </p>
+                  <p className="col-start-2 mt-2 min-w-0 leading-snug text-muted sm:col-start-auto sm:mt-0">
+                    <span className="block text-[11px] font-semibold text-faint">Last played</span>
+                    {entry.lastPlayed ?? "—"}
+                  </p>
                 </div>
               ))}
             </div>

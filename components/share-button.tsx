@@ -58,7 +58,7 @@ export function ShareButton({
       onClick={share}
       className={cn(
         buttonClass({ variant: "secondary" }),
-        label ? "px-4" : "w-10 px-0",
+        label ? "px-4" : "h-10 w-10 px-0",
         className
       )}
       aria-label={label ?? "Share"}

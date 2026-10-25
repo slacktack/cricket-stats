@@ -22,7 +22,7 @@ export function FormatPill({
   return (
     <span
       className={cn(
-        "inline-flex h-5 items-center rounded border px-1.5 font-mono text-[9px] font-medium uppercase tracking-[0.06em]",
+        "inline-flex h-5 items-center rounded border px-1.5 font-mono text-[10px] font-medium uppercase tracking-[0.06em]",
         formatTone(format),
         className
       )}
@@ -57,7 +57,7 @@ export function StatePill({
     return (
       <span
         className={cn(
-          "inline-flex h-6 items-center gap-1.5 rounded border border-live/20 bg-live/10 px-2 text-[9px] font-bold uppercase tracking-[0.1em] text-live",
+          "inline-flex h-6 items-center gap-1.5 rounded border border-live/20 bg-live/10 px-2 text-[10px] font-bold uppercase tracking-[0.1em] text-live",
           className
         )}
       >
@@ -70,7 +70,7 @@ export function StatePill({
   return (
     <span
       className={cn(
-        "inline-flex h-6 items-center rounded border border-line bg-surface2 px-2 text-[9px] font-bold uppercase tracking-[0.1em] text-muted",
+        "inline-flex h-6 items-center rounded border border-line bg-surface2 px-2 text-[10px] font-bold uppercase tracking-[0.1em] text-muted",
         className
       )}
     >

@@ -17,18 +17,14 @@ export const metadata: Metadata = {
   description: "Live and upcoming cricket series, schedules, points tables and tournament stats.",
 };
 
-function SeriesCard({ item, index }: { item: SeriesListItem; index: number }) {
+function SeriesCard({ item }: { item: SeriesListItem }) {
   return (
     <Link
       href={`/series/${item.id}`}
-      className="group grid gap-4 border-t border-line-strong py-5 transition-colors hover:bg-accent-soft/25 sm:grid-cols-[40px_minmax(0,1fr)_196px] sm:gap-6 sm:px-2"
+      className="group grid gap-4 border-t border-line-strong py-5 transition-colors hover:bg-accent-soft/25 sm:grid-cols-[minmax(0,1fr)_196px] sm:gap-6 sm:px-2"
     >
-      <span className="mono text-[10px] font-medium text-faint">
-        {String(index + 1).padStart(2, "0")}
-      </span>
-
       <div className="min-w-0">
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[9px] font-medium uppercase tracking-[0.1em]">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[11px] font-medium uppercase tracking-[0.08em]">
           <span className="text-accent">{item.format ?? "Series"}</span>
           <span
             className={cn(
@@ -50,7 +46,7 @@ function SeriesCard({ item, index }: { item: SeriesListItem; index: number }) {
           {item.name}
         </h2>
 
-        <p className="mt-2 flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.05em] text-faint">
+        <p className="mt-2 flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.04em] text-faint">
           <CalendarDays className="h-3 w-3 shrink-0" />
           {formatDateRange(item.startDate, item.endDate)}
         </p>
@@ -67,7 +63,7 @@ function SeriesCard({ item, index }: { item: SeriesListItem; index: number }) {
             ))}
           </div>
           {item.teams.length > 6 ? (
-            <span className="grid h-6 min-w-6 place-items-center border border-line bg-bg px-1 font-mono text-[8px] font-medium text-faint">
+            <span className="grid h-6 min-w-6 place-items-center border border-line bg-bg px-1 font-mono text-[10px] font-medium text-faint">
               +{item.teams.length - 6}
             </span>
           ) : null}
@@ -75,7 +71,7 @@ function SeriesCard({ item, index }: { item: SeriesListItem; index: number }) {
       </div>
 
       <div className="flex items-end justify-between gap-4 sm:flex-col sm:items-end sm:justify-between">
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[9px] font-medium uppercase tracking-[0.06em] text-muted">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[11px] font-medium uppercase tracking-[0.04em] text-muted">
           {item.live > 0 ? (
             <span className="inline-flex items-center gap-1 text-live">
               <LiveDot /> {item.live} live
@@ -84,7 +80,7 @@ function SeriesCard({ item, index }: { item: SeriesListItem; index: number }) {
           {item.upcoming > 0 ? <span>{item.upcoming} upcoming</span> : null}
           {item.completed > 0 ? <span>{item.completed} completed</span> : null}
         </div>
-        <span className="inline-flex items-center gap-1 font-mono text-[9px] font-medium uppercase tracking-[0.1em] text-accent">
+        <span className="inline-flex items-center gap-1 font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-accent">
           Open
           <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
         </span>
@@ -110,13 +106,13 @@ function SeriesSection({
         <h2 className="display text-[clamp(1.8rem,3.4vw,2.7rem)] font-bold leading-none tracking-[-0.04em]">
           {title}
         </h2>
-        <span className="mono ml-auto pb-0.5 text-[10px] font-medium text-faint">
-          {String(items.length).padStart(2, "0")}
+        <span className="mono ml-auto pb-0.5 text-xs font-semibold text-faint">
+          {items.length}
         </span>
       </div>
       <div className="stagger border-b border-line-strong">
         {items.map((item, index) => (
-          <SeriesCard key={item.id} item={item} index={index} />
+          <SeriesCard key={`${item.id}-${index}`} item={item} />
         ))}
       </div>
     </section>
@@ -134,7 +130,7 @@ export default async function SeriesPage() {
       <section className="grain relative overflow-hidden rounded-xl border border-panel-ink/20 bg-panel text-panel-ink">
         <FallingBall className="absolute -right-20 -top-28 z-0 hidden h-[500px] w-[500px] text-panel-ink opacity-20 md:block" />
         <div className="relative z-10 grid lg:grid-cols-[minmax(0,1fr)_318px]">
-          <div className="px-5 py-6 sm:px-8 sm:py-8">
+          <div className="px-5 py-5 sm:px-8 sm:py-8">
             <div className="flex items-center gap-2">
               <span className="h-px w-5 bg-panel-ink/50" />
               <span className="eyebrow text-panel-ink/70">Cricket calendar</span>
@@ -142,11 +138,11 @@ export default async function SeriesPage() {
             <h1 className="display mt-3 text-[clamp(2rem,5.8vw,4.65rem)] leading-[0.94] tracking-[-0.04em]">
               Series <span className="text-panel-muted">&amp; tours.</span>
             </h1>
-            <p className="mt-3 max-w-lg text-[13px] font-medium leading-relaxed text-panel-ink/75 sm:text-sm">
+            <p className="mt-3 hidden max-w-lg text-sm font-medium leading-relaxed text-panel-ink/75 sm:block">
               Schedules, live matches, points tables and the players shaping
               every series in the current feed.
             </p>
-            <p className="mt-4 flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.07em] text-panel-muted">
+            <p className="mt-4 hidden items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.06em] text-panel-muted sm:flex">
               <CalendarDays className="h-3 w-3" />
               Updated {timeAgo(Date.now())}
             </p>
@@ -165,10 +161,10 @@ export default async function SeriesPage() {
                   index < 2 && "border-r border-line"
                 )}
               >
-                <p className={cn("mono text-[28px] font-medium leading-none tracking-[-0.04em]", stat.tone)}>
-                  {String(stat.value).padStart(2, "0")}
+                <p className={cn("mono text-[28px] font-bold leading-none tracking-[-0.03em]", stat.tone)}>
+                  {stat.value}
                 </p>
-                <p className="mt-2 text-[9px] font-bold uppercase tracking-[0.12em] text-faint">
+                <p className="mt-2 text-xs font-semibold text-faint">
                   {stat.label}
                 </p>
               </div>
@@ -194,7 +190,7 @@ export default async function SeriesPage() {
         </>
       )}
 
-      <p className="mt-8 flex items-center gap-1.5 text-[11px] text-faint">
+      <p className="mt-8 flex items-center gap-1.5 text-xs text-faint">
         <CalendarDays className="h-3.5 w-3.5" />
         Schedules are loaded from the live cricket feed and may change.
       </p>

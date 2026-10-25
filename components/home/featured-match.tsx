@@ -13,22 +13,26 @@ import { TeamBadge } from "@/components/ui/team-badge";
 
 export function FeaturedMatch({ match }: { match: MatchSummary }) {
   const live = match.state === "live";
+  const hasScores = match.teams.some((team) => {
+    const score = teamScoreText(match, team);
+    return score !== "Yet to bat" && score !== "—";
+  });
   return (
     <Link
       href={`/match/${match.id}`}
-      className="grain group block h-full border-[5px] border-panel-ink bg-bg text-ink shadow-[10px_10px_0_rgba(7,9,18,0.18)] transition-transform duration-200 hover:-translate-y-0.5"
+      className="grain group block h-full border-[3px] border-panel-ink bg-bg text-ink shadow-[6px_6px_0_rgba(7,9,18,0.2)] transition-transform duration-200 hover:-translate-y-0.5"
     >
       <div className="flex items-center gap-3 border-b border-ink/15 px-4 py-3">
         <span
           className={cn(
-            "inline-flex h-5 items-center gap-1.5 font-mono text-[9px] font-medium uppercase tracking-[0.1em]",
+            "inline-flex h-5 items-center gap-1.5 font-mono text-[10px] font-medium uppercase tracking-[0.1em]",
             live ? "text-live" : "text-warn"
           )}
         >
           {live ? <LiveDot /> : null}
           {live ? "Live now" : "Next up"}
         </span>
-        <span className="font-mono text-[9px] uppercase tracking-[0.08em] text-ink/50">
+        <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-ink/50">
           {matchFormat(match)}
         </span>
         <ArrowUpRight className="ml-auto h-4 w-4 text-ink/45 transition-colors group-hover:text-accent" />
@@ -57,7 +61,7 @@ export function FeaturedMatch({ match }: { match: MatchSummary }) {
                   </p>
                   <p
                     className={cn(
-                      "mt-0.5 truncate font-mono text-[8px] uppercase tracking-[0.06em]",
+                      "mt-0.5 truncate font-mono text-[10px] uppercase tracking-[0.06em]",
                       current ? "text-accent" : "text-ink/50"
                     )}
                   >
@@ -65,8 +69,8 @@ export function FeaturedMatch({ match }: { match: MatchSummary }) {
                   </p>
                 </div>
                 <span className="flex shrink-0 items-baseline gap-1.5">
-                  {yetToBat ? (
-                    <span className="font-mono text-[8px] font-bold uppercase tracking-[0.08em] text-ink/45">
+                  {!hasScores ? null : yetToBat ? (
+                    <span className="font-mono text-[10px] font-bold uppercase tracking-[0.08em] text-ink/45">
                       Yet to bat
                     </span>
                   ) : (
@@ -81,7 +85,7 @@ export function FeaturedMatch({ match }: { match: MatchSummary }) {
                     </span>
                   )}
                   {overs ? (
-                    <span className="mono text-[8px] uppercase tracking-[0.04em] text-ink/45">
+                    <span className="mono text-[10px] uppercase tracking-[0.04em] text-ink/45">
                       {overs}
                     </span>
                   ) : null}
@@ -91,12 +95,12 @@ export function FeaturedMatch({ match }: { match: MatchSummary }) {
           })}
         </div>
 
-        <p className="mt-4 border-t border-ink/15 pt-3 text-[11px] font-medium leading-snug text-ink/65">
+        <p className="mt-4 border-t border-ink/15 pt-3 text-[13px] font-medium leading-snug text-ink/75">
           {matchStatusText(match)}
         </p>
       </div>
 
-      <div className="flex items-center gap-1.5 border-t border-ink/15 px-4 py-2.5 font-mono text-[8px] font-medium uppercase tracking-[0.08em] text-ink/50">
+      <div className="flex items-center gap-1.5 border-t border-ink/15 px-4 py-2.5 font-mono text-[10px] font-medium uppercase tracking-[0.08em] text-ink/50">
         {match.venue?.city ? (
           <>
             <MapPin className="h-3 w-3" />

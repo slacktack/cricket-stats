@@ -30,7 +30,14 @@
   --sun: 196 147 38;
   --sage: 222 224 244;
   --clay: 231 215 201;
+  --header-h: 3.5rem;
   color-scheme: light;
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --header-h: 4rem;
+  }
 }
 
 .dark {
@@ -136,18 +143,18 @@ body {
   }
 
   .mono {
-    font-family: var(--font-mono), ui-monospace, monospace;
-    font-variant-numeric: tabular-nums;
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-variant-numeric: tabular-nums lining-nums;
     letter-spacing: -0.01em;
   }
 
   .eyebrow {
     font-family: var(--font-mono), ui-monospace, monospace;
-    font-size: 0.625rem;
+    font-size: 0.6875rem;
     line-height: 1;
     font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 0.13em;
+    letter-spacing: 0.1em;
     color: rgb(var(--accent));
   }
 
@@ -160,7 +167,7 @@ body {
   }
 
   .segmented-item {
-    @apply relative inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-md px-3 text-[11px] font-bold text-muted transition-colors duration-150;
+    @apply relative inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-md px-3 text-xs font-bold text-muted transition-colors duration-150;
   }
 
   .segmented-item:hover {
@@ -178,7 +185,7 @@ body {
   }
 
   .chip-filter {
-    @apply inline-flex h-8 shrink-0 items-center gap-1.5 rounded-md border border-line bg-surface px-3 text-[11px] font-bold text-muted transition-colors duration-150;
+    @apply inline-flex h-10 shrink-0 items-center gap-1.5 rounded-md border border-line bg-surface px-3 text-xs font-bold text-muted sm:h-9 transition-colors duration-150;
   }
 
   .chip-filter:hover {
@@ -198,7 +205,7 @@ body {
   }
 
   .count-badge {
-    @apply inline-flex min-w-[18px] items-center justify-center rounded px-1 py-0.5 text-[9px] font-bold tabular-nums text-current;
+    @apply inline-flex min-w-[20px] items-center justify-center rounded px-1 py-0.5 text-[10px] font-bold tabular-nums text-current;
     background: rgb(var(--ink) / 0.06);
   }
 
@@ -212,7 +219,7 @@ body {
   }
 
   .tab-link {
-    @apply flex h-9 items-center rounded-md px-3.5 text-[11px] font-bold text-muted transition-colors duration-150 hover:bg-surface hover:text-ink;
+    @apply flex h-10 flex-1 items-center justify-center whitespace-nowrap rounded-md px-2 text-xs font-bold text-muted transition-colors duration-150 hover:bg-surface hover:text-ink sm:flex-none sm:px-4;
   }
 
   .tab-link[data-active="true"] {
@@ -342,6 +349,19 @@ body {
   .stagger > *:nth-child(7) { animation-delay: 210ms; }
   .stagger > *:nth-child(8) { animation-delay: 245ms; }
   .stagger > *:nth-child(n+9) { animation-delay: 280ms; }
+}
+
+.bottom-nav {
+  background: rgb(var(--surface) / 0.94);
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+@media (max-width: 1023px) {
+  body {
+    padding-bottom: calc(4rem + env(safe-area-inset-bottom));
+  }
 }
 
 .theme-moon {

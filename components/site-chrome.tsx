@@ -1,14 +1,14 @@
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Search } from "lucide-react";
 import { Logo } from "@/components/logo";
-import { DesktopNav, MobileMenu } from "@/components/nav";
+import { BottomNav, DesktopNav } from "@/components/nav";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { LiveDot } from "@/components/ui/pills";
 
 export function SiteHeader() {
   return (
     <header className="site-header sticky top-0 z-50">
-      <div className="container-page flex h-16 items-stretch gap-4 sm:gap-8">
+      <div className="container-page flex h-[var(--header-h)] items-stretch gap-4 sm:gap-8">
         <div className="flex items-center text-header-ink">
           <Logo variant="panel" />
         </div>
@@ -18,14 +18,22 @@ export function SiteHeader() {
             <LiveDot />
             Live scores
           </span>
-          <div className="hidden lg:block">
-            <ThemeToggle />
-          </div>
-          <MobileMenu />
+          <Link
+            href="/search"
+            aria-label="Search"
+            className="grid h-10 w-10 place-items-center rounded-md border border-header-ink/25 text-header-ink transition-colors duration-150 hover:border-header-ink hover:bg-header-ink/10 lg:hidden"
+          >
+            <Search className="h-[18px] w-[18px]" />
+          </Link>
+          <ThemeToggle />
         </div>
       </div>
     </header>
   );
+}
+
+export function SiteNav() {
+  return <BottomNav />;
 }
 
 export function SiteFooter() {

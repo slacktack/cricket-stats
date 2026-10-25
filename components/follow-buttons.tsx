@@ -12,7 +12,7 @@ function useFollowAction() {
 }
 
 const BASE =
-  "mono inline-flex h-9 items-center gap-2 border px-3 text-[9px] font-semibold uppercase tracking-[0.12em] transition-colors disabled:opacity-50";
+  "mono inline-flex h-10 items-center gap-2 border px-3.5 text-[11px] font-semibold uppercase tracking-[0.1em] transition-colors disabled:opacity-50";
 
 export function FollowTeamButton({
   team,
@@ -87,9 +87,11 @@ export function FollowSeriesButton({
 export function FollowTeamIcon({
   team,
   className,
+  showLabel = false,
 }: {
   team: { id: number; name: string; shortName: string };
   className?: string;
+  showLabel?: boolean;
 }) {
   const { favorites, toast } = useFollowAction();
   const followed = favorites.isTeamFollowed(team.id);
@@ -106,14 +108,15 @@ export function FollowTeamIcon({
         toast(followed ? `Unfollowed ${team.shortName}` : `Following ${team.shortName}`);
       }}
       className={cn(
-        "grid h-8 w-8 place-items-center border transition-colors disabled:opacity-50",
+        "inline-flex h-10 min-w-10 items-center justify-center gap-1.5 border px-2.5 text-[11px] font-bold transition-colors disabled:opacity-50",
         followed
           ? "border-accent bg-accent text-accent-ink"
-          : "border-line text-faint hover:border-line-strong hover:text-ink",
+          : "border-line text-muted hover:border-line-strong hover:text-ink",
         className
       )}
     >
-      <Heart className={cn("h-3.5 w-3.5", followed && "fill-current")} />
+      <Heart className={cn("h-4 w-4", followed && "fill-current")} />
+      {showLabel ? team.shortName : null}
     </button>
   );
 }

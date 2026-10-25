@@ -289,40 +289,40 @@ export function HomeFeed({
       <section className="grain relative mt-5 overflow-hidden border border-panel-ink/20 bg-panel text-panel-ink">
         <FallingBall className="absolute -right-24 -top-32 z-0 hidden h-[640px] w-[640px] text-panel-ink opacity-20 sm:block" />
         <div className="relative z-10 grid xl:grid-cols-[minmax(0,1.02fr)_minmax(330px,0.78fr)]">
-          <div className="flex flex-col justify-between px-5 py-7 sm:px-8 sm:py-10">
+          <div className="flex flex-col justify-between px-5 py-6 sm:px-8 sm:py-10">
             <div>
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
-                <span className="font-mono text-[9px] font-medium uppercase tracking-[0.13em] text-panel-ink/75">
+                <span className="font-mono text-[11px] font-medium uppercase tracking-[0.1em] text-panel-ink/80">
                   {formatDate(feed.updatedAt, {
                     weekday: "long",
                     day: "numeric",
                     month: "long",
                   })}
                 </span>
-                <span className="h-3 w-px bg-panel-ink/30" />
-                <span className="font-mono text-[9px] font-medium uppercase tracking-[0.13em] text-panel-muted">
+                <span className="hidden h-3 w-px bg-panel-ink/30 sm:block" />
+                <span className="hidden font-mono text-[11px] font-medium uppercase tracking-[0.1em] text-panel-muted sm:inline">
                   Live from around the world
                 </span>
               </div>
 
-              <h1 className="display mt-6 max-w-[680px] text-[clamp(2.4rem,7vw,5.9rem)] uppercase leading-[0.86]">
+              <h1 className="display mt-4 max-w-[680px] text-[clamp(2.25rem,7vw,5.9rem)] uppercase leading-[0.88] sm:mt-6">
                 The day&apos;s
                 <span className="block">cricket.</span>
               </h1>
 
-              <p className="mt-6 max-w-md text-[13px] font-medium leading-relaxed text-panel-ink/70 sm:text-sm">
+              <p className="mt-6 hidden max-w-md text-sm font-medium leading-relaxed text-panel-ink/75 sm:block">
                 Live scores, full scorecards and the day&apos;s results from
                 around the world.
               </p>
             </div>
 
-            <div className="mt-8 flex flex-wrap items-center gap-3">
-              <span className="inline-flex h-9 items-center gap-2 bg-panel-ink px-3.5 font-mono text-[9px] font-medium uppercase tracking-[0.12em] text-panel">
+            <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-2 sm:mt-8">
+              <span className="inline-flex h-10 items-center gap-2 bg-panel-ink px-3.5 font-mono text-[11px] font-medium uppercase tracking-[0.1em] text-panel">
                 <LiveDot />
                 {liveCount ? `${liveCount} live` : `${counts.upcoming} upcoming`}
               </span>
               <span
-                className="inline-flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.08em] text-panel-muted"
+                className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.06em] text-panel-muted"
                 suppressHydrationWarning
               >
                 <span
@@ -338,7 +338,7 @@ export function HomeFeed({
                 onClick={() => void refresh(false)}
                 disabled={refreshing}
                 aria-label="Refresh matches"
-                className="grid h-8 w-8 place-items-center border border-panel-ink/30 text-panel-ink/70 transition-colors duration-150 hover:border-panel-ink hover:text-panel-ink disabled:opacity-50"
+                className="ml-auto grid h-10 w-10 place-items-center border border-panel-ink/30 text-panel-ink/80 transition-colors duration-150 hover:border-panel-ink hover:text-panel-ink disabled:opacity-50 sm:ml-0"
               >
                 <RefreshCw
                   className={cn(
@@ -350,11 +350,7 @@ export function HomeFeed({
             </div>
           </div>
 
-          <div className="border-t border-panel-ink/20 px-4 py-4 xl:border-l xl:border-t-0 sm:px-5 sm:py-5">
-            <div className="mb-2.5 flex items-center justify-between font-mono text-[8px] font-medium uppercase tracking-[0.12em] text-panel-muted">
-              <span>The live board</span>
-              <span>Scorecard / 01</span>
-            </div>
+          <div className="border-t border-panel-ink/20 px-4 py-4 sm:px-5 sm:py-5 xl:border-l xl:border-t-0">
             {featured ? (
               <FeaturedMatch match={featured} />
             ) : (
@@ -388,7 +384,7 @@ export function HomeFeed({
                   data-active={active}
                   data-live={item.key === "live"}
                   onClick={() => setTab(item.key)}
-                  className="segmented-item w-full justify-between px-1.5 text-[10px] sm:justify-center sm:px-2.5 sm:text-[11px]"
+                  className="segmented-item h-auto w-full flex-col-reverse gap-0.5 px-1 py-2 text-[11px] sm:h-10 sm:flex-row sm:gap-2 sm:px-3 sm:py-0 sm:text-xs"
                 >
                   <span className="inline-flex items-center gap-1.5">
                     {item.key === "live" ? (
@@ -406,7 +402,7 @@ export function HomeFeed({
 
           <div className="hidden items-center gap-2 xl:ml-auto xl:flex">
             <span
-              className="text-[9px] font-bold uppercase tracking-[0.12em] text-faint"
+              className="text-[10px] font-bold uppercase tracking-[0.12em] text-faint"
               suppressHydrationWarning
             >
               {stale ? "Offline · showing last update" : "Live feed connected"}
@@ -436,7 +432,7 @@ export function HomeFeed({
                   className="chip-filter"
                 >
                   {item}
-                  <span className="font-mono text-[9px] font-medium tabular-nums opacity-60">
+                  <span className="font-mono text-[10px] font-medium tabular-nums opacity-60">
                     {count}
                   </span>
                 </button>
@@ -451,7 +447,7 @@ export function HomeFeed({
               onChange={(event) =>
                 setCategory(event.target.value as MatchCategory)
               }
-              className="h-8 max-w-[154px] appearance-none truncate rounded-md border border-line bg-surface pl-3 pr-8 text-[11px] font-bold text-ink"
+              className="h-10 max-w-[170px] appearance-none truncate rounded-md border border-line bg-surface pl-3 pr-8 text-xs font-bold text-ink"
             >
               {CATEGORIES.map((item) => (
                 <option key={item} value={item}>
@@ -489,7 +485,7 @@ export function HomeFeed({
             />
             Following
             {favorites.hasFavorites ? (
-              <span className="font-mono text-[9px] font-medium opacity-60">
+              <span className="font-mono text-[10px] font-medium opacity-60">
                 {favorites.teams.length + favorites.series.length}
               </span>
             ) : null}
@@ -521,51 +517,46 @@ export function HomeFeed({
           emptyState()
         ) : (
           <div className="stagger space-y-8">
-            {groups.map((group, groupIndex) => (
+            {groups.map((group) => (
               <section key={group.key} aria-label={group.name}>
-                <div className="flex items-end gap-3 border-b border-line-strong pb-2.5">
-                  <span className="mono pb-0.5 text-[10px] font-medium text-faint">
-                    {String(groupIndex + 1).padStart(2, "0")}
-                  </span>
+                <div className="flex items-start gap-3 border-b border-line-strong pb-3">
                   <div className="min-w-0 flex-1">
                     {group.seriesId ? (
                       <Link
                         href={`/series/${group.seriesId}`}
-                        title={group.name}
-                        className="display block truncate text-[21px] font-bold leading-tight tracking-[-0.025em] transition-colors hover:text-accent sm:text-[24px]"
+                        className="display block text-[19px] font-bold leading-snug tracking-[-0.02em] [text-wrap:balance] transition-colors hover:text-accent sm:text-[22px]"
                       >
                         {group.name}
                       </Link>
                     ) : (
-                      <span
-                        title={group.name}
-                        className="display block truncate text-[21px] font-bold leading-tight tracking-[-0.025em] sm:text-[24px]"
-                      >
+                      <span className="display block text-[19px] font-bold leading-snug tracking-[-0.02em] [text-wrap:balance] sm:text-[22px]">
                         {group.name}
                       </span>
                     )}
-                    <p className="mt-1 font-mono text-[9px] font-medium uppercase tracking-[0.08em] text-faint">
-                      {group.matches.length}{" "}
-                      {group.matches.length === 1 ? "match" : "matches"}
+                    <p className="mt-1.5 flex items-center gap-2.5 font-mono text-[11px] font-medium uppercase tracking-[0.06em] text-faint">
+                      <span>
+                        {group.matches.length}{" "}
+                        {group.matches.length === 1 ? "match" : "matches"}
+                      </span>
+                      {group.live > 0 ? (
+                        <span className="inline-flex items-center gap-1.5 text-live">
+                          <LiveDot />
+                          {group.live} live
+                        </span>
+                      ) : null}
                     </p>
                   </div>
-                  {group.live > 0 ? (
-                    <span className="inline-flex h-5 shrink-0 items-center gap-1.5 text-[9px] font-bold uppercase tracking-[0.1em] text-live">
-                      <LiveDot />
-                      {group.live} live
-                    </span>
-                  ) : null}
                   {group.seriesId ? (
                     <Link
                       href={`/series/${group.seriesId}`}
                       aria-label={`View ${group.name}`}
-                      className="grid h-7 w-7 shrink-0 place-items-center rounded border border-line bg-surface text-faint transition-colors duration-150 hover:border-accent hover:text-accent"
+                      className="grid h-10 w-10 shrink-0 place-items-center rounded border border-line bg-surface text-faint transition-colors duration-150 hover:border-accent hover:text-accent"
                     >
-                      <ArrowUpRight className="h-3.5 w-3.5" />
+                      <ArrowUpRight className="h-4 w-4" />
                     </Link>
                   ) : null}
                 </div>
-                <div className="mt-0 grid">
+                <div className="grid grid-cols-[minmax(0,1fr)]">
                   {group.matches.map((match) => (
                     <MatchCard key={match.id} match={match} />
                   ))}

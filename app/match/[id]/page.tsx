@@ -1,14 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ChevronRight } from "lucide-react";
 import { getMatchDetail } from "@/lib/data/match";
 import { loadPage } from "@/lib/page-data";
 import { matchFormat, matchShortTitle } from "@/lib/match-display";
 import { Breadcrumbs } from "@/components/page-header";
 import { FollowTeamIcon } from "@/components/follow-buttons";
 import { ShareButton } from "@/components/share-button";
-import { FormatPill, StatePill } from "@/components/ui/pills";
 import { MatchHero } from "@/components/match/match-hero";
 import { LivePanel } from "@/components/match/live-panel";
 import { ScorecardView } from "@/components/match/scorecard-view";
@@ -70,7 +68,7 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
     : fallback;
 
   return (
-    <div className="container-page py-5 sm:py-6">
+    <div className="container-page py-4 sm:py-6">
       <Breadcrumbs
         items={[
           { label: "Matches", href: "/" },
@@ -81,31 +79,23 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
         ]}
       />
 
-      <div className="mt-4 flex flex-wrap items-center gap-2">
-        <FormatPill format={matchFormat(summary)} />
-        <StatePill state={summary.state} />
-        {detail.series.id ? (
-          <Link
-            href={`/series/${detail.series.id}`}
-            className="inline-flex min-w-0 items-center gap-1 text-[11px] font-semibold text-faint transition-colors hover:text-accent"
-          >
-            <span className="truncate">{detail.series.name}</span>
-            <ChevronRight className="h-3 w-3 shrink-0" />
-          </Link>
-        ) : null}
-        <div className="ml-auto flex items-center gap-2">
-          <FollowTeamIcon team={summary.teams[0]} />
-          <FollowTeamIcon team={summary.teams[1]} />
-          <ShareButton title={`${matchShortTitle(summary)} · Chauka`} text={summary.status} />
-        </div>
-      </div>
-
       <MatchHero detail={detail} />
+
+      <div className="mt-3 flex flex-wrap items-center gap-2">
+        <span className="mr-1 text-xs font-semibold text-faint">Follow</span>
+        <FollowTeamIcon team={summary.teams[0]} showLabel />
+        <FollowTeamIcon team={summary.teams[1]} showLabel />
+        <ShareButton
+          title={`${matchShortTitle(summary)} · Chauka`}
+          text={summary.status}
+          className="ml-auto"
+        />
+      </div>
 
       <LivePanel detail={detail} />
 
-      <div className="sticky top-16 z-20 mt-5 border-b border-line-strong bg-bg/95 backdrop-blur-sm">
-        <div className="flex flex-wrap items-center gap-x-1" role="tablist" aria-label="Match sections">
+      <div className="sticky top-[var(--header-h)] z-20 mt-5 border-b border-line-strong bg-bg/95 backdrop-blur-sm">
+        <div className="flex items-center" role="tablist" aria-label="Match sections">
           {TABS.map((item) => {
             const active = tab === item.key;
             return (
@@ -115,7 +105,7 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
                 role="tab"
                 aria-selected={active}
                 className={cn(
-                  "flex h-10 items-center border-b-2 px-3 text-[10px] font-bold uppercase tracking-[0.07em] transition-colors sm:h-11 sm:px-4 sm:text-[11px] sm:tracking-[0.08em]",
+                  "flex h-12 flex-1 items-center justify-center border-b-2 px-3 text-xs font-bold transition-colors sm:h-12 sm:flex-none sm:px-5 sm:text-[13px]",
                   active
                     ? "border-accent text-accent"
                     : "border-transparent text-muted hover:text-ink"

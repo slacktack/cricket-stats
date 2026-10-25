@@ -48,7 +48,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           />
         </div>
         <aside className="hidden border-l border-line pl-7 lg:block">
-          <div className="sticky top-[84px] space-y-4 pb-8 pt-7">
+          <div className="sticky top-[calc(var(--header-h)+1.25rem)] space-y-4 pb-8 pt-7">
             <RankingsRail entries={rankings} />
             <SeriesRail groups={groups} />
           </div>

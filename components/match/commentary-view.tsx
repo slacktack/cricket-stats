@@ -30,8 +30,8 @@ export function CommentaryView({ detail }: { detail: MatchDetail }) {
   return (
     <div className="mt-4 grid gap-4 lg:grid-cols-[minmax(0,1fr)_300px]">
       <div className="space-y-3">
-        {commentary.overs.map((over) => (
-          <section key={over.over} className="card overflow-hidden">
+        {commentary.overs.map((over, overIndex) => (
+          <section key={`${over.over}-${overIndex}`} className="card overflow-hidden">
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line bg-surface2/60 px-4 py-2.5">
               <h2 className="text-sm font-bold">Over {over.over}</h2>
               <div className="flex items-center gap-3 text-xs text-muted">
@@ -40,15 +40,15 @@ export function CommentaryView({ detail }: { detail: MatchDetail }) {
               </div>
             </div>
             <div className="divide-y divide-line/70">
-              {over.balls.map((ball) => (
-                <div key={ball.id} className="flex gap-3 px-4 py-3">
-                  <span className={`mt-0.5 grid h-7 min-w-7 shrink-0 place-items-center rounded-md px-1 text-[11px] font-bold ${badgeTone(ball)}`}>
+              {over.balls.map((ball, ballIndex) => (
+                <div key={`${ball.id}-${ballIndex}`} className="flex gap-3 px-4 py-3">
+                  <span className={`mt-0.5 grid h-8 min-w-8 shrink-0 place-items-center rounded-md px-1 text-xs font-bold ${badgeTone(ball)}`}>
                     {ball.badge ?? ball.ballMetric ?? "•"}
                   </span>
                   <div className="min-w-0">
-                    <p className="text-[13px] leading-relaxed text-ink">{ball.text}</p>
+                    <p className="text-sm leading-relaxed text-ink">{ball.text}</p>
                     {ball.event.length > 0 ? (
-                      <p className="mt-1 text-[11px] text-faint">{ball.event.join(" · ")}</p>
+                      <p className="mt-1 text-xs text-faint">{ball.event.join(" · ")}</p>
                     ) : null}
                   </div>
                 </div>
@@ -64,8 +64,8 @@ export function CommentaryView({ detail }: { detail: MatchDetail }) {
           <h2 className="text-sm font-bold">Match talk</h2>
           {commentary.talk.length > 0 ? (
             <div className="mt-3 space-y-3">
-              {commentary.talk.map((item) => (
-                <p key={item.id} className="rounded bg-surface2/60 px-3 py-2 text-xs leading-relaxed text-muted">
+              {commentary.talk.map((item, itemIndex) => (
+                <p key={`${item.id}-${itemIndex}`} className="rounded bg-surface2/60 px-3 py-2 text-xs leading-relaxed text-muted">
                   {item.text}
                 </p>
               ))}

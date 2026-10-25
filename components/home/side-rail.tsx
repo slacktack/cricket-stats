@@ -34,7 +34,7 @@ export function RankingsRail({
       <div className="divide-y divide-line/70">
         {entries.slice(0, 5).map((entry, index) => (
           <Link
-            key={entry.id}
+            key={`${entry.id}-${index}`}
             href={`/players/${entry.id}`}
             className="group flex items-center gap-2.5 px-3 py-2.5 transition-colors hover:bg-surface2/60"
           >
@@ -47,18 +47,18 @@ export function RankingsRail({
                 name: entry.name,
                 faceImageId: entry.faceImageId,
               }}
-              size={56}
+              size={40}
               className="border-0"
             />
             <div className="min-w-0 flex-1">
-              <p className="truncate text-[12px] font-bold leading-tight transition-colors group-hover:text-accent">
+              <p className="truncate text-[13px] font-bold leading-tight transition-colors group-hover:text-accent">
                 {entry.name}
               </p>
-              <p className="mt-0.5 truncate text-[9px] font-medium text-faint">
+              <p className="mt-0.5 truncate text-[11px] font-medium text-faint">
                 {entry.country ?? "—"}
               </p>
             </div>
-            <span className="mono shrink-0 text-[12px] font-medium text-ink">
+            <span className="mono shrink-0 text-[13px] font-bold text-ink">
               {entry.rating}
             </span>
           </Link>
@@ -66,12 +66,12 @@ export function RankingsRail({
       </div>
 
       <div className="flex items-center justify-between border-t border-line px-4 py-2.5">
-        <span className="font-mono text-[9px] uppercase tracking-[0.08em] text-faint">
+        <span className="font-mono text-[11px] uppercase tracking-[0.06em] text-faint">
           ODI · Batting
         </span>
         <Link
           href="/rankings"
-          className="inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-[0.1em] text-muted transition-colors hover:text-accent"
+          className="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-[0.08em] text-muted transition-colors hover:text-accent"
         >
           Full table
           <ArrowUpRight className="h-3 w-3" />
@@ -111,20 +111,17 @@ export function SeriesRail({ groups }: { groups: SeriesGroup[] }) {
       </div>
 
       <div className="divide-y divide-panel-ink/15">
-        {focus.map((group, index) => (
+        {focus.map((group) => (
           <Link
             key={group.key}
             href={`/series/${group.seriesId}`}
             className="group flex items-start gap-3 px-4 py-3 transition-colors hover:bg-panel-ink/10"
           >
-            <span className="mono mt-0.5 w-5 shrink-0 text-[10px] font-medium text-panel-ink/50">
-              {String(index + 1).padStart(2, "0")}
-            </span>
             <div className="min-w-0 flex-1">
-              <p className="line-clamp-2 text-[12px] font-bold leading-snug text-panel-ink">
+              <p className="line-clamp-2 text-[13px] font-bold leading-snug text-panel-ink">
                 {group.name}
               </p>
-              <p className="mt-1 flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.05em] text-panel-muted">
+              <p className="mt-1 flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.04em] text-panel-muted">
                 <span>
                   {group.matches.length}{" "}
                   {group.matches.length === 1 ? "match" : "matches"}

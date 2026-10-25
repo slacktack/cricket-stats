@@ -25,27 +25,27 @@ export function SquadsView({ detail }: { detail: MatchDetail }) {
             <Link href={`/teams/${squad.team.id}`} className="min-w-0 flex-1 truncate text-sm font-bold transition-colors hover:text-accent">
               {squad.team.name}
             </Link>
-            <span className="text-[11px] text-faint">{squad.players.length} players</span>
+            <span className="text-xs text-faint">{squad.players.length} players</span>
           </div>
           <div className="divide-y divide-line/70">
-            {squad.players.map((player) => (
-              <div key={player.id} className="flex items-center gap-3 px-4 py-2.5">
-                <PlayerAvatar player={{ id: player.id, name: player.name, faceImageId: player.faceImageId }} size={54} />
+            {squad.players.map((player, index) => (
+              <div key={`${player.id}-${index}`} className="flex items-center gap-3 px-4 py-2.5">
+                <PlayerAvatar player={{ id: player.id, name: player.name, faceImageId: player.faceImageId }} size={40} />
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-1.5">
                     {player.id ? (
-                      <Link href={`/players/${player.id}`} className="truncate text-[13px] font-semibold transition-colors hover:text-accent">
+                      <Link href={`/players/${player.id}`} className="truncate text-sm font-semibold transition-colors hover:text-accent">
                         {player.name}
                       </Link>
                     ) : (
-                      <span className="truncate text-[13px] font-semibold">{player.name}</span>
+                      <span className="truncate text-sm font-semibold">{player.name}</span>
                     )}
-                    {player.captain ? <span className="rounded bg-accent-soft px-1 text-[9px] font-bold text-accent">C</span> : null}
-                    {player.keeper ? <span className="rounded bg-surface2 px-1 text-[9px] font-bold text-muted">WK</span> : null}
-                    {player.substitute ? <span className="rounded bg-surface2 px-1 text-[9px] text-faint">SUB</span> : null}
-                    {player.isOverseas ? <span className="rounded bg-warn/10 px-1 text-[9px] text-warn">OS</span> : null}
+                    {player.captain ? <span className="rounded bg-accent-soft px-1 text-[11px] font-bold text-accent">C</span> : null}
+                    {player.keeper ? <span className="rounded bg-surface2 px-1 text-[10px] font-bold text-muted">WK</span> : null}
+                    {player.substitute ? <span className="rounded bg-surface2 px-1 text-[10px] text-faint">SUB</span> : null}
+                    {player.isOverseas ? <span className="rounded bg-warn/10 px-1 text-[10px] text-warn">OS</span> : null}
                   </div>
-                  <p className="truncate text-[11px] text-faint">
+                  <p className="truncate text-xs text-faint">
                     {[player.role, player.battingStyle, player.bowlingStyle].filter(Boolean).join(" · ") || "Player"}
                   </p>
                 </div>

@@ -1,9 +1,9 @@
 import type { Metadata, Viewport } from "next";
-import { DM_Mono, Manrope, Montserrat } from "next/font/google";
+import { Manrope, Montserrat, Spline_Sans_Mono } from "next/font/google";
 import "./globals.css";
 import { FavoritesProvider } from "@/components/providers/favorites-provider";
 import { ToastProvider } from "@/components/providers/toast-provider";
-import { SiteFooter, SiteHeader } from "@/components/site-chrome";
+import { SiteFooter, SiteHeader, SiteNav } from "@/components/site-chrome";
 
 const sans = Manrope({
   subsets: ["latin"],
@@ -18,7 +18,7 @@ const display = Montserrat({
   display: "swap",
 });
 
-const mono = DM_Mono({
+const mono = Spline_Sans_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
   weight: ["400", "500"],
@@ -125,6 +125,7 @@ export default function RootLayout({
               {children}
             </main>
             <SiteFooter />
+            <SiteNav />
           </FavoritesProvider>
         </ToastProvider>
       </body>

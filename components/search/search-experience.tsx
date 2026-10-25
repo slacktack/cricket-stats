@@ -1,6 +1,6 @@
 "use client";
 
-import { useDeferredValue, useMemo, useState } from "react";
+import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowUpRight, Search, X } from "lucide-react";
 import type { SearchIndex } from "@/lib/types";
@@ -27,9 +27,7 @@ function SectionTitle({ children, count }: { children: React.ReactNode; count?: 
       <span className="mb-1 h-2 w-2 rounded-full bg-accent" />
       <h2 className="display text-[22px] font-bold leading-none tracking-[-0.025em]">{children}</h2>
       {count !== undefined ? (
-        <span className="mono ml-auto text-[9px] font-medium uppercase tracking-[0.06em] text-faint">
-          {String(count).padStart(2, "0")}
-        </span>
+        <span className="mono ml-auto text-xs font-semibold text-faint">{count}</span>
       ) : null}
     </div>
   );
@@ -43,6 +41,11 @@ export function SearchExperience({
   initialQuery: string;
 }) {
   const [query, setQuery] = useState(initialQuery);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (window.matchMedia("(pointer: fine)").matches) inputRef.current?.focus();
+  }, []);
   const [filter, setFilter] = useState<Filter>("all");
   const deferredQuery = useDeferredValue(query);
   const results = useMemo(() => querySearchIndex(index, deferredQuery, 12), [index, deferredQuery]);
@@ -113,21 +116,21 @@ export function SearchExperience({
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search players, teams, matches or series"
-            autoFocus
+            ref={inputRef}
             aria-label="Search players, teams, matches and series"
-            className="h-12 min-w-0 flex-1 bg-transparent px-3.5 text-[15px] font-semibold text-ink outline-none placeholder:font-medium placeholder:text-faint"
+            className="h-12 min-w-0 flex-1 bg-transparent px-3.5 text-base font-semibold text-ink outline-none placeholder:font-medium placeholder:text-faint"
           />
           {query ? (
             <button
               type="button"
               onClick={() => setQuery("")}
               aria-label="Clear search"
-              className="mr-1 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-surface2 text-faint transition-colors hover:text-ink"
+              className="mr-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-full bg-surface2 text-faint transition-colors hover:text-ink"
             >
               <X className="h-4 w-4" />
             </button>
           ) : (
-            <span className="mr-2 hidden shrink-0 rounded-lg border border-line bg-surface2 px-2 py-1 text-[9px] font-extrabold uppercase tracking-[0.08em] text-faint sm:inline">
+            <span className="mr-2 hidden shrink-0 rounded-lg border border-line bg-surface2 px-2 py-1 text-[10px] font-extrabold uppercase tracking-[0.08em] text-faint sm:inline">
               Enter
             </span>
           )}
@@ -149,7 +152,7 @@ export function SearchExperience({
               >
                 {item.label}
                 {counts[item.key] > 0 ? (
-                  <span className="text-[9px] font-extrabold tabular-nums opacity-65">
+                  <span className="text-[11px] font-bold tabular-nums opacity-65">
                     {counts[item.key]}
                   </span>
                 ) : null}
@@ -165,7 +168,7 @@ export function SearchExperience({
                 <div className="flex flex-col items-center gap-5">
                   {suggestedTeams.length > 0 ? (
                     <div className="space-y-2">
-                      <p className="font-mono text-[9px] uppercase tracking-[0.1em] text-faint">
+                      <p className="text-xs font-semibold text-faint">
                         Teams in this search
                       </p>
                       <div className="flex flex-wrap justify-center gap-1.5">
@@ -173,7 +176,7 @@ export function SearchExperience({
                           <Link
                             key={team.id}
                             href={`/teams/${team.id}`}
-                            className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface2 px-2.5 py-1 text-[11px] font-semibold transition-colors hover:border-accent/40 hover:text-accent"
+                            className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-line bg-surface2 px-3 py-1.5 text-xs font-semibold transition-colors hover:border-accent/40 hover:text-accent"
                           >
                             <TeamBadge team={team} size={18} />
                             {team.name}
@@ -197,10 +200,10 @@ export function SearchExperience({
                   <div className="stagger mt-2 grid gap-2 sm:grid-cols-2">
                     {results.players.map((player) => (
                       <Link key={player.id} href={`/players/${player.id}`} className="card card-hover flex items-center gap-3 p-3">
-                        <PlayerAvatar player={{ id: player.id, name: player.name, faceImageId: player.imageId }} size={60} className="ring-2 ring-surface" />
+                        <PlayerAvatar player={{ id: player.id, name: player.name, faceImageId: player.imageId }} size={44} className="ring-2 ring-surface" />
                         <div className="min-w-0">
                           <p className="truncate text-sm font-semibold">{player.name}</p>
-                          <p className="truncate text-[11px] text-faint">{player.country ?? "Player"}</p>
+                          <p className="truncate text-xs text-faint">{player.country ?? "Player"}</p>
                         </div>
                       </Link>
                     ))}
@@ -214,10 +217,10 @@ export function SearchExperience({
                   <div className="stagger mt-2 grid gap-2 sm:grid-cols-2">
                     {results.teams.map((team) => (
                       <Link key={team.id} href={`/teams/${team.id}`} className="card card-hover flex items-center gap-3 p-3">
-                        <TeamBadge team={team} size={32} className="rounded-lg ring-2 ring-surface" />
+                        <TeamBadge team={team} size={30} className="rounded-lg ring-2 ring-surface" />
                         <div className="min-w-0">
                           <p className="truncate text-sm font-semibold">{team.name}</p>
-                          <p className="text-[11px] text-faint">{team.shortName}</p>
+                          <p className="text-xs text-faint">{team.shortName}</p>
                         </div>
                       </Link>
                     ))}
@@ -244,7 +247,7 @@ export function SearchExperience({
                       <Link key={series.id} href={`/series/${series.id}`} className="card card-hover flex items-center gap-3 p-3">
                         <div className="min-w-0 flex-1">
                           <p className="line-clamp-2 text-sm font-semibold">{series.name}</p>
-                          <p className="mt-1 text-[11px] text-faint">
+                          <p className="mt-1 text-xs text-faint">
                             {series.matches} matches{series.live ? ` · ${series.live} live` : ""}
                           </p>
                         </div>
@@ -264,10 +267,10 @@ export function SearchExperience({
             <div className="stagger mt-2 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
               {index.trending.map((player) => (
                 <Link key={player.id} href={`/players/${player.id}`} className="card card-hover flex items-center gap-3 p-3">
-                  <PlayerAvatar player={{ id: player.id, name: player.name, faceImageId: player.imageId }} size={52} className="ring-2 ring-surface" />
+                  <PlayerAvatar player={{ id: player.id, name: player.name, faceImageId: player.imageId }} size={44} className="ring-2 ring-surface" />
                   <div className="min-w-0">
                     <p className="truncate text-sm font-semibold">{player.name}</p>
-                    <p className="truncate text-[11px] text-faint">{player.country ?? "Player"}</p>
+                    <p className="truncate text-xs text-faint">{player.country ?? "Player"}</p>
                   </div>
                 </Link>
               ))}
@@ -285,7 +288,7 @@ export function SearchExperience({
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center justify-between rounded-lg border border-line px-3.5 py-3 text-xs font-bold text-ink transition-colors duration-150 hover:border-line-strong ${item.className}`}
+                  className={`flex items-center justify-between rounded-lg border border-line px-4 py-3.5 text-[13px] font-bold text-ink transition-colors duration-150 hover:border-line-strong ${item.className}`}
                 >
                   {item.label}
                   <ArrowUpRight className="h-3.5 w-3.5 text-faint" />
