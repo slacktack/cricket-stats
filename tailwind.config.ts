@@ -21,6 +21,9 @@ module.exports = {
         "accent-ink": "rgb(var(--accent-ink) / <alpha-value>)",
         "accent-soft": "rgb(var(--accent-soft) / <alpha-value>)",
         live: "rgb(var(--live) / <alpha-value>)",
+        wkt: "rgb(var(--wkt) / <alpha-value>)",
+        s1: "rgb(var(--s1) / <alpha-value>)",
+        s2: "rgb(var(--s2) / <alpha-value>)",
         win: "rgb(var(--win) / <alpha-value>)",
         warn: "rgb(var(--warn) / <alpha-value>)",
         header: "rgb(var(--header) / <alpha-value>)",
@@ -40,16 +43,21 @@ module.exports = {
       fontFamily: {
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],
         display: ["var(--font-display)", "system-ui", "sans-serif"],
-        mono: ["var(--font-mono)", "ui-monospace", "monospace"],
+        mono: ["var(--font-sans)", "system-ui", "sans-serif"],
       },
       borderRadius: {
-        xl: "0.5rem",
-        "2xl": "0.625rem",
+        DEFAULT: "0.375rem",
+        md: "0.5rem",
+        lg: "0.625rem",
+        xl: "0.875rem",
+        "2xl": "1.125rem",
+        "3xl": "1.375rem",
       },
       boxShadow: {
-        card: "0 1px 2px rgba(12, 20, 35, 0.04), 0 16px 36px -34px rgba(12, 20, 35, 0.4)",
-        lift: "0 18px 46px -30px rgba(12, 20, 35, 0.4)",
-        glow: "0 0 0 3px rgb(var(--accent) / 0.14)",
+        card: "0 1px 0 rgb(255 255 255 / 0.04) inset, 0 12px 32px -18px rgb(0 0 0 / 0.45)",
+        lift: "0 24px 60px -24px rgb(0 0 0 / 0.55)",
+        glow: "0 0 0 1px rgb(var(--accent) / 0.35), 0 0 32px -6px rgb(var(--accent) / 0.45)",
+        "glow-sm": "0 0 18px -4px rgb(var(--accent) / 0.6)",
       },
       keyframes: {
         "pulse-dot": {
@@ -86,8 +94,8 @@ module.exports = {
           "50%": { backgroundPosition: "100% 50%" },
         },
         "live-ring": {
-          "0%": { boxShadow: "0 0 0 0 rgb(var(--live) / 0.45)" },
-          "70%": { boxShadow: "0 0 0 7px rgb(var(--live) / 0)" },
+          "0%": { boxShadow: "0 0 0 0 rgb(var(--live) / 0.6)" },
+          "70%": { boxShadow: "0 0 0 6px rgb(var(--live) / 0)" },
           "100%": { boxShadow: "0 0 0 0 rgb(var(--live) / 0)" },
         },
       },

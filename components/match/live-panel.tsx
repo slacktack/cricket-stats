@@ -56,8 +56,8 @@ function ChaseBar({
 }
 
 function ballTone(ball: string): string {
-  if (ball === "W") return "border border-live bg-live text-white";
-  if (ball === "4" || ball === "6") return "border border-win/25 bg-win/12 text-win";
+  if (ball === "W") return "border border-wkt bg-wkt text-white";
+  if (ball === "4" || ball === "6") return "border border-win/25 bg-win/15 text-win";
   if (ball === "wd" || ball === "nb") return "border border-gold/30 bg-gold/12 text-warn";
   return "border border-line bg-surface2 text-muted";
 }

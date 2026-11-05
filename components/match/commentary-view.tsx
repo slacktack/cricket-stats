@@ -3,7 +3,7 @@ import { timeAgo } from "@/lib/utils";
 import { EmptyState } from "@/components/ui/empty-state";
 
 function badgeTone(ball: CommentaryBall): string {
-  if (ball.badge === "W") return "bg-live text-white";
+  if (ball.badge === "W") return "bg-wkt text-white";
   if (ball.badge === "4" || ball.badge === "6") return "bg-accent text-accent-ink";
   if (ball.badge === "wd" || ball.badge === "nb") return "bg-warn/15 text-warn";
   return "bg-surface2 text-muted";

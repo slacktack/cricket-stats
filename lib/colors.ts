@@ -47,16 +47,24 @@ const TEAM_COLORS: Record<string, string> = {
 };
 
 const FALLBACK_COLORS = [
-  "#3B82F6",
-  "#F59E0B",
-  "#10B981",
-  "#EF4444",
-  "#8B5CF6",
-  "#EC4899",
-  "#14B8A6",
-  "#F97316",
-  "#6366F1",
-  "#84CC16",
+  "#2563EB",
+  "#D97706",
+  "#059669",
+  "#DC2626",
+  "#7C3AED",
+  "#DB2777",
+  "#0D9488",
+  "#EA580C",
+  "#4F46E5",
+  "#65A30D",
+  "#0891B2",
+  "#C026D3",
+  "#B45309",
+  "#0F766E",
+  "#9333EA",
+  "#BE123C",
+  "#1D4ED8",
+  "#15803D",
 ];
 
 function hash(value: string): number {
@@ -104,4 +112,38 @@ export function isPlaceholderTeam(name?: string, imageId?: number): boolean {
     value === "tba" ||
     imageId === 172198
   );
+}
+
+const NATIONAL_CODES = new Set([
+  "IND", "AUS", "ENG", "PAK", "SA", "NZ", "SL", "WI", "BAN", "AFG", "ZIM",
+  "IRE", "SCO", "NED", "UAE", "NAM", "USA", "OMA", "OMAN", "NEP", "NPL", "CAN",
+  "PNG", "HK", "KEN", "BER", "UGA", "JER", "ITA", "GER", "MLY", "THA", "QAT",
+  "KUW", "SIN", "BHR", "TAN", "NGA", "RSA", "MAL",
+]);
+
+export function nationalBase(shortName?: string): string | undefined {
+  const code = (shortName || "").toUpperCase();
+  for (const suffix of ["U19W", "U19", "W", "A", ""]) {
+    if (suffix && !code.endsWith(suffix)) continue;
+    const base = suffix ? code.slice(0, -suffix.length) : code;
+    if (NATIONAL_CODES.has(base)) return base;
+  }
+  return undefined;
+}
+
+// Cricbuzz serves plain-text placeholder images for most domestic sides.
+export function hasRealLogo(team: { shortName?: string; imageId?: number }): boolean {
+  const id = team.imageId ?? 0;
+  if (id < 200_000 || id === 172198) return false;
+  if (nationalBase(team.shortName)) return true;
+  return id >= 300_000 && !(id >= 700_000 && id < 780_000);
+}
+
+export function readableOn(hex: string): string {
+  const clean = hex.replace("#", "");
+  const int = Number.parseInt(clean, 16);
+  const r = (int >> 16) & 255;
+  const g = (int >> 8) & 255;
+  const b = int & 255;
+  return 0.299 * r + 0.587 * g + 0.114 * b > 165 ? "#111827" : "#FFFFFF";
 }

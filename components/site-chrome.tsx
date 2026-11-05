@@ -1,30 +1,17 @@
 import Link from "next/link";
-import { ArrowUpRight, Search } from "lucide-react";
-import { Logo } from "@/components/logo";
-import { BottomNav, DesktopNav } from "@/components/nav";
+import { ArrowUpRight } from "lucide-react";
+import { CommandPalette, SearchButton } from "@/components/search/command-palette";
+import { BallMark, Logo } from "@/components/logo";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { LiveDot } from "@/components/ui/pills";
+import { BottomNav, SideNav } from "@/components/nav";
 
 export function SiteHeader() {
   return (
-    <header className="site-header sticky top-0 z-50">
-      <div className="container-page flex h-[var(--header-h)] items-stretch gap-4 sm:gap-8">
-        <div className="flex items-center text-header-ink">
-          <Logo variant="panel" />
-        </div>
-        <DesktopNav />
-        <div className="ml-auto flex items-center gap-2.5">
-          <span className="hidden h-7 items-center gap-2 border-l border-header-ink/25 pl-4 text-[10px] font-bold uppercase tracking-[0.13em] text-header-muted md:flex">
-            <LiveDot />
-            Live scores
-          </span>
-          <Link
-            href="/search"
-            aria-label="Search"
-            className="grid h-10 w-10 place-items-center rounded-md border border-header-ink/25 text-header-ink transition-colors duration-150 hover:border-header-ink hover:bg-header-ink/10 lg:hidden"
-          >
-            <Search className="h-[18px] w-[18px]" />
-          </Link>
+    <header className="site-header sticky top-0 z-50 lg:hidden">
+      <div className="container-page flex h-[var(--header-h)] items-center gap-3">
+        <Logo variant="panel" />
+        <div className="ml-auto flex items-center gap-2">
+          <SearchButton variant="icon" />
           <ThemeToggle />
         </div>
       </div>
@@ -32,13 +19,41 @@ export function SiteHeader() {
   );
 }
 
+export function SiteSidebar() {
+  return (
+    <aside className="fixed inset-y-0 left-0 z-50 hidden w-[76px] flex-col items-center bg-gradient-to-b from-[#2563eb] to-[#1e3a8a] py-5 lg:flex">
+      <Link
+        href="/"
+        aria-label="Chauka home"
+        className="grid h-11 w-11 place-items-center rounded-full bg-white text-[#1d4ed8]"
+      >
+        <BallMark className="h-6 w-6" />
+      </Link>
+      <div className="mt-8">
+        <SearchButton variant="rail" />
+      </div>
+      <div className="mt-3">
+        <SideNav />
+      </div>
+      <div className="mt-auto">
+        <ThemeToggle variant="rail" />
+      </div>
+    </aside>
+  );
+}
+
 export function SiteNav() {
-  return <BottomNav />;
+  return (
+    <>
+      <BottomNav />
+      <CommandPalette />
+    </>
+  );
 }
 
 export function SiteFooter() {
   return (
-    <footer className="grain mt-16 border-t-[3px] border-ink bg-panel text-panel-ink">
+    <footer className="mt-16 border-t border-line bg-panel text-panel-ink">
       <div className="container-page py-10">
         <div className="grid gap-10 sm:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
           <div>

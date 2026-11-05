@@ -56,7 +56,7 @@ export default async function TeamPage({ params }: TeamPageProps) {
         eyebrow="Team"
         title={
           <span className="flex items-center gap-3 sm:gap-4">
-            <TeamBadge team={data.team} size={44} />
+            <TeamBadge team={data.team} size={64} />
             <span className="min-w-0">
               <span className="block text-[0.8em] leading-[1.02] [text-wrap:balance]">{data.team.name}</span>
               <span className="mt-1 block text-sm font-medium tracking-normal text-faint">{data.team.shortName}</span>
@@ -85,7 +85,7 @@ export default async function TeamPage({ params }: TeamPageProps) {
               <Link
                 key={series.id}
                 href={`/series/${series.id}`}
-                className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-line bg-surface px-3 py-1.5 text-xs text-muted transition-colors hover:border-accent/40 hover:text-ink"
+                className="inline-flex min-h-9 items-center gap-1.5 rounded-full bg-white/15 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-white/25"
               >
                 {series.live > 0 ? <LiveDot /> : null}
                 <span className="max-w-[260px] truncate">{series.name}</span>
@@ -124,7 +124,7 @@ export default async function TeamPage({ params }: TeamPageProps) {
                   {group.matches.length} {group.matches.length === 1 ? "match" : "matches"}
                 </span>
               </div>
-              <div>
+              <div className="mt-3 grid gap-3 md:grid-cols-2">
                 {group.matches.map((match) => (
                   <MatchCard key={match.id} match={match} />
                 ))}

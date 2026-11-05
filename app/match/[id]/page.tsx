@@ -7,13 +7,15 @@ import { matchFormat, matchShortTitle } from "@/lib/match-display";
 import { Breadcrumbs } from "@/components/page-header";
 import { FollowTeamIcon } from "@/components/follow-buttons";
 import { ShareButton } from "@/components/share-button";
-import { MatchHero } from "@/components/match/match-hero";
+import { MatchBanner } from "@/components/home/match-centre";
+import { GameProgress } from "@/components/match/game-progress";
+import { getMatchOvers } from "@/lib/data/overs";
 import { LivePanel } from "@/components/match/live-panel";
 import { ScorecardView } from "@/components/match/scorecard-view";
 import { CommentaryView } from "@/components/match/commentary-view";
 import { SquadsView } from "@/components/match/squads-view";
 import { MatchInfo } from "@/components/match/match-info";
-import { cn } from "@/lib/utils";
+import { cn, oversLimit } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -56,9 +58,10 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
   const { id } = await params;
   const matchId = parseId(id);
   if (!matchId) notFound();
-  const [detail, query] = await Promise.all([
+  const [detail, query, overs] = await Promise.all([
     loadPage(getMatchDetail(matchId)),
     searchParams,
+    getMatchOvers(matchId).catch(() => null),
   ]);
   const summary = detail.summary;
   const requested = Array.isArray(query.tab) ? query.tab[0] : query.tab;
@@ -79,7 +82,9 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
         ]}
       />
 
-      <MatchHero detail={detail} />
+      <div className="mt-3">
+        <MatchBanner match={summary} detail={detail} showLink={false} />
+      </div>
 
       <div className="mt-3 flex flex-wrap items-center gap-2">
         <span className="mr-1 text-xs font-semibold text-faint">Follow</span>
@@ -94,7 +99,15 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
 
       <LivePanel detail={detail} />
 
-      <div className="sticky top-[var(--header-h)] z-20 mt-5 border-b border-line-strong bg-bg/95 backdrop-blur-sm">
+      {overs && overs.innings.some((item) => item.overs.length > 0) ? (
+        <GameProgress
+          data={overs}
+          oversLimit={oversLimit(summary.formatRaw)}
+          className="mt-5 rounded-2xl border-0"
+        />
+      ) : null}
+
+      <div className="sticky top-[var(--header-h)] z-20 mt-5 border-b border-line bg-bg">
         <div className="flex items-center" role="tablist" aria-label="Match sections">
           {TABS.map((item) => {
             const active = tab === item.key;
@@ -102,6 +115,7 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
               <Link
                 key={item.key}
                 href={`/match/${matchId}?tab=${item.key}`}
+                scroll={false}
                 role="tab"
                 aria-selected={active}
                 className={cn(
@@ -119,7 +133,7 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
       </div>
 
       <div className="pb-8">
-        {tab === "scorecard" ? <ScorecardView detail={detail} /> : null}
+        {tab === "scorecard" ? <ScorecardView detail={detail} overs={overs} /> : null}
         {tab === "commentary" ? <CommentaryView detail={detail} /> : null}
         {tab === "squads" ? <SquadsView detail={detail} /> : null}
         {tab === "info" ? <MatchInfo detail={detail} /> : null}

@@ -158,3 +158,31 @@ export function upstreamErrorResponse(error: unknown): {
     body: { error: "Something went wrong while fetching cricket data." },
   };
 }
+
+export async function fetchCricbuzzJson<T>(
+  path: string,
+  options?: { ttlMs?: number; staleMs?: number }
+): Promise<T> {
+  if (!path.startsWith("/api/")) {
+    throw new CricbuzzError("Invalid upstream path", 400, "BAD_PATH");
+  }
+  return cachedValue(
+    `json:${path}`,
+    options?.ttlMs ?? 10_000,
+    options?.staleMs ?? 5 * 60_000,
+    async () => {
+      const response = await fetch(`${BASE_URL}${path}`, {
+        headers: { ...BASE_HEADERS, accept: "application/json" },
+        cache: "no-store",
+        signal: AbortSignal.timeout(10_000),
+      });
+      if (!response.ok) {
+        throw new CricbuzzError(`Upstream responded with ${response.status}`, 502, "UPSTREAM_ERROR");
+      }
+      if (!(response.headers.get("content-type") || "").includes("json")) {
+        throw new CricbuzzError("Unexpected upstream response", 502, "BAD_CONTENT");
+      }
+      return (await response.json()) as T;
+    }
+  );
+}

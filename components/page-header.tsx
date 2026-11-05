@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { BlueHero } from "@/components/ui/blue-hero";
 
 export function Breadcrumbs({
   items,
@@ -51,36 +52,36 @@ export function PageHeader({
   className?: string;
 }) {
   return (
-    <header className={cn("border-b border-line-strong pb-6 pt-2 sm:pb-7", className)}>
-      <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          {eyebrow ? (
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="h-px w-5 bg-accent" />
-              <div className="flex flex-wrap items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em] text-accent">
+    <BlueHero
+      className={cn(
+        "mt-3 px-6 py-7 sm:px-9 sm:py-8 [&_.text-faint]:text-white/60 [&_.text-muted]:text-white/75",
+        className
+      )}
+    >
+      <header>
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+          <div className="min-w-0">
+            {eyebrow ? (
+              <div className="inline-flex flex-wrap items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-[12px] font-semibold text-white">
                 {eyebrow}
               </div>
+            ) : null}
+            <h1 className="mt-4 font-display text-[30px] font-bold leading-tight tracking-[-0.02em] sm:text-[40px]">
+              {title}
+            </h1>
+            {description ? (
+              <p className="mt-3 max-w-2xl text-[14px] leading-relaxed text-white/75">{description}</p>
+            ) : null}
+            {meta ? <div className="mt-2 text-[13px] text-white/60">{meta}</div> : null}
+          </div>
+          {actions ? (
+            <div className="flex shrink-0 flex-wrap items-center gap-2 pt-1 [&_button]:border-white/30 [&_button]:bg-white/10 [&_button]:text-white">
+              {actions}
             </div>
           ) : null}
-          <h1 className="display mt-3 text-[clamp(2rem,6vw,4.5rem)] leading-[0.96] tracking-[-0.035em]">
-            {title}
-          </h1>
-          {description ? (
-            <p className="mt-3 max-w-2xl text-[13px] font-medium leading-relaxed text-muted sm:text-sm">
-              {description}
-            </p>
-          ) : null}
-          {meta ? (
-            <div className="mt-3 text-[11px] font-medium text-faint">{meta}</div>
-          ) : null}
         </div>
-        {actions ? (
-          <div className="flex shrink-0 flex-wrap items-center gap-2 pt-1">
-            {actions}
-          </div>
-        ) : null}
-      </div>
-      {children ? <div className="mt-5">{children}</div> : null}
-    </header>
+        {children ? <div className="mt-6">{children}</div> : null}
+      </header>
+    </BlueHero>
   );
 }

@@ -44,15 +44,13 @@ export function Logo({
     >
       <span
         className={cn(
-          "grid h-9 w-9 place-items-center rounded",
-          variant === "panel"
-            ? "bg-panel-ink text-panel"
-            : "bg-accent text-accent-ink"
+          "grid h-8 w-8 place-items-center rounded-full bg-accent text-accent-ink transition-transform duration-300 group-hover:rotate-[24deg]",
+          variant === "panel" && "ring-2 ring-panel-ink/10"
         )}
       >
-        <BallMark className="h-[22px] w-[22px]" />
+        <BallMark className="h-5 w-5" />
       </span>
-      <span className="font-display text-[26px] font-bold leading-none tracking-[-0.05em]">
+      <span className="font-display text-[22px] font-bold leading-none tracking-[-0.02em]">
         chauka
       </span>
     </Link>

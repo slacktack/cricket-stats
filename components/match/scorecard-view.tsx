@@ -1,7 +1,9 @@
 import Link from "next/link";
 import type { InningsDetail, MatchDetail } from "@/lib/types";
 import { runSources } from "@/lib/match-stats";
-import { ballsFromOvers, cn, formatOvers } from "@/lib/utils";
+import { cn, formatOvers } from "@/lib/utils";
+import type { InningsOvers, MatchOvers } from "@/lib/data/overs";
+import { BallChip } from "@/components/ui/ball-chip";
 import { EmptyState } from "@/components/ui/empty-state";
 import { TeamBadge } from "@/components/ui/team-badge";
 import { MatchNumbers } from "@/components/match/match-numbers";
@@ -44,7 +46,7 @@ function ordinal(value: number): string {
 
 function SectionBar({ title, aside }: { title: string; aside?: React.ReactNode }) {
   return (
-    <div className="flex items-center justify-between gap-3 border-y border-line bg-sage/40 px-4 py-2.5">
+    <div className="flex items-center justify-between gap-3 border-y border-line bg-surface2/60 px-4 py-2.5">
       <h3 className="text-xs font-bold text-accent">{title}</h3>
       {aside ? <span className="min-w-0 truncate text-xs text-faint">{aside}</span> : null}
     </div>
@@ -55,15 +57,15 @@ function RunSourceBar({ innings }: { innings: InningsDetail }) {
   const sources = runSources(innings);
   if (sources.total === 0) return null;
   const segments = [
-    { key: "running", label: "Running", value: sources.running, note: "", tone: "bg-ink/25" },
-    { key: "fours", label: "Fours", value: sources.fours, note: `${sources.fourCount}×4`, tone: "bg-accent" },
-    { key: "sixes", label: "Sixes", value: sources.sixes, note: `${sources.sixCount}×6`, tone: "bg-gold" },
-    { key: "extras", label: "Extras", value: sources.extras, note: "", tone: "bg-live/70" },
+    { key: "running", label: "Running", value: sources.running, note: "", tone: "bg-[#b8901a]" },
+    { key: "fours", label: "Fours", value: sources.fours, note: `${sources.fourCount}×4`, tone: "bg-[#2f74d0]" },
+    { key: "sixes", label: "Sixes", value: sources.sixes, note: `${sources.sixCount}×6`, tone: "bg-[#16a34a]" },
+    { key: "extras", label: "Extras", value: sources.extras, note: "", tone: "bg-[#7c6bc4]" },
   ];
   return (
     <div className="px-4 py-4">
       <h3 className="text-[13px] font-bold">How the runs came</h3>
-      <div className="mt-3 flex h-3.5 w-full gap-0.5 overflow-hidden rounded-sm" role="img" aria-label="Run sources">
+      <div className="mt-3 flex h-3 w-full gap-0.5 overflow-hidden rounded-full" role="img" aria-label="Run sources">
         {segments
           .filter((segment) => segment.value > 0)
           .map((segment) => (
@@ -97,48 +99,69 @@ function RunSourceBar({ innings }: { innings: InningsDetail }) {
   );
 }
 
-function WicketTimeline({ innings }: { innings: InningsDetail }) {
+function WicketStrip({ innings }: { innings: InningsDetail }) {
   const wickets = innings.fallOfWickets;
   if (wickets.length === 0) return null;
-  const span = Math.max(5, Math.ceil(innings.overs / 5) * 5);
-  const ticks = Array.from({ length: span / 5 + 1 }, (_, index) => index * 5);
   return (
     <div className="border-t border-line px-4 py-4">
-      <h3 className="text-[13px] font-bold">Wickets</h3>
-      <div className="relative mx-3 mb-7 mt-3 h-[58px]">
-        <div className="absolute inset-x-0 top-[36px] h-px bg-line-strong" />
-        {ticks.map((tick) => (
-          <span
-            key={tick}
-            className="absolute top-[36px] -translate-x-1/2"
-            style={{ left: `${(tick / span) * 100}%` }}
-          >
-            <span className="mx-auto block h-1.5 w-px bg-line-strong" />
-            <span className="mt-1 block text-[11px] tabular-nums text-faint">{tick}</span>
-          </span>
-        ))}
+      <h3 className="text-[13px] font-bold">Fall of wickets</h3>
+      <ol className="no-scrollbar -mx-4 mt-3 flex snap-x gap-2 overflow-x-auto px-4 pb-1">
         {wickets.map((wicket, index) => (
-          <span
+          <li
             key={`${wicket.order}-${index}`}
-            title={`${wicket.wickets}-${wicket.runs} · ${wicket.batsmanName} (${formatOvers(wicket.overs)} ov)`}
-            className="mono absolute grid h-6 w-6 -translate-x-1/2 place-items-center rounded-full bg-live text-[11px] font-bold text-white ring-2 ring-surface"
-            style={{
-              top: index % 2 === 0 ? 24 : 0,
-              left: `${Math.min(98, Math.max(2, (ballsFromOvers(wicket.overs) / (span * 6)) * 100))}%`,
-            }}
+            className="w-[150px] shrink-0 snap-start rounded-xl bg-surface2 p-3"
           >
-            {wicket.wickets}
-          </span>
+            <div className="flex items-center gap-2">
+              <span className="grid h-6 w-6 place-items-center rounded-full bg-wkt text-[11px] font-bold text-white">
+                {wicket.wickets}
+              </span>
+              <span className="tnum text-[16px] font-bold">
+                {wicket.runs}/{wicket.wickets}
+              </span>
+            </div>
+            <p className="mt-2 truncate text-[13px] font-semibold">{wicket.batsmanName}</p>
+            <p className="tnum text-[12px] text-faint">{formatOvers(wicket.overs)} ov</p>
+          </li>
         ))}
+      </ol>
+    </div>
+  );
+}
+
+function OverScroller({ overs }: { overs?: InningsOvers }) {
+  if (!overs || overs.overs.length === 0) return null;
+  const list = [...overs.overs].reverse();
+  const best = Math.max(...overs.overs.map((o) => o.runs));
+  return (
+    <div className="border-t border-line px-4 py-4">
+      <div className="flex items-baseline justify-between gap-3">
+        <h3 className="text-[13px] font-bold">Over by over</h3>
+        <span className="text-[12px] text-faint">Latest first · scroll →</span>
       </div>
-      <ol className="flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-muted">
-        {wickets.map((wicket, index) => (
-          <li key={`${wicket.order}-${index}`}>
-            <span className="mono font-bold text-ink">
-              {wicket.wickets}-{wicket.runs}
-            </span>{" "}
-            {wicket.batsmanName}{" "}
-            <span className="text-faint">({formatOvers(wicket.overs)} ov)</span>
+      <ol className="no-scrollbar -mx-4 mt-3 flex snap-x gap-2 overflow-x-auto px-4 pb-1">
+        {list.map((over) => (
+          <li
+            key={over.over}
+            className={cn(
+              "w-[176px] shrink-0 snap-start rounded-xl p-3",
+              over.wicketsInOver > 0 ? "bg-wkt/10 ring-1 ring-wkt/30" : "bg-surface2"
+            )}
+          >
+            <div className="flex items-baseline justify-between">
+              <span className="text-[12px] font-semibold text-faint">Over {over.over}</span>
+              <span className={cn("tnum text-[18px] font-bold", over.runs === best && "text-live")}>
+                {over.runs}
+              </span>
+            </div>
+            <div className="mt-2 flex flex-wrap gap-1">
+              {over.balls.map((ball, index) => (
+                <BallChip key={index} ball={ball} size={22} />
+              ))}
+            </div>
+            <p className="tnum mt-2 text-[12px] text-muted">
+              {over.score}/{over.wickets}
+              {over.bowler ? <span className="text-faint"> · {over.bowler}</span> : null}
+            </p>
           </li>
         ))}
       </ol>
@@ -170,8 +193,8 @@ function Partnerships({ innings }: { innings: InningsDetail }) {
               className="mt-1.5 flex h-2.5 gap-px"
               style={{ width: `${Math.max(6, (item.totalRuns / max) * 100)}%` }}
             >
-              <span className="bg-accent" style={{ flex: Math.max(item.bat1Runs, 0.01) }} />
-              <span className="bg-gold" style={{ flex: Math.max(item.bat2Runs, 0.01) }} />
+              <span className="rounded-l-full bg-accent" style={{ flex: Math.max(item.bat1Runs, 0.01) }} />
+              <span className="rounded-r-full bg-accent/45" style={{ flex: Math.max(item.bat2Runs, 0.01) }} />
             </div>
             <div className="mt-1 flex justify-between gap-3 text-[11px] text-faint">
               <span className="truncate">
@@ -188,7 +211,7 @@ function Partnerships({ innings }: { innings: InningsDetail }) {
   );
 }
 
-function InningsCard({ innings }: { innings: InningsDetail }) {
+function InningsCard({ innings, overs }: { innings: InningsDetail; overs?: InningsOvers }) {
   const extras = [
     innings.extras.byes ? `b ${innings.extras.byes}` : "",
     innings.extras.legByes ? `lb ${innings.extras.legByes}` : "",
@@ -210,27 +233,27 @@ function InningsCard({ innings }: { innings: InningsDetail }) {
   const worstEcon = economies.length ? Math.max(...economies) : 0;
 
   return (
-    <section className="overflow-hidden rounded-xl border border-line bg-surface">
-      <div className="flex flex-wrap items-center gap-3 border-b-2 border-panel-ink/25 bg-panel px-4 py-3.5 text-panel-ink">
-        <TeamBadge team={innings.battingTeam} size={34} className="rounded-md border-panel-ink/20 bg-panel-ink" />
+    <section className="overflow-hidden rounded-2xl bg-surface">
+      <div className="flex flex-wrap items-center gap-3 bg-gradient-to-r from-[#0a1a4f] via-[#1435a8] to-[#2a5cff] px-4 py-4 text-white">
+        <TeamBadge team={innings.battingTeam} size={40} />
         <div className="min-w-0 flex-1">
           <Link
             href={`/teams/${innings.battingTeam.id}`}
-            className="line-clamp-2 text-[15px] font-semibold leading-tight text-panel-ink transition-colors hover:text-panel-muted"
+            className="line-clamp-2 text-[16px] font-semibold leading-tight text-white transition-opacity hover:opacity-80"
           >
             {innings.battingTeam.name}
           </Link>
-          <p className="mt-0.5 font-mono text-[11px] uppercase tracking-[0.06em] text-panel-muted">
+          <p className="mt-0.5 text-[12px] text-white/70">
             {innings.declared ? "Declared" : innings.followOn ? "Following on" : "Innings"}
             {innings.target ? ` · Target ${innings.target}` : ""}
             {innings.isCurrent ? " · Current" : ""}
           </p>
         </div>
         <div className="text-right">
-          <p className="mono text-[28px] font-bold leading-none tracking-[-0.03em] text-panel-ink">
+          <p className="tnum font-display text-[28px] font-bold leading-none tracking-[-0.02em] text-white">
             {innings.runs}/{innings.wickets}
           </p>
-          <p className="mono mt-1.5 text-[11px] uppercase tracking-[0.04em] text-panel-muted">
+          <p className="tnum mt-1.5 text-[12px] text-white/70">
             {formatOvers(innings.overs)} ov · RR {innings.runRate.toFixed(2)}
           </p>
         </div>
@@ -263,9 +286,6 @@ function InningsCard({ innings }: { innings: InningsDetail }) {
               <tbody>
                 {innings.batsmen.map((batter, index) => {
                   const isTop = topScore > 0 && batter.runs === topScore;
-                  const share = topScore > 0 ? (batter.runs / topScore) * 100 : 0;
-                  const barTone =
-                    batter.runs >= 100 ? "bg-gold" : batter.runs >= 50 ? "bg-accent" : "bg-accent/45";
                   const hot = batter.strikeRate >= 150 && batter.balls >= 6;
                   const slow = batter.strikeRate < 80 && batter.balls >= 15;
                   return (
@@ -276,7 +296,7 @@ function InningsCard({ innings }: { innings: InningsDetail }) {
                         isTop && "bg-accent/[0.04]"
                       )}
                     >
-                      <td className="px-3 py-3 sm:px-4">
+                      <td className="px-3 py-2.5 sm:px-4">
                         <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 [&_a]:text-[14px] [&_a]:font-bold [&_a]:text-ink">
                           <PlayerLink id={batter.id} name={batter.name} />
                           {batter.isCaptain ? <Tag>C</Tag> : null}
@@ -289,23 +309,17 @@ function InningsCard({ innings }: { innings: InningsDetail }) {
                             {batter.outDesc}
                           </p>
                         ) : null}
-                        <div className="mt-2 h-[3px] w-full bg-line/50" aria-hidden="true">
-                          <span
-                            className={cn("block h-full", barTone)}
-                            style={{ width: `${Math.max(batter.runs > 0 ? 3 : 0, share)}%` }}
-                          />
-                        </div>
                         {batter.fours > 0 || batter.sixes > 0 ? (
                           <p className="mt-1.5 flex items-center gap-3 text-[11px] font-semibold text-muted sm:hidden">
                             {batter.fours > 0 ? (
                               <span className="inline-flex items-center gap-1">
-                                <i className="h-1.5 w-1.5 rounded-full bg-accent" />
+                                <i className="h-1.5 w-1.5 rounded-full bg-[#2f74d0]" />
                                 {batter.fours}×4
                               </span>
                             ) : null}
                             {batter.sixes > 0 ? (
                               <span className="inline-flex items-center gap-1">
-                                <i className="h-1.5 w-1.5 rounded-full bg-gold" />
+                                <i className="h-1.5 w-1.5 rounded-full bg-[#16a34a]" />
                                 {batter.sixes}×6
                               </span>
                             ) : null}
@@ -314,19 +328,19 @@ function InningsCard({ innings }: { innings: InningsDetail }) {
                       </td>
                       <td
                         className={cn(
-                          "mono px-1.5 py-3 text-right text-[19px] font-bold leading-none sm:px-2",
+                          "tnum px-1.5 py-2.5 text-right text-[16px] font-semibold leading-none sm:px-2",
                           isTop && "text-accent"
                         )}
                       >
                         {batter.runs}
                       </td>
-                      <td className="px-1.5 py-3 text-right tabular-nums text-muted sm:px-2">{batter.balls}</td>
-                      <td className="hidden px-1.5 py-3 text-right tabular-nums text-muted sm:table-cell sm:px-2">{batter.fours}</td>
-                      <td className="hidden px-1.5 py-3 text-right tabular-nums text-muted sm:table-cell sm:px-2">{batter.sixes}</td>
+                      <td className="px-1.5 py-2.5 text-right tabular-nums text-muted sm:px-2">{batter.balls}</td>
+                      <td className="hidden px-1.5 py-2.5 text-right tabular-nums text-muted sm:table-cell sm:px-2">{batter.fours}</td>
+                      <td className="hidden px-1.5 py-2.5 text-right tabular-nums text-muted sm:table-cell sm:px-2">{batter.sixes}</td>
                       <td
                         className={cn(
-                          "px-3 py-3 text-right tabular-nums sm:px-4",
-                          hot ? "font-bold text-win" : slow ? "text-live" : "text-muted"
+                          "px-3 py-2.5 text-right tabular-nums sm:px-4",
+                          hot ? "font-semibold text-live" : slow ? "text-wkt" : "text-muted"
                         )}
                       >
                         {batter.strikeRate.toFixed(2)}
@@ -377,9 +391,9 @@ function InningsCard({ innings }: { innings: InningsDetail }) {
                   const econTone =
                     bowled.length > 1 && bowler.overs > 0
                       ? bowler.economy === bestEcon
-                        ? "font-bold text-win"
+                        ? "font-semibold text-live"
                         : bowler.economy === worstEcon && worstEcon - bestEcon >= 2
-                          ? "text-live"
+                          ? "text-wkt"
                           : "text-muted"
                       : "text-muted";
                   return (
@@ -390,16 +404,16 @@ function InningsCard({ innings }: { innings: InningsDetail }) {
                         isBest && "bg-accent/[0.04]"
                       )}
                     >
-                      <td className="px-3 py-3 sm:px-4">
+                      <td className="px-3 py-2.5 sm:px-4">
                         <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 [&_a]:text-[14px] [&_a]:font-bold [&_a]:text-ink">
                           <PlayerLink id={bowler.id} name={bowler.name} />
                           {isBest ? <Tag tone="accent">Best</Tag> : null}
                         </div>
                       </td>
-                      <td className="px-1.5 py-3 text-right tabular-nums text-muted sm:px-2">{formatOvers(bowler.overs)}</td>
-                      <td className="hidden px-1.5 py-3 text-right tabular-nums text-muted sm:table-cell sm:px-2">{bowler.maidens}</td>
-                      <td className="px-1.5 py-3 text-right tabular-nums text-muted sm:px-2">{bowler.runs}</td>
-                      <td className="px-1.5 py-3 text-right sm:px-2">
+                      <td className="px-1.5 py-2.5 text-right tabular-nums text-muted sm:px-2">{formatOvers(bowler.overs)}</td>
+                      <td className="hidden px-1.5 py-2.5 text-right tabular-nums text-muted sm:table-cell sm:px-2">{bowler.maidens}</td>
+                      <td className="px-1.5 py-2.5 text-right tabular-nums text-muted sm:px-2">{bowler.runs}</td>
+                      <td className="px-1.5 py-2.5 text-right sm:px-2">
                         {bowler.wickets > 0 ? (
                           <span
                             className={cn(
@@ -415,7 +429,7 @@ function InningsCard({ innings }: { innings: InningsDetail }) {
                           <span className="mono text-[15px] text-faint">0</span>
                         )}
                       </td>
-                      <td className={cn("px-3 py-3 text-right tabular-nums sm:px-4", econTone)}>
+                      <td className={cn("px-3 py-2.5 text-right tabular-nums sm:px-4", econTone)}>
                         {bowler.economy.toFixed(2)}
                       </td>
                     </tr>
@@ -429,13 +443,14 @@ function InningsCard({ innings }: { innings: InningsDetail }) {
 
       <SectionBar title="Innings story" />
       <RunSourceBar innings={innings} />
-      <WicketTimeline innings={innings} />
+      <OverScroller overs={overs} />
+      <WicketStrip innings={innings} />
       <Partnerships innings={innings} />
     </section>
   );
 }
 
-export function ScorecardView({ detail }: { detail: MatchDetail }) {
+export function ScorecardView({ detail, overs }: { detail: MatchDetail; overs?: MatchOvers | null }) {
   if (detail.innings.length === 0) {
     return (
       <EmptyState
@@ -453,7 +468,11 @@ export function ScorecardView({ detail }: { detail: MatchDetail }) {
       <MatchNumbers detail={detail} />
       <div className="mt-4 space-y-4">
         {detail.innings.map((innings, index) => (
-          <InningsCard key={`${innings.id}-${index}`} innings={innings} />
+          <InningsCard
+            key={`${innings.id}-${index}`}
+            innings={innings}
+            overs={overs?.innings.find((item) => item.inningsId === innings.id) ?? overs?.innings[index]}
+          />
         ))}
         <p className="text-xs text-faint">
           Scorecard updated from the live feed. Batting and bowling figures may lag by a delivery.

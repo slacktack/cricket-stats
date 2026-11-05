@@ -67,7 +67,7 @@ function rankTeams(teams: SearchTeam[], query: string, terms: string[]) {
     .map((entry) => entry.team);
 }
 
-function matchHaystack(match: MatchSummary): string {
+export function matchHaystack(match: MatchSummary): string {
   return [
     match.teams[0]?.name,
     match.teams[1]?.name,

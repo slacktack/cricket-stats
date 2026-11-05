@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { BlueHero, HeroChip } from "@/components/ui/blue-hero";
 import { ArrowDown, ArrowUp, Minus } from "lucide-react";
 import { getRankingCategory } from "@/lib/data/rankings";
 import { loadPage } from "@/lib/page-data";
 import { cn } from "@/lib/utils";
 import { EmptyState } from "@/components/ui/empty-state";
-import { FallingBall } from "@/components/falling-ball";
 import { PlayerAvatar, TeamBadge } from "@/components/ui/team-badge";
 import type {
   RankingCategory,
@@ -110,42 +110,39 @@ export default async function RankingsPage({
 
   return (
     <div className="container-page py-5 sm:py-6">
-      <section className="grain relative overflow-hidden rounded-xl border border-panel-ink/20 bg-panel text-panel-ink">
-        <FallingBall className="absolute -left-20 -top-28 z-0 hidden h-[500px] w-[500px] text-panel-ink opacity-15 md:block" />
-        <div className="relative z-10 grid lg:grid-cols-[minmax(0,1fr)_248px]">
-          <div className="px-5 py-5 sm:px-8 sm:py-7">
-            <div className="flex items-center gap-2">
-              <span className="h-px w-5 bg-panel-ink/50" />
-              <span className="eyebrow text-panel-ink/70">ICC rankings</span>
-            </div>
-            <h1 className="display mt-3 max-w-[760px] text-[clamp(2rem,5.6vw,4.5rem)] leading-[0.95] tracking-[-0.04em]">
-              {gender === "men" ? "Men's" : "Women's"}{" "}
-              <span className="text-panel-muted">
-                {formatLabel} {categoryLabel.toLowerCase()}.
-              </span>
+      <BlueHero className="px-6 py-7 sm:px-9 sm:py-9">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <HeroChip>ICC rankings · updated weekly</HeroChip>
+            <h1 className="mt-4 font-display text-[32px] font-bold leading-none tracking-[-0.02em] sm:text-[44px]">
+              {gender === "men" ? "Men's" : "Women's"} {formatLabel} {categoryLabel.toLowerCase()}
             </h1>
-            <p className="mt-3 hidden max-w-xl text-sm font-medium leading-relaxed text-panel-ink/75 sm:block">
-              The official ICC player and team rankings, updated from the live
-              rankings feed.
+            <p className="mt-3 max-w-md text-[14px] leading-relaxed text-white/75">
+              The official ICC player and team rankings.
             </p>
           </div>
-          <div className="flex items-end justify-between border-t border-panel-ink/20 bg-bg px-5 py-5 text-ink lg:flex-col lg:items-start lg:justify-center lg:border-l lg:border-t-0 lg:px-6">
-            <div>
-              <p className="mono text-[40px] font-bold leading-none tracking-[-0.04em]">
-                {entries.length}
-              </p>
-              <p className="mt-2 text-xs font-semibold text-faint">
-                Ranked {isTeams ? "teams" : "players"}
-              </p>
+          {entries[0] ? (
+            <div className="flex items-center gap-4 rounded-2xl bg-white/10 p-4 pr-6">
+              {isTeams ? null : (
+                <PlayerAvatar
+                  player={{ id: entries[0].id, name: entries[0].name, faceImageId: entries[0].faceImageId }}
+                  size={64}
+                />
+              )}
+              <div>
+                <p className="text-[12px] font-semibold text-[#fbbf24]">No. 1</p>
+                <p className="font-display text-[20px] font-bold leading-tight">{entries[0].name}</p>
+                <p className="tnum text-[13px] text-white/70">
+                  {entries[0].country ? `${entries[0].country} · ` : ""}
+                  {entries[0].rating} rating
+                </p>
+              </div>
             </div>
-            <p className="mb-1 text-xs text-faint lg:mt-5">
-              Updated weekly
-            </p>
-          </div>
+          ) : null}
         </div>
-      </section>
+      </BlueHero>
 
-      <section className="mt-4 space-y-2.5 border-y border-line-strong bg-surface px-3 py-3">
+      <section className="mt-5 space-y-3 rounded-2xl bg-surface p-3">
         <div
           className="no-scrollbar -mx-3 flex items-center gap-1.5 overflow-x-auto px-3"
           role="tablist"
@@ -252,7 +249,8 @@ export default async function RankingsPage({
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-sm font-bold">{entry.name}</span>
                   <span className="mt-1 block text-xs text-faint">
-                    {isTeams ? "Team" : entry.country ?? "—"} · {entry.matches ?? 0} M
+                    {isTeams ? "Team" : entry.country ?? "—"}
+                    {entry.matches ? ` · ${entry.matches} matches` : ""}
                   </span>
                 </span>
                 <span className="shrink-0 text-right">

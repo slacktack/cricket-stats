@@ -178,7 +178,7 @@ export function SearchExperience({
                             href={`/teams/${team.id}`}
                             className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-line bg-surface2 px-3 py-1.5 text-xs font-semibold transition-colors hover:border-accent/40 hover:text-accent"
                           >
-                            <TeamBadge team={team} size={18} />
+                            <TeamBadge team={team} size={24} className="rounded-md" />
                             {team.name}
                           </Link>
                         ))}
@@ -217,7 +217,7 @@ export function SearchExperience({
                   <div className="stagger mt-2 grid gap-2 sm:grid-cols-2">
                     {results.teams.map((team) => (
                       <Link key={team.id} href={`/teams/${team.id}`} className="card card-hover flex items-center gap-3 p-3">
-                        <TeamBadge team={team} size={30} className="rounded-lg ring-2 ring-surface" />
+                        <TeamBadge team={team} size={44} />
                         <div className="min-w-0">
                           <p className="truncate text-sm font-semibold">{team.name}</p>
                           <p className="text-xs text-faint">{team.shortName}</p>
@@ -231,7 +231,7 @@ export function SearchExperience({
               {show("matches") && results.matches.length > 0 ? (
                 <section>
                   <SectionTitle count={results.matches.length}>Matches</SectionTitle>
-                  <div className="mt-1">
+                  <div className="mt-3 grid gap-3 md:grid-cols-2">
                     {results.matches.map((match) => (
                       <MatchCard key={match.id} match={match} compact showSeries />
                     ))}

@@ -6,8 +6,8 @@ import { cn } from "@/lib/utils";
 
 type Theme = "dark" | "light";
 
-export function ThemeToggle({ variant = "header" }: { variant?: "header" | "panel" }) {
-  const [theme, setTheme] = useState<Theme>("light");
+export function ThemeToggle({ variant = "header" }: { variant?: "header" | "panel" | "rail" }) {
+  const [theme, setTheme] = useState<Theme>("dark");
 
   useEffect(() => {
     setTheme(document.documentElement.classList.contains("dark") ? "dark" : "light");
@@ -24,7 +24,7 @@ export function ThemeToggle({ variant = "header" }: { variant?: "header" | "pane
     }
     document
       .querySelector('meta[name="theme-color"]')
-      ?.setAttribute("content", next === "dark" ? "#121939" : "#1F30B4");
+      ?.setAttribute("content", next === "dark" ? "#070D1F" : "#EEF4FF");
   }
 
   return (
@@ -32,9 +32,11 @@ export function ThemeToggle({ variant = "header" }: { variant?: "header" | "pane
       type="button"
       onClick={toggle}
       className={cn(
-        "group grid h-10 w-10 place-items-center rounded-md border transition-colors duration-150",
-        variant === "header"
-          ? "border-header-ink/25 text-header-ink hover:border-header-ink hover:bg-header-ink/10"
+        "group grid h-9 w-9 place-items-center rounded-lg border transition-colors duration-150",
+        variant === "rail"
+          ? "h-11 w-11 rounded-xl border-transparent text-white/70 hover:bg-white/10 hover:text-white"
+          : variant === "header"
+          ? "border-line bg-surface/60 text-header-ink hover:border-line-strong hover:bg-surface2"
           : "border-line text-muted hover:border-line-strong hover:bg-surface2 hover:text-ink"
       )}
       aria-label="Toggle colour theme"

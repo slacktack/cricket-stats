@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
 import { getHomeFeed } from "@/lib/data/home";
-import { getRankingCategory } from "@/lib/data/rankings";
-import { groupMatchesBySeries } from "@/lib/match-display";
 import { HomeFeed } from "@/components/home/home-feed";
-import { RankingsRail, SeriesRail } from "@/components/home/side-rail";
 
 export const dynamic = "force-dynamic";
 
@@ -24,36 +21,11 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   const teamId =
     Number.isInteger(parsedTeam) && parsedTeam > 0 ? parsedTeam : undefined;
 
-  const [feed, batting] = await Promise.all([
-    getHomeFeed(),
-    getRankingCategory("men", "batting").catch(() => null),
-  ]);
-
-  const rankings =
-    batting?.odi.length
-      ? batting.odi
-      : batting?.t20.length
-        ? batting.t20
-        : batting?.test ?? [];
-  const groups = groupMatchesBySeries(feed.matches);
+  const feed = await getHomeFeed();
 
   return (
     <div className="container-page">
-      <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_292px]">
-        <div className="min-w-0 lg:pr-8 xl:pr-10">
-          <HomeFeed
-            key={teamId ?? "all"}
-            initialFeed={feed}
-            initialTeamId={teamId}
-          />
-        </div>
-        <aside className="hidden border-l border-line pl-7 lg:block">
-          <div className="sticky top-[calc(var(--header-h)+1.25rem)] space-y-4 pb-8 pt-7">
-            <RankingsRail entries={rankings} />
-            <SeriesRail groups={groups} />
-          </div>
-        </aside>
-      </div>
+      <HomeFeed key={teamId ?? "all"} initialFeed={feed} initialTeamId={teamId} />
     </div>
   );
 }

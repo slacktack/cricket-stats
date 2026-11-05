@@ -32,25 +32,28 @@ const ITEMS = [
   },
 ];
 
-export function DesktopNav() {
+export function SideNav() {
   const pathname = usePathname();
   return (
-    <nav aria-label="Primary" className="hidden items-stretch self-stretch lg:flex">
-      {ITEMS.map((item) => {
+    <nav aria-label="Primary" className="flex flex-col items-center gap-2">
+      {ITEMS.filter((item) => item.href !== "/search").map((item) => {
         const isActive = item.active(pathname);
+        const Icon = item.icon;
         return (
           <Link
             key={item.href}
             href={item.href}
             aria-current={isActive ? "page" : undefined}
+            title={item.label}
             className={cn(
-              "relative my-auto flex h-9 items-center border-b-2 px-3 text-[12px] font-bold transition-colors duration-150",
-              isActive
-                ? "border-header-ink text-header-ink"
-                : "border-transparent text-header-muted hover:text-header-ink"
+              "group relative grid h-11 w-11 place-items-center rounded-xl transition-colors duration-150",
+              isActive ? "bg-white text-[#1d4ed8]" : "text-white/70 hover:bg-white/10 hover:text-white"
             )}
           >
-            {item.label}
+            <Icon className="h-5 w-5" strokeWidth={isActive ? 2.2 : 1.8} />
+            <span className="pointer-events-none absolute left-full ml-3 whitespace-nowrap rounded-md bg-ink px-2 py-1 text-[12px] font-medium text-bg opacity-0 transition-opacity group-hover:opacity-100">
+              {item.label}
+            </span>
           </Link>
         );
       })}
@@ -63,9 +66,9 @@ export function BottomNav() {
   return (
     <nav
       aria-label="Primary"
-      className="bottom-nav fixed inset-x-0 bottom-0 z-50 border-t border-line-strong lg:hidden"
+      className="bottom-nav fixed inset-x-0 bottom-0 z-50 border-t border-line lg:hidden"
     >
-      <ul className="mx-auto grid max-w-lg grid-cols-4">
+      <ul className="mx-auto grid max-w-md grid-cols-4">
         {ITEMS.map((item) => {
           const isActive = item.active(pathname);
           const Icon = item.icon;
@@ -75,13 +78,10 @@ export function BottomNav() {
                 href={item.href}
                 aria-current={isActive ? "page" : undefined}
                 className={cn(
-                  "relative flex h-16 flex-col items-center justify-center gap-1 text-[11px] font-bold transition-colors duration-150",
+                  "flex h-14 flex-col items-center justify-center gap-1 text-[10px] font-medium transition-colors duration-150",
                   isActive ? "text-accent" : "text-faint active:text-ink"
                 )}
               >
-                {isActive ? (
-                  <span className="absolute inset-x-6 top-0 h-[3px] bg-accent" />
-                ) : null}
                 <Icon className="h-5 w-5" strokeWidth={isActive ? 2.2 : 1.8} />
                 {item.label}
               </Link>

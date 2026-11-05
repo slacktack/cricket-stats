@@ -4,7 +4,7 @@ function formatTone(format: string): string {
   const value = format.toUpperCase();
   if (value.includes("TEST")) return "border-pop/25 bg-pop/10 text-pop";
   if (value.includes("T20") || value.includes("T10")) {
-    return "border-live/25 bg-live/10 text-live";
+    return "border-warn/25 bg-warn/10 text-warn";
   }
   if (value.includes("ODI") || value.includes("ODM")) {
     return "border-aqua/25 bg-aqua/10 text-aqua";
@@ -22,7 +22,7 @@ export function FormatPill({
   return (
     <span
       className={cn(
-        "inline-flex h-5 items-center rounded border px-1.5 font-mono text-[10px] font-medium uppercase tracking-[0.06em]",
+        "inline-flex h-5 items-center rounded border px-1.5 text-[10px] font-semibold uppercase tracking-[0.04em]",
         formatTone(format),
         className
       )}
@@ -57,7 +57,7 @@ export function StatePill({
     return (
       <span
         className={cn(
-          "inline-flex h-6 items-center gap-1.5 rounded border border-live/20 bg-live/10 px-2 text-[10px] font-bold uppercase tracking-[0.1em] text-live",
+          "inline-flex h-6 items-center gap-1.5 rounded-md border border-live/25 bg-live/10 px-2 text-[10px] font-bold uppercase tracking-[0.08em] text-live",
           className
         )}
       >
@@ -70,7 +70,7 @@ export function StatePill({
   return (
     <span
       className={cn(
-        "inline-flex h-6 items-center rounded border border-line bg-surface2 px-2 text-[10px] font-bold uppercase tracking-[0.1em] text-muted",
+        "inline-flex h-6 items-center rounded-md border border-line bg-surface2 px-2 text-[10px] font-bold uppercase tracking-[0.08em] text-muted",
         className
       )}
     >
@@ -98,7 +98,7 @@ export function TonePill({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em]",
+        "inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-[10px] font-bold uppercase tracking-[0.08em]",
         tones[tone],
         className
       )}

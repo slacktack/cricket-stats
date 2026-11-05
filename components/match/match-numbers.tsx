@@ -40,8 +40,8 @@ function Versus({
         </span>
       </div>
       <div className="mt-2 flex h-2 gap-[3px]" aria-hidden="true">
-        <span className="bg-accent" style={{ width: `${leftShare}%` }} />
-        <span className="bg-gold" style={{ width: `${100 - leftShare}%` }} />
+        <span className="bg-s1" style={{ width: `${leftShare}%` }} />
+        <span className="bg-s2" style={{ width: `${100 - leftShare}%` }} />
       </div>
     </div>
   );
@@ -61,11 +61,11 @@ export function WinProbabilityBar({ probability }: { probability: WinProbability
         </span>
       </div>
       <div className="mt-2 flex h-3 gap-[3px]" role="img" aria-label={`${team1.shortName} ${team1.percent}%, ${team2.shortName} ${team2.percent}%`}>
-        <span className="bg-accent" style={{ width: `${team1.percent}%` }} />
+        <span className="bg-s1" style={{ width: `${team1.percent}%` }} />
         {drawTiePercent > 0 ? (
           <span className="bg-line-strong" style={{ width: `${drawTiePercent}%` }} />
         ) : null}
-        <span className="bg-gold" style={{ width: `${team2.percent}%` }} />
+        <span className="bg-s2" style={{ width: `${team2.percent}%` }} />
       </div>
       <div className="mt-1.5 flex justify-between text-xs font-semibold text-muted">
         <span>{team1.shortName}</span>
@@ -155,11 +155,11 @@ export function MatchNumbers({ detail }: { detail: MatchDetail }) {
           </h2>
           <div className="flex items-center gap-2.5 text-xs font-bold">
             <span className="inline-flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 bg-accent ring-1 ring-panel-ink/60" />
+              <span className="h-2.5 w-2.5 rounded-full bg-s1" />
               {a.shortName}
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 bg-gold" />
+              <span className="h-2.5 w-2.5 rounded-full bg-s2" />
               {b.shortName}
             </span>
           </div>

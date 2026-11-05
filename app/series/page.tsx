@@ -3,10 +3,9 @@ import Link from "next/link";
 import { ArrowUpRight, CalendarDays, Trophy } from "lucide-react";
 import { getSeriesList } from "@/lib/data/series";
 import { loadPage } from "@/lib/page-data";
-import { cn, formatDateRange, timeAgo } from "@/lib/utils";
+import { cn, formatDateRange } from "@/lib/utils";
 import { EmptyState } from "@/components/ui/empty-state";
-import { FallingBall } from "@/components/falling-ball";
-import { LiveDot } from "@/components/ui/pills";
+import { BlueHero, HeroChip, HeroStat } from "@/components/ui/blue-hero";
 import { TeamBadge } from "@/components/ui/team-badge";
 import type { SeriesListItem } from "@/lib/types";
 
@@ -18,99 +17,84 @@ export const metadata: Metadata = {
 };
 
 function SeriesCard({ item }: { item: SeriesListItem }) {
+  const played = item.completed;
+  const pct = item.matches ? Math.round((played / item.matches) * 100) : 0;
+  const live = item.state === "live";
   return (
     <Link
       href={`/series/${item.id}`}
-      className="group grid gap-4 border-t border-line-strong py-5 transition-colors hover:bg-accent-soft/25 sm:grid-cols-[minmax(0,1fr)_196px] sm:gap-6 sm:px-2"
+      className={cn(
+        "group flex min-w-0 flex-col rounded-2xl p-5 transition-transform duration-200 hover:-translate-y-0.5",
+        live
+          ? "bg-gradient-to-br from-[#0f2a8a] via-[#1d4ed8] to-[#3b6cff] text-white shadow-[0_18px_40px_-20px_rgb(37_99_235/0.9)]"
+          : "bg-surface"
+      )}
     >
-      <div className="min-w-0">
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[11px] font-medium uppercase tracking-[0.08em]">
-          <span className="text-accent">{item.format ?? "Series"}</span>
-          <span
-            className={cn(
-              "inline-flex items-center gap-1.5",
-              item.state === "live"
-                ? "text-live"
-                : item.state === "upcoming"
-                  ? "text-warn"
-                  : "text-faint"
-            )}
-          >
-            {item.state === "live" ? <LiveDot /> : null}
-            {item.state === "completed" ? "Completed" : item.state}
+      <div className="flex items-center gap-2 text-[12px]">
+        <span className={cn("rounded-full px-2.5 py-0.5 font-semibold", live ? "bg-white/20" : "bg-surface2 text-muted")}>
+          {item.format ?? "Series"}
+        </span>
+        {live ? (
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-[#22c55e] px-2.5 py-0.5 font-bold text-[#052e16]">
+            <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-[#052e16]" />
+            {item.live} live
           </span>
-          <span className="text-faint">{item.matches} matches</span>
-        </div>
-
-        <h2 className="display mt-2 text-[clamp(1.45rem,2.6vw,2.15rem)] font-bold leading-[1.02] tracking-[-0.035em] transition-colors group-hover:text-accent">
-          {item.name}
-        </h2>
-
-        <p className="mt-2 flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.04em] text-faint">
-          <CalendarDays className="h-3 w-3 shrink-0" />
-          {formatDateRange(item.startDate, item.endDate)}
-        </p>
-
-        <div className="mt-3 flex items-center gap-2">
-          <div className="flex -space-x-1.5">
-            {item.teams.slice(0, 6).map((team) => (
-              <TeamBadge
-                key={team.id}
-                team={team}
-                size={26}
-                className="rounded-[2px] bg-bg ring-2 ring-bg"
-              />
-            ))}
-          </div>
-          {item.teams.length > 6 ? (
-            <span className="grid h-6 min-w-6 place-items-center border border-line bg-bg px-1 font-mono text-[10px] font-medium text-faint">
-              +{item.teams.length - 6}
-            </span>
-          ) : null}
-        </div>
+        ) : (
+          <span className={cn("font-medium", item.state === "upcoming" ? "text-aqua" : "text-faint")}>
+            {item.state === "upcoming" ? "Upcoming" : "Completed"}
+          </span>
+        )}
+        <ArrowUpRight className={cn("ml-auto h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5", live ? "text-white/70" : "text-faint")} />
       </div>
 
-      <div className="flex items-end justify-between gap-4 sm:flex-col sm:items-end sm:justify-between">
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[11px] font-medium uppercase tracking-[0.04em] text-muted">
-          {item.live > 0 ? (
-            <span className="inline-flex items-center gap-1 text-live">
-              <LiveDot /> {item.live} live
-            </span>
-          ) : null}
-          {item.upcoming > 0 ? <span>{item.upcoming} upcoming</span> : null}
-          {item.completed > 0 ? <span>{item.completed} completed</span> : null}
+      <h2 className="mt-3 line-clamp-2 font-display text-[19px] font-bold leading-snug tracking-[-0.01em]">
+        {item.name}
+      </h2>
+      <p className={cn("mt-1 flex items-center gap-1.5 text-[13px]", live ? "text-white/70" : "text-faint")}>
+        <CalendarDays className="h-3.5 w-3.5 shrink-0" />
+        {formatDateRange(item.startDate, item.endDate)}
+      </p>
+
+      <div className="mt-4 flex items-center">
+        <div className="flex -space-x-2">
+          {item.teams.slice(0, 6).map((team) => (
+            <TeamBadge key={team.id} team={team} size={32} className={live ? "ring-2 ring-[#1d4ed8]" : "ring-2 ring-surface"} />
+          ))}
         </div>
-        <span className="inline-flex items-center gap-1 font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-accent">
-          Open
-          <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-        </span>
+        {item.teams.length > 6 ? (
+          <span className={cn("ml-2 text-[12px] font-semibold", live ? "text-white/70" : "text-faint")}>
+            +{item.teams.length - 6}
+          </span>
+        ) : null}
+      </div>
+
+      <div className="mt-auto pt-5">
+        <div className={cn("flex justify-between text-[12px]", live ? "text-white/80" : "text-muted")}>
+          <span>
+            {played} of {item.matches} played
+          </span>
+          <span className="tnum font-semibold">{pct}%</span>
+        </div>
+        <div className={cn("mt-1.5 h-1.5 overflow-hidden rounded-full", live ? "bg-white/20" : "bg-surface2")}>
+          <span
+            className={cn("block h-full rounded-full", live ? "bg-white" : "bg-accent")}
+            style={{ width: `${Math.max(pct, played ? 4 : 0)}%` }}
+          />
+        </div>
       </div>
     </Link>
   );
 }
 
-function SeriesSection({
-  title,
-  items,
-  live = false,
-}: {
-  title: string;
-  items: SeriesListItem[];
-  live?: boolean;
-}) {
+function SeriesSection({ title, items }: { title: string; items: SeriesListItem[] }) {
   if (items.length === 0) return null;
   return (
-    <section className="mt-8">
-      <div className="mb-1 flex items-end gap-3 border-b border-line-strong pb-3">
-        <span className={cn("mb-1 h-2.5 w-2.5 rounded-full", live ? "bg-live" : "bg-accent")} />
-        <h2 className="display text-[clamp(1.8rem,3.4vw,2.7rem)] font-bold leading-none tracking-[-0.04em]">
-          {title}
-        </h2>
-        <span className="mono ml-auto pb-0.5 text-xs font-semibold text-faint">
-          {items.length}
-        </span>
+    <section className="mt-9">
+      <div className="mb-4 flex items-baseline gap-2">
+        <h2 className="font-display text-[22px] font-bold tracking-[-0.01em]">{title}</h2>
+        <span className="text-[14px] text-faint">{items.length}</span>
       </div>
-      <div className="stagger border-b border-line-strong">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {items.map((item, index) => (
           <SeriesCard key={`${item.id}-${index}`} item={item} />
         ))}
@@ -127,51 +111,27 @@ export default async function SeriesPage() {
 
   return (
     <div className="container-page py-5 sm:py-6">
-      <section className="grain relative overflow-hidden rounded-xl border border-panel-ink/20 bg-panel text-panel-ink">
-        <FallingBall className="absolute -right-20 -top-28 z-0 hidden h-[500px] w-[500px] text-panel-ink opacity-20 md:block" />
-        <div className="relative z-10 grid lg:grid-cols-[minmax(0,1fr)_318px]">
-          <div className="px-5 py-5 sm:px-8 sm:py-8">
-            <div className="flex items-center gap-2">
-              <span className="h-px w-5 bg-panel-ink/50" />
-              <span className="eyebrow text-panel-ink/70">Cricket calendar</span>
-            </div>
-            <h1 className="display mt-3 text-[clamp(2rem,5.8vw,4.65rem)] leading-[0.94] tracking-[-0.04em]">
-              Series <span className="text-panel-muted">&amp; tours.</span>
+      <BlueHero className="px-6 py-7 sm:px-9 sm:py-9">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <HeroChip>
+              <Trophy className="h-3.5 w-3.5" />
+              Cricket calendar
+            </HeroChip>
+            <h1 className="mt-4 font-display text-[34px] font-bold leading-none tracking-[-0.02em] sm:text-[44px]">
+              Series &amp; tours
             </h1>
-            <p className="mt-3 hidden max-w-lg text-sm font-medium leading-relaxed text-panel-ink/75 sm:block">
-              Schedules, live matches, points tables and the players shaping
-              every series in the current feed.
-            </p>
-            <p className="mt-4 hidden items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.06em] text-panel-muted sm:flex">
-              <CalendarDays className="h-3 w-3" />
-              Updated {timeAgo(Date.now())}
+            <p className="mt-3 max-w-md text-[14px] leading-relaxed text-white/75">
+              Every tour, league and tournament in the feed, with fixtures, tables and stats.
             </p>
           </div>
-
-          <div className="grid grid-cols-3 border-t border-panel-ink/20 bg-bg lg:border-l lg:border-t-0">
-            {[
-              { label: "Live", value: live.length, tone: "text-live" },
-              { label: "Upcoming", value: upcoming.length, tone: "text-gold" },
-              { label: "Results", value: completed.length, tone: "text-win" },
-            ].map((stat, index) => (
-              <div
-                key={stat.label}
-                className={cn(
-                  "flex flex-col justify-center px-4 py-5",
-                  index < 2 && "border-r border-line"
-                )}
-              >
-                <p className={cn("mono text-[28px] font-bold leading-none tracking-[-0.03em]", stat.tone)}>
-                  {stat.value}
-                </p>
-                <p className="mt-2 text-xs font-semibold text-faint">
-                  {stat.label}
-                </p>
-              </div>
-            ))}
+          <div className="flex gap-3">
+            <HeroStat value={live.length} label="Live now" />
+            <HeroStat value={upcoming.length} label="Upcoming" />
+            <HeroStat value={completed.length} label="Finished" />
           </div>
         </div>
-      </section>
+      </BlueHero>
 
       {series.length === 0 ? (
         <EmptyState
@@ -184,7 +144,7 @@ export default async function SeriesPage() {
         />
       ) : (
         <>
-          <SeriesSection title="Live & in progress" items={live} live />
+          <SeriesSection title="Live now" items={live} />
           <SeriesSection title="Upcoming" items={upcoming} />
           <SeriesSection title="Recent results" items={completed} />
         </>

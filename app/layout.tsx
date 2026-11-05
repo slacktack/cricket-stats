@@ -1,27 +1,27 @@
 import type { Metadata, Viewport } from "next";
-import { Manrope, Montserrat, Spline_Sans_Mono } from "next/font/google";
+import { Inter, Inter_Tight, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { FavoritesProvider } from "@/components/providers/favorites-provider";
 import { ToastProvider } from "@/components/providers/toast-provider";
-import { SiteFooter, SiteHeader, SiteNav } from "@/components/site-chrome";
+import { SiteFooter, SiteHeader, SiteNav, SiteSidebar } from "@/components/site-chrome";
 
-const sans = Manrope({
+const sans = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
   display: "swap",
 });
 
-const display = Montserrat({
+const display = Inter_Tight({
   subsets: ["latin"],
   variable: "--font-display",
   weight: ["600", "700", "800"],
   display: "swap",
 });
 
-const mono = Spline_Sans_Mono({
+const mono = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
-  weight: ["400", "500"],
+  weight: ["400", "500", "700"],
   display: "swap",
 });
 
@@ -94,8 +94,8 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#1F30B4" },
-    { media: "(prefers-color-scheme: dark)", color: "#121939" },
+    { media: "(prefers-color-scheme: light)", color: "#EEF4FF" },
+    { media: "(prefers-color-scheme: dark)", color: "#070D1F" },
   ],
   colorScheme: "light dark",
 };
@@ -106,25 +106,28 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth">
       <body className={`${sans.variable} ${display.variable} ${mono.variable} font-sans`}>
-        <script
+                <script
           dangerouslySetInnerHTML={{
             __html:
-              "try{const saved=localStorage.getItem('chauka-theme');if(saved==='dark'||(!saved&&matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark')}}catch(e){}",
+              "try{if(localStorage.getItem('chauka-theme')!=='light'){document.documentElement.classList.add('dark')}}catch(e){document.documentElement.classList.add('dark')}",
           }}
         />
         <a
           href="#main"
-          className="fixed left-4 top-4 z-[100] -translate-y-24 rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-accent-ink transition focus:translate-y-0"
+          className="fixed left-4 top-4 z-[100] -translate-y-24 rounded-full bg-accent px-4 py-2.5 text-sm font-semibold text-accent-ink transition focus:translate-y-0"
         >
           Skip to content
         </a>
         <ToastProvider>
           <FavoritesProvider>
-            <SiteHeader />
-            <main id="main" className="min-h-[calc(100vh-5rem)]">
-              {children}
-            </main>
-            <SiteFooter />
+            <SiteSidebar />
+            <div className="lg:pl-[76px]">
+              <SiteHeader />
+              <main id="main" className="min-h-[calc(100vh-5rem)]">
+                {children}
+              </main>
+              <SiteFooter />
+            </div>
             <SiteNav />
           </FavoritesProvider>
         </ToastProvider>

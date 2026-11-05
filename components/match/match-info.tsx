@@ -90,8 +90,8 @@ export function MatchInfo({ detail }: { detail: MatchDetail }) {
             <span className="font-semibold">{probability.team2.shortName}</span>
           </div>
           <div className="mt-2 flex h-3 overflow-hidden rounded-full bg-surface2">
-            <span className="bg-accent" style={{ width: `${probability.team1.percent}%` }} />
-            <span className="bg-live" style={{ width: `${probability.team2.percent}%` }} />
+            <span className="bg-s1" style={{ width: `${probability.team1.percent}%` }} />
+            <span className="bg-s2" style={{ width: `${probability.team2.percent}%` }} />
           </div>
           <div className="mt-2 flex items-center justify-between text-[11px] text-faint tabular-nums">
             <span>{probability.team1.percent}%</span>

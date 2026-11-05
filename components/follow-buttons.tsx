@@ -12,7 +12,7 @@ function useFollowAction() {
 }
 
 const BASE =
-  "mono inline-flex h-10 items-center gap-2 border px-3.5 text-[11px] font-semibold uppercase tracking-[0.1em] transition-colors disabled:opacity-50";
+  "inline-flex h-9 items-center gap-2 rounded-lg border px-3 text-[13px] font-medium transition-colors disabled:opacity-50";
 
 export function FollowTeamButton({
   team,
@@ -108,7 +108,7 @@ export function FollowTeamIcon({
         toast(followed ? `Unfollowed ${team.shortName}` : `Following ${team.shortName}`);
       }}
       className={cn(
-        "inline-flex h-10 min-w-10 items-center justify-center gap-1.5 border px-2.5 text-[11px] font-bold transition-colors disabled:opacity-50",
+        "inline-flex h-9 min-w-9 items-center justify-center gap-1.5 rounded-lg border px-3 text-[13px] font-medium transition-colors disabled:opacity-50",
         followed
           ? "border-accent bg-accent text-accent-ink"
           : "border-line text-muted hover:border-line-strong hover:text-ink",
