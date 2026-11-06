@@ -25,7 +25,7 @@ export function ThemeToggle({ variant = "header" }: { variant?: "header" | "pane
       className={cn(
         "grid h-8 w-8 place-items-center border transition-colors duration-150",
         variant === "rail"
-          ? "h-10 w-10 border-white/25 text-white/70 hover:border-white hover:text-white"
+          ? "h-10 w-10 border-line text-muted hover:border-slab hover:text-ink"
           : variant === "header"
           ? "border-line bg-surface text-header-ink hover:border-slab hover:text-slab"
           : "border-line text-muted hover:border-slab hover:text-slab"
