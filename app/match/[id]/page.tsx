@@ -120,7 +120,11 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
 
         <div className="order-2 mt-5 min-w-0 lg:order-1 lg:mt-0">
           <div className="sticky top-[var(--header-h)] z-20 border-b border-line bg-bg">
-            <div className="flex items-center" role="tablist" aria-label="Match sections">
+            <div
+              className="no-scrollbar flex min-w-0 items-center overflow-x-auto"
+              role="tablist"
+              aria-label="Match sections"
+            >
               {TABS.map((item) => {
                 const active = tab === item.key;
                 return (

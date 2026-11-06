@@ -383,6 +383,43 @@ html[data-pal="amber"] .num-lg {
   color: rgb(var(--accent));
 }
 
+/* The accent slab re-inverts every token inside it so a hairline chip reads
+   correctly on a filled field. That inversion is written for the grid stock —
+   crimson and amber have to pour their own metal into it, or a Share button
+   turns Klein blue on a field of gold foil. */
+html[data-pal="crimson"] .sheet-accent {
+  --line: 255 156 122;
+  --line-strong: 255 205 186;
+  --muted: 255 214 199;
+  --faint: 255 187 166;
+  --surface: 190 14 3;
+  --surface2: 150 8 1;
+  --accent-soft: 150 8 1;
+  --panel: 190 14 3;
+}
+
+html[data-pal="amber"] .sheet-accent {
+  --line: 226 197 138;
+  --line-strong: 243 226 186;
+  --muted: 240 224 186;
+  --faint: 219 194 140;
+  --surface: 150 108 28;
+  --surface2: 112 78 16;
+  --accent-soft: 112 78 16;
+  --panel: 150 108 28;
+}
+
+html.dark[data-pal="amber"] .sheet-accent {
+  --line: 236 214 168;
+  --line-strong: 246 226 174;
+  --muted: 246 232 200;
+  --faint: 224 202 152;
+  --surface: 112 78 16;
+  --surface2: 90 62 12;
+  --accent-soft: 90 62 12;
+  --panel: 112 78 16;
+}
+
 * {
   border-color: rgb(var(--line));
 }
@@ -1668,7 +1705,10 @@ html:not(.dark) .stock::after {
   .figs dd {
     font-size: 12px;
     color: rgb(var(--ink));
-    flex: 0 0 auto;
+    /* Shrinks, so a long "Debut … · Last …" wraps inside the slab instead of
+       running past it on a phone. */
+    flex: 0 1 auto;
+    min-width: 0;
   }
 
   /* Data table: hairline rows, tint + left bar on hover. */
@@ -2284,6 +2324,20 @@ html:not(.dark) .stock::after {
   }
 }
 
+/* Crimson sets its caps wider and heavier, and only crimson's tab strips run
+   past a narrow phone. Unlayered, because the Tailwind px-* utilities on the
+   individual tabs would otherwise outrank it. */
+@media (max-width: 400px) {
+  html[data-pal="crimson"] .tab-link {
+    padding-inline: 7px;
+    letter-spacing: 0.01em;
+  }
+
+  html[data-pal="crimson"] .tab-link .count-badge {
+    margin-left: 4px;
+  }
+}
+
 .cover-link {
   display: inline-flex;
   align-items: center;
@@ -2528,7 +2582,7 @@ html[data-pal="amber"] .rows .hrow {
   --v-1: oklch(0.56 0.21 266);
   --v-2: oklch(0.49 0.24 272);
   --v-3: oklch(0.41 0.21 277);
-  --v-4: oklch(0.27 0.15 272);
+  --v-4: oklch(0.21 0.16 272);
 
   --v-lit: var(--v-1);
   --v-mid: var(--v-2);
@@ -2573,9 +2627,9 @@ html[data-pal="amber"] .rows .hrow {
 
 html.dark {
   --v-1: oklch(0.57 0.19 265);
-  --v-2: oklch(0.53 0.23 271);
-  --v-3: oklch(0.42 0.22 276);
-  --v-4: oklch(0.24 0.14 272);
+  --v-2: oklch(0.5 0.23 271);
+  --v-3: oklch(0.39 0.22 276);
+  --v-4: oklch(0.19 0.15 272);
 
   --v-pale: color-mix(in oklab, rgb(var(--slab)) 40%, #0a0e22);
   --nap: inset 0 1px 0 rgb(255 255 255 / 0.2), inset 0 -1px 0 rgb(0 0 0 / 0.5);
@@ -2585,34 +2639,34 @@ html.dark {
 html[data-pal="crimson"] {
   /* CRIMSON — orange fire falling to oxblood. */
   --v-1: oklch(0.58 0.2 34);
-  --v-2: oklch(0.53 0.23 28);
-  --v-3: oklch(0.43 0.21 26);
-  --v-4: oklch(0.27 0.14 24);
+  --v-2: oklch(0.51 0.24 30);
+  --v-3: oklch(0.4 0.22 22);
+  --v-4: oklch(0.22 0.16 18);
   --silk-tint: rgb(255 236 220 / 0.26);
 }
 
 html.dark[data-pal="crimson"] {
   --v-1: oklch(0.58 0.19 35);
-  --v-2: oklch(0.55 0.22 30);
-  --v-3: oklch(0.44 0.21 27);
-  --v-4: oklch(0.28 0.15 25);
+  --v-2: oklch(0.52 0.23 30);
+  --v-3: oklch(0.41 0.22 23);
+  --v-4: oklch(0.21 0.15 18);
 }
 
 html[data-pal="amber"] {
   /* AMBER — struck gold down through bronze. */
   --v-1: oklch(0.55 0.12 80);
-  --v-2: oklch(0.48 0.12 76);
-  --v-3: oklch(0.4 0.1 72);
-  --v-4: oklch(0.25 0.07 68);
+  --v-2: oklch(0.47 0.13 76);
+  --v-3: oklch(0.38 0.11 72);
+  --v-4: oklch(0.19 0.08 68);
   --v-pale: color-mix(in oklab, rgb(var(--slab)) 26%, #fff6df);
   --silk-tint: rgb(255 244 214 / 0.3);
 }
 
 html.dark[data-pal="amber"] {
   --v-1: oklch(0.56 0.13 83);
-  --v-2: oklch(0.52 0.13 79);
-  --v-3: oklch(0.42 0.11 74);
-  --v-4: oklch(0.25 0.07 68);
+  --v-2: oklch(0.5 0.14 79);
+  --v-3: oklch(0.4 0.12 74);
+  --v-4: oklch(0.2 0.08 68);
 }
 
 /* Slabs poured from the ramp. */
@@ -2727,6 +2781,43 @@ mark {
 .band:hover {
   background-position:
     -30% 0,
+    0 0,
+    0 0;
+}
+
+/* The hero is the largest field on the page, so it carries the pile too —
+   flat rgb(--slab) made crimson read as one solid sheet of paint. The two
+   radials from the base rule are restated because this replaces the shorthand. */
+.sheet-accent {
+  background-repeat: no-repeat;
+  background-image:
+    var(--sweep),
+    var(--twill),
+    radial-gradient(90% 70% at 85% 0%, rgb(var(--pop) / 0.5), transparent 60%),
+    radial-gradient(70% 80% at 0% 100%, rgb(var(--accent-deep) / 0.85), transparent 70%),
+    var(--velvet);
+  background-size:
+    240% 100%,
+    auto,
+    100% 100%,
+    100% 100%,
+    100% 100%;
+  background-position:
+    170% 0,
+    0 0,
+    0 0,
+    0 0,
+    0 0;
+  background-color: rgb(var(--slab));
+  box-shadow: var(--nap);
+  transition: background-position 1.4s var(--ease);
+}
+
+.sheet-accent:hover {
+  background-position:
+    -60% 0,
+    0 0,
+    0 0,
     0 0,
     0 0;
 }
@@ -3052,6 +3143,13 @@ html.pal-fade *::after {
 .disc > summary:hover .disc-mark {
   background: #fff;
   color: rgb(var(--slab));
+}
+
+/* A details set to display:contents hands its children straight to the parent
+   flex row, which also defeats the browser's "hide what is closed" slot — so
+   the folded items used to be laid out and clipped by the slab around them. */
+details.contents:not([open]) > :not(summary) {
+  display: none;
 }
 
 .disc-body {

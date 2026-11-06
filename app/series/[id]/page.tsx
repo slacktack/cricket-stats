@@ -303,7 +303,7 @@ export default async function SeriesDetailPage({ params, searchParams }: SeriesP
               ) : null}
             </div>
           )}
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3">
             <HeroStat value={series.matches.length} label="Matches" />
             <HeroStat value={played} label="Played" />
             <HeroStat value={series.teams.length} label="Teams" />

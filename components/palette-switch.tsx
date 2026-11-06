@@ -20,7 +20,11 @@ export function PaletteSwitch({ className }: { className?: string }) {
   }, []);
 
   return (
-    <div className={cn("grid grid-cols-3 gap-1.5", className)} role="group" aria-label="Colour theme">
+    <div
+      className={cn("grid gap-1.5", className)}
+      role="group"
+      aria-label="Colour theme"
+    >
       {OPTIONS.map((item) => {
         const active = palette === item.key;
         return (

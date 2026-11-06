@@ -66,7 +66,11 @@ export function SeriesMatches({
 
   return (
     <div className="mt-4">
-      <div className="flex gap-0 border-b border-line" role="tablist" aria-label="Match state">
+      <div
+        className="no-scrollbar flex min-w-0 gap-0 overflow-x-auto border-b border-line"
+        role="tablist"
+        aria-label="Match state"
+      >
         {(
           [
             ["upcoming", "Live & upcoming"],

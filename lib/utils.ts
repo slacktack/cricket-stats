@@ -212,6 +212,9 @@ export function sanitizeText(value: string): string {
       .replace(/<[^>]+>/g, " ")
   )
     .replace(/\s+/g, " ")
+    /* The feed marks boundaries with inline tags, and dropping the tag leaves
+       the space behind: "to Perry, FOUR , to deep mid-wicket". */
+    .replace(/\s+([,.;:!?])/g, "$1")
     .trim();
 }
 
