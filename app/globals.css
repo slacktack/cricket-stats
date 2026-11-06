@@ -2467,6 +2467,272 @@ html[data-pal="amber"] .rows .hrow {
 }
 
 /* ============================================================
+   VELVET & SILK — nothing here is one flat colour. Each stock is
+   poured from its own four-stop ramp that travels hue as well as
+   lightness, so a slab reads as cloth with a nap rather than paint
+   with a filter over it. Stops are oklch on purpose: mixing in sRGB
+   is what makes a blue gradient go muddy in the middle.
+   ============================================================ */
+
+:root {
+  /* GRID — ultramarine to midnight, the whole family of blue. The top stop
+     stays dark enough that white 10px labels on a slab keep their contrast. */
+  --v-1: oklch(0.56 0.21 266);
+  --v-2: oklch(0.49 0.24 272);
+  --v-3: oklch(0.41 0.21 277);
+  --v-4: oklch(0.27 0.15 272);
+
+  --v-lit: var(--v-1);
+  --v-mid: var(--v-2);
+  --v-deep: var(--v-4);
+  --v-pale: color-mix(in oklab, rgb(var(--slab)) 30%, #f4f7ff);
+
+  --velvet: linear-gradient(
+    152deg,
+    var(--v-1) 0%,
+    var(--v-2) 26%,
+    var(--v-3) 62%,
+    var(--v-4) 100%
+  );
+
+  /* The nap: one bright hairline along the top, one dark along the foot. */
+  --nap: inset 0 1px 0 rgb(255 255 255 / 0.28), inset 0 -1px 0 rgb(0 0 0 / 0.24);
+
+  /* Twill: the weave itself. Coarse enough not to boil while scrolling. */
+  --twill: repeating-linear-gradient(
+    118deg,
+    rgb(255 255 255 / 0.055) 0 1px,
+    transparent 1px 6px
+  );
+
+  --wash: linear-gradient(
+    180deg,
+    color-mix(in oklab, rgb(var(--surface)) 84%, var(--v-pale)) 0%,
+    rgb(var(--surface)) 58%
+  );
+
+  --silk-tint: rgb(255 255 255 / 0.17);
+  --sweep: linear-gradient(
+    100deg,
+    transparent 40%,
+    var(--silk-tint) 50%,
+    transparent 60%
+  );
+
+  /* the third field of light on the page */
+  --floor: color-mix(in oklab, var(--v-2) 30%, transparent);
+}
+
+html.dark {
+  --v-1: oklch(0.57 0.19 265);
+  --v-2: oklch(0.53 0.23 271);
+  --v-3: oklch(0.42 0.22 276);
+  --v-4: oklch(0.24 0.14 272);
+
+  --v-pale: color-mix(in oklab, rgb(var(--slab)) 40%, #0a0e22);
+  --nap: inset 0 1px 0 rgb(255 255 255 / 0.2), inset 0 -1px 0 rgb(0 0 0 / 0.5);
+  --floor: color-mix(in oklab, var(--v-4) 82%, transparent);
+}
+
+html[data-pal="crimson"] {
+  /* CRIMSON — orange fire falling to oxblood. */
+  --v-1: oklch(0.58 0.2 34);
+  --v-2: oklch(0.53 0.23 28);
+  --v-3: oklch(0.43 0.21 26);
+  --v-4: oklch(0.27 0.14 24);
+  --silk-tint: rgb(255 236 220 / 0.26);
+}
+
+html.dark[data-pal="crimson"] {
+  --v-1: oklch(0.58 0.19 35);
+  --v-2: oklch(0.55 0.22 30);
+  --v-3: oklch(0.44 0.21 27);
+  --v-4: oklch(0.28 0.15 25);
+}
+
+html[data-pal="amber"] {
+  /* AMBER — struck gold down through bronze. */
+  --v-1: oklch(0.55 0.12 80);
+  --v-2: oklch(0.48 0.12 76);
+  --v-3: oklch(0.4 0.1 72);
+  --v-4: oklch(0.25 0.07 68);
+  --v-pale: color-mix(in oklab, rgb(var(--slab)) 26%, #fff6df);
+  --silk-tint: rgb(255 244 214 / 0.3);
+}
+
+html.dark[data-pal="amber"] {
+  --v-1: oklch(0.56 0.13 83);
+  --v-2: oklch(0.52 0.13 79);
+  --v-3: oklch(0.42 0.11 74);
+  --v-4: oklch(0.25 0.07 68);
+}
+
+/* Slabs poured from the ramp. */
+.band {
+  background-image: var(--velvet);
+  background-color: rgb(var(--slab));
+  border-bottom-color: var(--v-deep);
+  box-shadow: var(--nap);
+}
+
+mark {
+  background-image: var(--velvet);
+  background-color: rgb(var(--slab));
+}
+
+:is(.btn-accent, .chip-filter[data-active="true"], .tab-link[data-active="true"]) {
+  background-image: var(--velvet);
+  background-color: rgb(var(--slab));
+  box-shadow: var(--nap);
+}
+
+.segmented-item[data-active="true"] {
+  background-image: var(--velvet);
+  background-color: rgb(var(--slab));
+  color: #fff;
+}
+
+/* Inside a slab the inversion still has to read as a cut-out. */
+.band .segmented-item[data-active="true"] {
+  background-image: none;
+  background-color: #fff;
+  color: rgb(var(--slab));
+  box-shadow: none;
+}
+
+/* Any Tailwind slab picks up the same pile, not a flat fill. */
+.bg-slab {
+  background-repeat: no-repeat;
+  background-image: var(--twill), var(--velvet);
+  background-size: auto, 100% 100%;
+  background-color: rgb(var(--slab));
+}
+
+/* The issue numeral is cut from the same cloth: lit edge, deep body. */
+.cover-num {
+  -webkit-text-stroke-color: var(--v-1);
+  background: linear-gradient(
+    168deg,
+    color-mix(in oklab, var(--v-2) 0%, transparent) 38%,
+    color-mix(in oklab, var(--v-2) 58%, transparent) 72%,
+    color-mix(in oklab, var(--v-4) 82%, transparent) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* Cards get a tonal wash instead of a flat fill, and lift on the edge. */
+.blk {
+  background-image: var(--wash);
+  background-color: rgb(var(--surface));
+  transition: border-color 0.35s var(--ease), box-shadow 0.35s var(--ease);
+}
+
+.blk:hover {
+  border-top-color: var(--v-lit);
+  box-shadow: 0 0 0 1px rgb(var(--slab) / 0.12);
+}
+
+/* Silk: a highlight walks the filled surfaces on hover. Each surface lists
+   its own background layers because they cannot be merged across rules. */
+.btn-accent,
+.chip-filter[data-active="true"],
+.tab-link[data-active="true"],
+.segmented-item[data-active="true"] {
+  background-repeat: no-repeat;
+  background-image: var(--sweep), var(--velvet);
+  background-size: 240% 100%, 100% 100%;
+  background-position:
+    160% 0,
+    0 0;
+  transition: background-position 1.1s var(--ease), box-shadow 0.35s var(--ease),
+    transform 0.35s var(--ease), color 0.2s, border-color 0.3s;
+}
+
+.btn-accent:hover,
+.chip-filter[data-active="true"]:hover,
+.tab-link[data-active="true"]:hover,
+.segmented-item[data-active="true"]:hover {
+  background-position:
+    -50% 0,
+    0 0;
+}
+
+/* The button no longer flips to paper — it lifts and the pile catches light. */
+.btn-accent:hover {
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: var(--nap), 0 8px 22px -12px rgb(var(--slab) / 0.9);
+}
+
+.band {
+  background-repeat: no-repeat;
+  background-image: var(--sweep), var(--twill), var(--velvet);
+  background-size: 240% 100%, auto, 100% 100%;
+  background-position:
+    160% 0,
+    0 0,
+    0 0;
+  transition: background-position 1.2s var(--ease);
+}
+
+.band:hover {
+  background-position:
+    -30% 0,
+    0 0,
+    0 0;
+}
+
+/* The spread keeps its two radials under the sweep. */
+.spread {
+  background-repeat: no-repeat;
+  background-color: rgb(var(--slab));
+  box-shadow: var(--nap);
+  background-image: var(--sweep),
+    var(--twill),
+    radial-gradient(
+      90% 70% at 85% 0%,
+      color-mix(in oklab, var(--v-1) 62%, transparent),
+      transparent 62%
+    ),
+    radial-gradient(70% 80% at 0% 100%, var(--v-4), transparent 72%),
+    var(--velvet);
+  background-size: 240% 100%, auto, 100% 100%, 100% 100%, 100% 100%;
+  background-position:
+    160% 0,
+    0 0,
+    0 0,
+    0 0,
+    0 0;
+  transition: background-position 1.2s var(--ease);
+}
+
+.spread:hover {
+  background-position:
+    -30% 0,
+    0 0,
+    0 0,
+    0 0,
+    0 0;
+}
+
+/* The page itself is lit from three fields, not one. */
+body {
+  background:
+    radial-gradient(115% 78% at 3% -12%, rgb(var(--slab) / var(--field-a)), transparent 58%),
+    radial-gradient(85% 60% at 100% 0%, rgb(var(--accent) / var(--field-b)), transparent 55%),
+    radial-gradient(125% 80% at 50% 118%, var(--floor), transparent 66%),
+    rgb(var(--bg));
+  background-attachment: fixed;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :is(.band, .spread, .btn-accent, .chip-filter, .tab-link, .segmented-item) {
+    transition: none;
+  }
+}
+
+/* ============================================================
    MICRO-INTERACTIONS — transform/opacity only, nothing reflows.
    ============================================================ */
 
