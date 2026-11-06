@@ -12,9 +12,12 @@ const sans = Hanken_Grotesk({
   display: "swap",
 });
 
+/* Crimson drives the width axis: the same face set as a poster.
+   Weight is implied by `variable`; axes lists the others only. */
 const display = Archivo({
   subsets: ["latin"],
-  weight: ["400", "700", "800", "900"],
+  weight: "variable",
+  axes: ["wdth"],
   variable: "--font-archivo",
   display: "swap",
 });

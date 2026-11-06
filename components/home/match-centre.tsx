@@ -108,7 +108,7 @@ function TeamColumn({
         size={96}
         className="!h-[clamp(58px,9vw,104px)] !w-[clamp(58px,9vw,104px)] border-white/35"
       />
-      <p className="mt-3.5 max-w-full truncate text-[12px] font-extrabold uppercase leading-none tracking-[0.1em] text-white sm:text-[13px]">
+      <p className="mt-3.5 line-clamp-2 text-[12px] font-extrabold uppercase leading-[1.08] tracking-[0.06em] text-white sm:text-[13px]">
         {team.name}
       </p>
 

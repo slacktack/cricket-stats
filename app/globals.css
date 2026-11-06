@@ -49,7 +49,6 @@
   --field-a: 0.11;
   --field-b: 0.07;
   --fig: var(--accent);
-  --font-display: var(--font-sans);
   --stock: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='900' height='900'%3E%3Cfilter id='f' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.0045 0.006' numOctaves='5' seed='11' stitchTiles='stitch' result='n'/%3E%3CfeDiffuseLighting in='n' surfaceScale='6' diffuseConstant='1' lighting-color='%23ffffff' result='l'%3E%3CfeDistantLight azimuth='235' elevation='42'/%3E%3C/feDiffuseLighting%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0.9 0 0 0 -0.48'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E");
   --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1.6 -0.55'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 
@@ -155,7 +154,6 @@ html[data-pal="crimson"] {
   --scrim: 14 11 11;
   --field-a: 0.08;
   --field-b: 0.05;
-  --font-display: var(--font-archivo), "Archivo", system-ui, sans-serif;
   --ease: cubic-bezier(0.34, 1.56, 0.64, 1);
   --pad: clamp(16px, 3.4vw, 56px);
   color-scheme: light;
@@ -207,7 +205,10 @@ html.dark[data-pal="crimson"] {
 html[data-pal="crimson"] body {
   --font-sans: var(--font-archivo), "Archivo", system-ui, sans-serif;
   --font-mono: var(--font-space-mono), "Space Mono", ui-monospace, monospace;
-  font-size: 13.5px;
+  /* Declared here, not on html: next/font puts its variables on body, and a
+     var() reference that is missing where it is declared invalidates the whole
+     chain rather than resolving later. */
+  --font-display: var(--font-archivo), "Archivo", system-ui, sans-serif;
   letter-spacing: -0.011em;
 }
 
@@ -275,7 +276,6 @@ html[data-pal="amber"] {
   --scrim: 58 42 12;
   --field-a: 0.1;
   --field-b: 0.06;
-  --font-display: var(--font-serif), Georgia, "Times New Roman", serif;
   --foil: linear-gradient(
     105deg,
     #7a5413 0%,
@@ -342,6 +342,10 @@ html.dark[data-pal="amber"] {
 
 /* Amber's voice: Cormorant for anything that heads a page, and the big
    figures poured as metal rather than printed as ink. */
+html[data-pal="amber"] body {
+  --font-display: var(--font-serif), Georgia, "Times New Roman", serif;
+}
+
 html[data-pal="amber"] :is(h1, h2, .display) {
   font-family: var(--font-display);
   font-weight: 600;
@@ -350,12 +354,16 @@ html[data-pal="amber"] :is(h1, h2, .display) {
 
 html[data-pal="amber"] .kicker,
 html[data-pal="amber"] .eyebrow,
-html[data-pal="amber"] .cover-h {
+html[data-pal="amber"] .cover-h,
+html[data-pal="amber"] .dl dt {
   font-family: var(--font-mono), ui-monospace, monospace;
   letter-spacing: 0.14em;
 }
 
 html[data-pal="amber"] :is(.cover-num, .num-hero) {
+  font-family: var(--font-display);
+  font-weight: var(--num-w);
+  letter-spacing: -0.04em;
   -webkit-text-stroke-color: transparent;
   background-image: var(--foil);
   background-size: 220% 100%;
@@ -393,6 +401,10 @@ body {
   background-attachment: fixed;
   color: rgb(var(--ink));
   font-family: var(--font-sans), "Helvetica Neue", Arial, sans-serif;
+  /* next/font hangs its variables on <body>, so --font-display can only be
+     derived from them here. Declared on :root it is missing its reference and
+     the whole chain degrades to the guaranteed-invalid value. */
+  --font-display: var(--font-sans);
   font-size: 13px;
   line-height: 1.5;
   font-feature-settings: "ss01", "tnum";
@@ -2158,7 +2170,7 @@ html:not(.dark) .stock::after {
 
 .rows .hrow {
   display: grid;
-  grid-template-columns: 26px minmax(0, 1fr) auto;
+  grid-template-columns: 26px minmax(0, 1fr) minmax(0, auto);
   gap: 8px;
   align-items: baseline;
   padding: 6px 0;
@@ -2182,7 +2194,46 @@ html:not(.dark) .stock::after {
   font-style: normal;
   color: rgb(var(--muted));
   font-size: 11px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* Phones: a front page still has to leave room for the match. Three rows a
+   column, no standfirst, and the index columns given back to the titles. */
+@media (max-width: 1023px) {
+  .cover-top .cover-note {
+    display: none;
+  }
+
+  .cover-no {
+    grid-column: 1 / -1;
+    text-align: left;
+  }
+
+  .cover-mid {
+    padding: 16px 0 22px;
+  }
+
+  .cover-num {
+    font-size: clamp(64px, 17vw, 108px);
+  }
+
+  .cover-cols .rows li:nth-child(n + 4) {
+    display: none;
+  }
+
+  .rows .hrow {
+    grid-template-columns: 18px minmax(0, 1fr) auto;
+    gap: 6px;
+    padding: 7px 0;
+    font-size: 12.5px;
+  }
+
+  .rows .hrow em {
+    font-size: 10px;
+  }
 }
 
 .cover-link {
@@ -2236,6 +2287,183 @@ html[data-pal="amber"] .cover-tag mark {
   letter-spacing: -0.04em;
   font-weight: 700;
   font-size: 0.86em;
+}
+
+/* ============================================================
+   PALETTE GEOMETRY — a colourway is not a tint. Each stock keeps
+   its own measure: how large type runs, how round an edge is, how
+   heavy a rule falls and how fast a thing moves.
+   ============================================================ */
+
+:root {
+  /* GRID — 12.5px, hairline, square, hard wipes. The default stock. */
+  --measure: 13px;
+  --lead: 1.5;
+  --r-pill: 0px;
+  --r-box: 0px;
+  --rule-w: 1px;
+  --num-w: 800;
+  --num-stroke: 2px;
+  --num-fill: 0.55;
+}
+
+html[data-pal="crimson"] {
+  /* CRIMSON — a poster. Big type, round chips, 2pt rules, spring motion. */
+  --measure: 15px;
+  --lead: 1.45;
+  --r-pill: 999px;
+  --r-box: 4px;
+  --rule-w: 2px;
+  --num-w: 900;
+  --num-stroke: 3px;
+  --num-fill: 0.16;
+  --ease: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --io: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+html[data-pal="amber"] {
+  /* AMBER — slow, serif, gold hairlines that sit off the corner. */
+  --measure: 13.5px;
+  --lead: 1.6;
+  --r-pill: 0px;
+  --r-box: 0px;
+  --rule-w: 1px;
+  --num-w: 600;
+  --num-stroke: 1px;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --io: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+body {
+  font-size: var(--measure);
+  line-height: var(--lead);
+}
+
+/* Chips and tags: square in print, pill on the poster stock. */
+html[data-pal="crimson"] :is(.chip-filter, .count-badge, .dtag, .wktchip, .mini) {
+  border-radius: var(--r-pill);
+  padding-inline: 0.72em;
+}
+
+html[data-pal="crimson"] .badge {
+  border-radius: var(--r-pill);
+}
+
+/* Containers keep the stock's edge: hard corners in print, mitred on the poster. */
+:is(.blk, .band, .spread) {
+  border-radius: var(--r-box);
+}
+
+/* Rules get heavier with the type. */
+html[data-pal="crimson"] :is(.blk, .band, .spread, .hrow, .figs > div, .dl > div) {
+  border-width: var(--rule-w);
+  border-color: rgb(var(--line-strong));
+}
+
+html[data-pal="crimson"] .tab-link[data-active="true"]::after {
+  height: 4px;
+}
+
+/* The poster numeral is filled, not drawn. */
+html[data-pal="crimson"] :is(.cover-num, .num-hero) {
+  font-weight: var(--num-w);
+  -webkit-text-stroke-width: var(--num-stroke);
+  background-image: linear-gradient(
+    180deg,
+    rgb(var(--fig) / 0) 30%,
+    rgb(var(--slab) / var(--num-fill))
+  );
+}
+
+html[data-pal="crimson"] .cover-mast {
+  font-size: clamp(30px, 3.4vw, 50px);
+  font-weight: 900;
+  font-stretch: 118%;
+  letter-spacing: -0.045em;
+}
+
+html[data-pal="crimson"] .cover-tag {
+  /* Two lines, not three: the mark has to sit under one unbroken phrase. */
+  font-size: clamp(28px, 4.2vw, 60px);
+  font-stretch: 112%;
+  color: rgb(var(--ink));
+}
+
+html[data-pal="crimson"] .cover-h {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+}
+
+html[data-pal="crimson"] .rows .hrow {
+  padding: 9px 0;
+  font-size: 14px;
+}
+
+html[data-pal="crimson"] .dl dd {
+  font-size: 15px;
+}
+
+/* Amber sets its headings as a serif and its panels with gold corners. */
+html[data-pal="amber"] .band > h3,
+html[data-pal="amber"] .spread > b,
+html[data-pal="amber"] .sec-head > h2 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-style: italic;
+  letter-spacing: -0.012em;
+  text-transform: none;
+}
+
+html[data-pal="amber"] .blk {
+  position: relative;
+  border-color: rgb(var(--accent) / 0.26);
+}
+
+html[data-pal="amber"] .blk::before,
+html[data-pal="amber"] .blk::after {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-color: rgb(var(--accent));
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+html[data-pal="amber"] .blk::before {
+  top: -1px;
+  left: -1px;
+  border-top: 1px solid;
+  border-left: 1px solid;
+}
+
+html[data-pal="amber"] .blk::after {
+  bottom: -1px;
+  right: -1px;
+  border-bottom: 1px solid;
+  border-right: 1px solid;
+}
+
+html[data-pal="amber"] .cover-mast {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(30px, 3.6vw, 58px);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+html[data-pal="amber"] .cover-num {
+  -webkit-text-stroke-width: 0;
+}
+
+html[data-pal="amber"] .cover-h {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+}
+
+html[data-pal="amber"] .rows .hrow {
+  padding: 8px 0;
 }
 
 /* ============================================================

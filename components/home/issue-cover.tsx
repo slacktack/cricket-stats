@@ -6,9 +6,14 @@ import {
   matchFormat,
   matchShortTitle,
   sortByStateThenTime,
-  upcomingLine,
 } from "@/lib/match-display";
-import { formatDate, formatTime, pad, timeAgo } from "@/lib/utils";
+import {
+  formatDate,
+  formatTime,
+  pad,
+  relativeDayLabel,
+  timeAgo,
+} from "@/lib/utils";
 import { Lines, d } from "@/components/motion";
 
 /** ISO week number, because this page is published, not streamed. */
@@ -25,7 +30,12 @@ function issueOf(now: Date): string {
 
 /** What sits in the right-hand column of a contents row. */
 function scoreLine(match: MatchSummary): string {
-  if (match.state === "upcoming") return upcomingLine(match);
+  if (match.state === "upcoming") {
+    const day = relativeDayLabel(match.startTime);
+    /* "Today" is the common case and it is pure noise in a narrow column. */
+    const time = formatTime(match.startTime);
+    return day === "Today" ? time : `${day} · ${time}`;
+  }
   if (match.state === "completed" && match.winnerTeamId) {
     const winner = match.teams.find((team) => team.id === match.winnerTeamId);
     return winner ? `${winner.shortName} won` : "Result";
