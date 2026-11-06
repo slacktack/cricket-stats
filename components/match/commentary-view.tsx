@@ -2,11 +2,14 @@ import type { CommentaryBall, MatchDetail } from "@/lib/types";
 import { timeAgo } from "@/lib/utils";
 import { EmptyState } from "@/components/ui/empty-state";
 
-function badgeTone(ball: CommentaryBall): string {
-  if (ball.badge === "W") return "bg-wkt text-white";
-  if (ball.badge === "4" || ball.badge === "6") return "bg-accent text-accent-ink";
-  if (ball.badge === "wd" || ball.badge === "nb") return "bg-warn/15 text-warn";
-  return "bg-surface2 text-muted";
+/* Klein for boundaries, coral for a wicket, hairline for everything else. No pastels. */
+function badgeClass(ball: CommentaryBall): string {
+  const base =
+    "grid h-7 min-w-7 shrink-0 place-items-center border px-1 text-[11px] font-bold leading-none tabular-nums ";
+  if (ball.badge === "W") return `${base}border-wkt bg-wkt text-white`;
+  if (ball.badge === "4" || ball.badge === "6") return `${base}border-slab bg-slab text-white`;
+  if (ball.badge === "wd" || ball.badge === "nb") return `${base}border-accent/50 text-accent`;
+  return `${base}border-line text-muted`;
 }
 
 export function CommentaryView({ detail }: { detail: MatchDetail }) {
@@ -29,55 +32,66 @@ export function CommentaryView({ detail }: { detail: MatchDetail }) {
 
   return (
     <div className="mt-4 grid gap-4 lg:grid-cols-[minmax(0,1fr)_300px]">
-      <div className="space-y-3">
+      <div data-rv className="space-y-4">
         {commentary.overs.map((over, overIndex) => (
-          <section key={`${over.over}-${overIndex}`} className="card overflow-hidden">
-            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line bg-surface2/60 px-4 py-2.5">
-              <h2 className="text-sm font-bold">Over {over.over}</h2>
-              <div className="flex items-center gap-3 text-xs text-muted">
-                {over.score ? <span className="font-semibold tabular-nums">{over.score}</span> : null}
-                {over.runs !== undefined ? <span className="text-faint">{over.runs} runs</span> : null}
-              </div>
+          <section key={`${over.over}-${overIndex}`} className="blk">
+            <div className="band">
+              <h3>Over {String(over.over).padStart(2, "0")}</h3>
+              <span className="tnum">
+                {over.score ? `${over.score} · ` : ""}
+                {over.runs !== undefined ? `${over.runs} runs` : ""}
+              </span>
             </div>
-            <div className="divide-y divide-line/70">
+            <div className="px-4 py-1">
               {over.balls.map((ball, ballIndex) => (
-                <div key={`${ball.id}-${ballIndex}`} className="flex gap-3 px-4 py-3">
-                  <span className={`mt-0.5 grid h-8 min-w-8 shrink-0 place-items-center rounded-md px-1 text-xs font-bold ${badgeTone(ball)}`}>
-                    {ball.badge ?? ball.ballMetric ?? "•"}
-                  </span>
-                  <div className="min-w-0">
-                    <p className="text-sm leading-relaxed text-ink">{ball.text}</p>
+                <div
+                  key={`${ball.id}-${ballIndex}`}
+                  className="flex gap-3 border-t border-line/70 py-2.5 first:border-0"
+                >
+                  <span className={badgeClass(ball)}>{ball.badge ?? ball.ballMetric ?? "•"}</span>
+                  <p className="min-w-0 flex-1 text-[13px] leading-relaxed text-muted">
+                    {ball.text}
                     {ball.event.length > 0 ? (
-                      <p className="mt-1 text-xs text-faint">{ball.event.join(" · ")}</p>
+                      <span className="dnote block">{ball.event.join(" · ")}</span>
                     ) : null}
-                  </div>
+                  </p>
                 </div>
               ))}
             </div>
           </section>
         ))}
-        <p className="text-xs text-faint">Commentary updated {timeAgo(commentary.updatedAt)}.</p>
+        <p className="text-[11px] text-faint" suppressHydrationWarning>
+          Commentary updated {timeAgo(commentary.updatedAt)}.
+        </p>
       </div>
 
-      <aside className="space-y-3">
-        <section className="card p-4">
-          <h2 className="text-sm font-bold">Match talk</h2>
+      <aside className="space-y-4">
+        <section className="blk">
+          <div className="band">
+            <h3>Match talk</h3>
+            <span>{commentary.talk.length}</span>
+          </div>
           {commentary.talk.length > 0 ? (
-            <div className="mt-3 space-y-3">
+            <p className="px-4 py-1 text-[12px] leading-relaxed text-muted">
               {commentary.talk.map((item, itemIndex) => (
-                <p key={`${item.id}-${itemIndex}`} className="rounded bg-surface2/60 px-3 py-2 text-xs leading-relaxed text-muted">
+                <span
+                  key={`${item.id}-${itemIndex}`}
+                  className="block border-t border-line/70 py-2.5 first:border-0"
+                >
                   {item.text}
-                </p>
+                </span>
               ))}
-            </div>
+            </p>
           ) : (
-            <p className="mt-2 text-xs text-muted">No match talk yet.</p>
+            <p className="px-4 py-3 text-[12px] text-faint">No match talk yet.</p>
           )}
         </section>
         {detail.live?.lastWicket ? (
-          <section className="card p-4">
-            <h2 className="text-sm font-bold">Last wicket</h2>
-            <p className="mt-2 text-xs leading-relaxed text-muted">{detail.live.lastWicket}</p>
+          <section className="blk">
+            <div className="band">
+              <h3>Last wicket</h3>
+            </div>
+            <p className="px-4 py-3 text-[12px] leading-relaxed text-muted">{detail.live.lastWicket}</p>
           </section>
         ) : null}
       </aside>

@@ -2,91 +2,382 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================================
+   CHAUKA — "printed matter on black stock"
+   Palette discipline: greyscale + exactly one accent (Klein blue).
+   Lime is reserved for LIVE only. No border-radius, no blur.
+   ============================================================ */
+
 :root {
-  --bg-top: 200 216 252;
-  --bg: 226 234 250;
-  --surface: 255 255 255;
-  --surface2: 236 241 251;
-  --line: 214 223 242;
-  --line-strong: 165 184 224;
-  --ink: 12 22 52;
-  --muted: 58 72 110;
-  --faint: 98 112 150;
-  --accent: 37 99 235;
+  /* paper — day match. Cool stock, not grey: every neutral carries blue. */
+  --bg: 236 240 250;
+  --bg-top: 236 240 250;
+  --surface: 247 250 255;
+  --surface2: 224 233 250;
+  --line: 196 208 234;
+  --line-strong: 143 160 205;
+  --ink: 8 13 38;
+  --muted: 64 78 118;
+  --faint: 86 100 140;
+  --accent: 31 59 255;
+  --slab: 31 59 255;
   --accent-ink: 255 255 255;
-  --accent-soft: 214 228 255;
-  --live: 5 150 105;
-  --wkt: 234 88 12;
-  --win: 180 120 0;
-  --warn: 217 119 6;
-  --header: 238 244 255;
-  --header-ink: 12 22 52;
-  --header-muted: 80 96 140;
-  --panel: 255 255 255;
-  --panel-ink: 12 22 52;
-  --panel-muted: 80 96 140;
-  --gold: 202 138 4;
-  --pop: 124 58 237;
-  --coral: 234 88 12;
-  --aqua: 2 132 199;
-  --sun: 202 138 4;
-  --sage: 220 240 236;
-  --clay: 250 238 220;
-  --glow-a: 0 200 100;
-  --glow-b: 99 102 241;
-  --header-h: 3.75rem;
-  --s1: 224 86 10;
-  --s2: 37 99 235;
+  --accent-soft: 214 222 255;
+  --accent-deep: 18 41 201;
+  --live: 90 122 0;
+  --wkt: 176 52 18;
+  --win: 8 13 38;
+  --warn: 120 84 0;
+  --gold: 150 108 0;
+  --pop: 31 59 255;
+  --coral: 176 52 18;
+  --aqua: 31 59 255;
+  --sun: 150 108 0;
+  --sage: 222 232 250;
+  --clay: 228 236 251;
+  --header: 236 240 250;
+  --header-ink: 8 13 38;
+  --header-muted: 64 78 118;
+  --panel: 247 250 255;
+  --panel-ink: 8 13 38;
+  --panel-muted: 64 78 118;
+  --s1: 176 52 18;
+  --s2: 31 59 255;
+
+  --rule: rgb(20 40 140 / 0.16);
+  --scrim: 5 5 5;
+  --field-a: 0.11;
+  --field-b: 0.07;
+  --fig: var(--accent);
+  --font-display: var(--font-sans);
+  --stock: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='900' height='900'%3E%3Cfilter id='f' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.0045 0.006' numOctaves='5' seed='11' stitchTiles='stitch' result='n'/%3E%3CfeDiffuseLighting in='n' surfaceScale='6' diffuseConstant='1' lighting-color='%23ffffff' result='l'%3E%3CfeDistantLight azimuth='235' elevation='42'/%3E%3C/feDiffuseLighting%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0.9 0 0 0 -0.48'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E");
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1.6 -0.55'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+
+  --pad: clamp(16px, 2.8vw, 44px);
+  --rail: 0px;
+  --header-h: 3.5rem;
+  --ease: cubic-bezier(0.2, 0.7, 0, 1);
+  --io: cubic-bezier(0.77, 0, 0.175, 1);
   color-scheme: light;
 }
 
 @media (min-width: 1024px) {
   :root {
     --header-h: 0rem;
+    --rail: 200px;
   }
 }
 
+/* stock — night match. The default. */
 .dark {
-  --bg-top: 12 24 56;
-  --bg: 7 13 31;
-  --surface: 17 30 66;
-  --surface2: 26 42 88;
-  --line: 34 50 96;
-  --line-strong: 52 68 112;
-  --ink: 232 238 255;
-  --muted: 156 170 206;
-  --faint: 110 125 166;
-  --accent: 77 141 255;
+  --bg: 4 6 17;
+  --bg-top: 4 6 17;
+  --surface: 14 19 44;
+  --surface2: 25 33 70;
+  --line: 42 53 100;
+  --line-strong: 84 100 168;
+  --ink: 233 238 252;
+  --muted: 157 168 205;
+  --faint: 118 130 172;
+  --accent: 96 122 255;
+  --slab: 31 59 255;
   --accent-ink: 255 255 255;
-  --accent-soft: 21 41 90;
-  --live: 52 211 153;
+  --accent-soft: 26 36 92;
+  --accent-deep: 18 41 201;
+  --live: 200 245 59;
   --wkt: 255 107 74;
-  --win: 251 191 36;
-  --warn: 251 146 60;
-  --header: 7 13 31;
-  --header-ink: 232 238 255;
-  --header-muted: 150 164 200;
-  --panel: 14 23 48;
-  --panel-ink: 232 238 255;
-  --panel-muted: 156 170 206;
+  --win: 233 238 252;
+  --warn: 251 191 36;
   --gold: 251 191 36;
-  --pop: 167 139 250;
+  --pop: 146 166 255;
   --coral: 255 107 74;
-  --aqua: 56 189 248;
+  --aqua: 146 166 255;
   --sun: 251 191 36;
-  --sage: 16 40 52;
-  --clay: 40 36 30;
-  --glow-a: 61 255 139;
-  --glow-b: 99 102 241;
-  --s1: 232 100 26;
-  --s2: 74 132 255;
+  --sage: 15 22 50;
+  --clay: 22 26 56;
+  --header: 4 6 17;
+  --header-ink: 233 238 252;
+  --header-muted: 157 168 205;
+  --panel: 14 19 44;
+  --panel-ink: 233 238 252;
+  --panel-muted: 157 168 205;
+  --s1: 255 107 74;
+  --s2: 96 122 255;
+
+  --rule: rgb(190 206 255 / 0.14);
+  --scrim: 4 6 17;
+  --field-a: 0.42;
+  --field-b: 0.22;
   color-scheme: dark;
+}
+
+/* ============================================================
+   PALETTE 2 — CRIMSON. One loud red on bone paper, spring
+   easing, Archivo headlines. Light is the day match; .dark is oxblood.
+   ============================================================ */
+
+html[data-pal="crimson"] {
+  --bg: 244 239 232;
+  --bg-top: 244 239 232;
+  --surface: 250 246 240;
+  --surface2: 235 227 215;
+  --line: 214 202 189;
+  --line-strong: 176 160 143;
+  --ink: 14 11 11;
+  --muted: 90 78 74;
+  --faint: 108 92 86;
+  --accent: 225 6 0;
+  --slab: 225 6 0;
+  --accent-ink: 255 255 255;
+  --accent-soft: 250 226 222;
+  --accent-deep: 94 11 7;
+  --live: 90 122 0;
+  --wkt: 94 11 7;
+  --win: 14 11 11;
+  --warn: 150 60 0;
+  --gold: 150 90 0;
+  --pop: 255 74 28;
+  --coral: 232 56 43;
+  --aqua: 225 6 0;
+  --sun: 176 108 0;
+  --sage: 238 234 226;
+  --clay: 240 230 218;
+  --header: 244 239 232;
+  --header-ink: 14 11 11;
+  --header-muted: 90 78 74;
+  --panel: 250 246 240;
+  --panel-ink: 14 11 11;
+  --panel-muted: 90 78 74;
+  --s1: 225 6 0;
+  --s2: 40 34 32;
+
+  --rule: rgb(14 11 11 / 0.13);
+  --scrim: 14 11 11;
+  --field-a: 0.08;
+  --field-b: 0.05;
+  --font-display: var(--font-archivo), "Archivo", system-ui, sans-serif;
+  --ease: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --pad: clamp(16px, 3.4vw, 56px);
+  color-scheme: light;
+}
+
+html.dark[data-pal="crimson"] {
+  --bg: 11 8 8;
+  --surface: 20 15 15;
+  --surface2: 32 23 22;
+  --line: 56 40 39;
+  --line-strong: 104 68 66;
+  --ink: 244 239 232;
+  --muted: 172 158 152;
+  --faint: 126 110 106;
+  --accent: 255 74 28;
+  --slab: 225 6 0;
+  --accent-soft: 46 15 13;
+  --accent-deep: 94 11 7;
+  --live: 200 245 59;
+  --wkt: 255 138 101;
+  --win: 244 239 232;
+  --warn: 251 191 36;
+  --gold: 251 191 36;
+  --pop: 255 106 61;
+  --coral: 255 106 61;
+  --aqua: 255 74 28;
+  --sun: 251 191 36;
+  --sage: 26 18 17;
+  --clay: 30 21 18;
+  --header: 11 8 8;
+  --header-ink: 244 239 232;
+  --header-muted: 172 158 152;
+  --panel: 20 15 15;
+  --panel-ink: 244 239 232;
+  --panel-muted: 172 158 152;
+  --s1: 255 61 40;
+  --s2: 244 239 232;
+
+  --rule: rgb(244 239 232 / 0.11);
+  --scrim: 11 8 8;
+  --field-a: 0.32;
+  --field-b: 0.16;
+  color-scheme: dark;
+}
+
+/* Crimson is its own typographic system: Archivo everywhere, Space Mono
+   for figures. next/font declares --font-sans on <body>, so the override
+   has to land on body (0,1,1) to beat the class (0,1,0). */
+html[data-pal="crimson"] body {
+  --font-sans: var(--font-archivo), "Archivo", system-ui, sans-serif;
+  --font-mono: var(--font-space-mono), "Space Mono", ui-monospace, monospace;
+  font-size: 13.5px;
+  letter-spacing: -0.011em;
+}
+
+html[data-pal="crimson"] :is(h1, h2, .display, .num-hero, .num-xl, .num-lg) {
+  font-family: var(--font-display);
+  font-weight: 900;
+  letter-spacing: -0.045em;
+  text-transform: uppercase;
+}
+
+html[data-pal="crimson"] .kicker,
+html[data-pal="crimson"] .eyebrow,
+html[data-pal="crimson"] .band > h3 {
+  font-family: var(--font-mono);
+  letter-spacing: 0.1em;
+}
+
+html[data-pal="crimson"] a:focus-visible,
+html[data-pal="crimson"] button:focus-visible {
+  outline: 3px solid rgb(var(--pop));
+  outline-offset: 3px;
+}
+
+/* ============================================================
+   PALETTE 3 — AMBER. Gold foil on soot, or ink on sand. Serif
+   display, mono figures, hairlines that carry the metal.
+   ============================================================ */
+
+html[data-pal="amber"] {
+  --bg: 244 236 217;
+  --bg-top: 244 236 217;
+  --surface: 251 245 230;
+  --surface2: 235 224 198;
+  --line: 220 203 163;
+  --line-strong: 201 177 124;
+  --ink: 58 42 12;
+  --muted: 128 106 68;
+  --faint: 154 133 96;
+  --accent: 122 84 19;
+  --slab: 122 84 19;
+  --accent-ink: 255 255 255;
+  --accent-soft: 238 220 176;
+  --accent-deep: 90 68 12;
+  --live: 96 118 10;
+  --wkt: 150 52 26;
+  --win: 58 42 12;
+  --warn: 150 96 12;
+  --gold: 168 122 38;
+  --pop: 201 148 56;
+  --coral: 150 52 26;
+  --aqua: 122 84 19;
+  --sun: 168 122 38;
+  --sage: 238 231 213;
+  --clay: 240 231 210;
+  --header: 244 236 217;
+  --header-ink: 58 42 12;
+  --header-muted: 128 106 68;
+  --panel: 251 245 230;
+  --panel-ink: 58 42 12;
+  --panel-muted: 128 106 68;
+  --s1: 150 52 26;
+  --s2: 122 84 19;
+
+  --rule: rgb(58 42 12 / 0.15);
+  --scrim: 58 42 12;
+  --field-a: 0.1;
+  --field-b: 0.06;
+  --font-display: var(--font-serif), Georgia, "Times New Roman", serif;
+  --foil: linear-gradient(
+    105deg,
+    #7a5413 0%,
+    #b5862f 26%,
+    #e9c983 42%,
+    #8c641e 62%,
+    #c4943c 82%,
+    #7a5413 100%
+  );
+  color-scheme: light;
+}
+
+html.dark[data-pal="amber"] {
+  --bg: 7 7 7;
+  --bg-top: 7 7 7;
+  --surface: 16 14 11;
+  --surface2: 28 24 18;
+  --line: 58 50 38;
+  --line-strong: 104 88 60;
+  --ink: 241 236 226;
+  --muted: 158 148 132;
+  --faint: 126 116 100;
+  --accent: 217 178 106;
+  --slab: 150 105 28;
+  --accent-ink: 255 255 255;
+  --accent-soft: 42 33 17;
+  --accent-deep: 90 68 12;
+  --live: 200 245 59;
+  --wkt: 255 138 101;
+  --win: 241 236 226;
+  --warn: 233 201 131;
+  --gold: 233 201 131;
+  --pop: 246 226 174;
+  --coral: 255 138 101;
+  --aqua: 217 178 106;
+  --sun: 233 201 131;
+  --sage: 22 19 14;
+  --clay: 26 22 17;
+  --header: 7 7 7;
+  --header-ink: 241 236 226;
+  --header-muted: 158 148 132;
+  --panel: 16 14 11;
+  --panel-ink: 241 236 226;
+  --panel-muted: 158 148 132;
+  --s1: 255 138 101;
+  --s2: 217 178 106;
+
+  --rule: rgb(217 178 106 / 0.2);
+  --scrim: 7 7 7;
+  --field-a: 0.2;
+  --field-b: 0.1;
+  --foil: linear-gradient(
+    105deg,
+    #8c6a2c 0%,
+    #e9c983 22%,
+    #fff3cf 34%,
+    #c9974a 50%,
+    #f3d79a 66%,
+    #9b7535 84%,
+    #e2bf7c 100%
+  );
+  color-scheme: dark;
+}
+
+/* Amber's voice: Cormorant for anything that heads a page, and the big
+   figures poured as metal rather than printed as ink. */
+html[data-pal="amber"] :is(h1, h2, .display) {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.022em;
+}
+
+html[data-pal="amber"] .kicker,
+html[data-pal="amber"] .eyebrow,
+html[data-pal="amber"] .cover-h {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  letter-spacing: 0.14em;
+}
+
+html[data-pal="amber"] :is(.cover-num, .num-hero) {
+  -webkit-text-stroke-color: transparent;
+  background-image: var(--foil);
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: foil 11s linear infinite;
+}
+
+@keyframes foil {
+  to {
+    background-position: -220% 0;
+  }
+}
+
+html[data-pal="amber"] .num-xl,
+html[data-pal="amber"] .num-lg {
+  color: rgb(var(--accent));
 }
 
 * {
   border-color: rgb(var(--line));
 }
-
 html {
   -webkit-tap-highlight-color: transparent;
   scroll-behavior: smooth;
@@ -94,17 +385,32 @@ html {
 
 body {
   min-height: 100vh;
-  background: linear-gradient(180deg, rgb(var(--bg-top)) 0%, rgb(var(--bg)) 520px) no-repeat, rgb(var(--bg));
+  /* The accent is not a garnish here — it is the light the page is lit by. */
+  background:
+    radial-gradient(115% 78% at 3% -12%, rgb(var(--slab) / var(--field-a)), transparent 58%),
+    radial-gradient(85% 60% at 100% 0%, rgb(var(--accent) / var(--field-b)), transparent 55%),
+    rgb(var(--bg));
+  background-attachment: fixed;
   color: rgb(var(--ink));
-  font-family: var(--font-sans), system-ui, sans-serif;
-  font-feature-settings: "cv11", "ss01";
+  font-family: var(--font-sans), "Helvetica Neue", Arial, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  font-feature-settings: "ss01", "tnum";
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
 }
 
 ::selection {
-  background: rgb(var(--accent) / 0.2);
-  color: rgb(var(--ink));
+  background: rgb(var(--slab));
+  color: #fff;
+}
+
+mark {
+  background: rgb(var(--slab));
+  color: rgb(var(--accent-ink));
+  padding: 0 0.12em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
 }
 
 @layer base {
@@ -112,8 +418,9 @@ body {
   h2,
   h3,
   h4 {
-    letter-spacing: -0.02em;
-    font-weight: 600;
+    letter-spacing: -0.04em;
+    font-weight: 700;
+    line-height: 1.04;
   }
 
   a {
@@ -126,179 +433,1005 @@ body {
   }
 
   :focus-visible {
-    outline: 2px solid rgb(var(--accent));
-    outline-offset: 2px;
+    outline: 2px solid rgb(var(--slab));
+    outline-offset: 3px;
+  }
+
+  table {
+    font-variant-numeric: tabular-nums lining-nums;
   }
 }
 
+/* ============================================================
+   ATMOSPHERE
+   ============================================================ */
+
+/* Crumpled-plastic stock, rasterized once, promoted to its own layer. */
+.stock {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: var(--stock);
+  background-size: 900px 900px;
+  opacity: 0.09;
+  transform: translateZ(0);
+}
+
+.stock::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    70% 60% at 85% 0%,
+    rgb(var(--slab) / 0.55),
+    transparent 70%
+  );
+  opacity: 0.3;
+}
+
+html:not(.dark) .stock {
+  opacity: 0.05;
+}
+
+html:not(.dark) .stock::after {
+  background: radial-gradient(
+    70% 60% at 85% 0%,
+    rgb(var(--accent) / 0.22),
+    transparent 70%
+  );
+  opacity: 0.5;
+}
+
+/* Fine film grain, jittered on steps() like a shutter. Paused off-screen. */
+.grain {
+  position: absolute;
+  inset: -60px;
+  pointer-events: none;
+  opacity: 0.14;
+  background-image: var(--grain);
+  animation: grain 0.9s steps(5) infinite;
+  animation-play-state: paused;
+}
+
+.grain[data-run] {
+  animation-play-state: running;
+}
+
+@keyframes grain {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  20% {
+    transform: translate3d(-24px, 14px, 0);
+  }
+  40% {
+    transform: translate3d(18px, -30px, 0);
+  }
+  60% {
+    transform: translate3d(-12px, 26px, 0);
+  }
+  80% {
+    transform: translate3d(30px, 8px, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Scroll progress traced around the viewport perimeter, corner by corner. */
+.frame {
+  position: fixed;
+  inset: 0;
+  z-index: 49;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s var(--ease);
+}
+
+.frame[data-on] {
+  opacity: 1;
+}
+
+.frame i {
+  position: absolute;
+  will-change: transform;
+  background: linear-gradient(90deg, rgb(var(--slab)), rgb(var(--accent-deep)));
+}
+
+.frame .f0 {
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 3px;
+  transform-origin: left;
+  transform: scaleX(var(--p0, 0));
+}
+
+.frame .f1 {
+  right: 0;
+  top: 0;
+  width: 3px;
+  height: 100%;
+  transform-origin: top;
+  transform: scaleY(var(--p1, 0));
+}
+
+.frame .f2 {
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 3px;
+  transform-origin: right;
+  transform: scaleX(var(--p2, 0));
+}
+
+.frame .f3 {
+  left: 0;
+  bottom: 0;
+  width: 3px;
+  height: 100%;
+  transform-origin: bottom;
+  transform: scaleY(var(--p3, 0));
+}
+
+/* Vertical column gridlines that draw themselves in per route. */
+.cols {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: var(--rail);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.cols i {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  left: calc(var(--pad) + (100% - 2 * var(--pad)) * var(--gi) / 12);
+  background: linear-gradient(
+    rgb(var(--slab) / 0.16),
+    rgb(var(--slab) / 0.06) 55%,
+    transparent
+  );
+  transform-origin: top;
+  animation: draw 1.3s var(--ease) both;
+  animation-delay: calc(var(--gi) * 45ms + 200ms);
+}
+
+@keyframes draw {
+  from {
+    transform: scaleY(0);
+  }
+}
+
+@media (max-width: 1023px) {
+  .cols i:nth-child(even) {
+    display: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .cols i:nth-child(4n + 3) {
+    display: none;
+  }
+}
+
+/* ============================================================
+   REVEAL CONTRACT — mark with data-rv, observer adds data-in.
+   Stagger is authored as style={{ "--gd": "140ms" }}.
+   ============================================================ */
+
+[data-rv] {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.9s var(--ease) var(--gd, 0ms),
+    transform 1s var(--ease) var(--gd, 0ms);
+}
+
+[data-rv][data-in] {
+  opacity: 1;
+  transform: none;
+}
+
+/* Line-mask reveal — author the breaks, one mask per semantic line. */
+.lines .line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.06em;
+  margin-bottom: -0.06em;
+}
+
+.lines .line > span {
+  display: inline-block;
+  transform: translateY(108%);
+  transition: transform 1.15s var(--ease) var(--gd, 0ms);
+}
+
+.lines[data-in] .line > span {
+  transform: none;
+}
+
+.lines[data-rv] {
+  opacity: 1;
+  transform: none;
+}
+
+/* ============================================================
+   TYPE
+   ============================================================ */
+
 @layer components {
   .container-page {
-    @apply mx-auto w-full max-w-[1240px] px-4 sm:px-6 lg:px-8;
+    margin-inline: auto;
+    width: 100%;
+    max-width: 1560px;
+    padding-inline: var(--pad);
   }
 
-  .card {
-    @apply rounded-xl border border-line bg-surface;
+  .kicker {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: rgb(var(--muted));
   }
 
-  .card-hover {
-    @apply transition duration-200 ease-out hover:-translate-y-px hover:border-line-strong;
+  .kicker b {
+    display: inline-block;
+    background: rgb(var(--slab));
+    color: #fff;
+    padding: 1px 5px 0;
+    margin-right: 6px;
+    font-weight: 700;
   }
 
-  .card-vivid {
-    background: rgb(var(--surface));
+  .eyebrow {
+    font-size: 10px;
+    line-height: 1;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgb(var(--accent));
+  }
+
+  /* Giant outlined numeral — the hero figure. */
+  .num-hero {
+    font-size: clamp(112px, 19vw, 300px);
+    font-weight: 800;
+    letter-spacing: -0.075em;
+    line-height: 0.76;
+    color: transparent;
+    -webkit-text-stroke: 2px rgb(var(--fig));
+    background: linear-gradient(
+      180deg,
+      rgb(var(--fig) / 0) 40%,
+      rgb(var(--fig) / 0.62)
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+
+  /* Monument stat. */
+  .num-xl {
+    font-size: clamp(38px, 5vw, 82px);
+    font-weight: 700;
+    letter-spacing: -0.05em;
+    line-height: 0.95;
+    font-variant-numeric: tabular-nums lining-nums;
+    color: rgb(var(--fig));
+  }
+
+  .num-lg {
+    font-size: clamp(28px, 3.4vw, 54px);
+    font-weight: 700;
+    letter-spacing: -0.045em;
+    line-height: 0.95;
+    font-variant-numeric: tabular-nums lining-nums;
+    color: rgb(var(--fig));
+  }
+
+  .num-md {
+    font-size: clamp(22px, 2.2vw, 32px);
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums lining-nums;
+    color: rgb(var(--fig));
   }
 
   .display {
-    font-family: var(--font-display), system-ui, sans-serif;
+    font-family: var(--font-display), var(--font-sans), "Helvetica Neue", Arial, sans-serif;
     font-weight: 700;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.04em;
+  }
+
+  /* Once the surface is the accent, the figures go white instead of blue. */
+  :is(.sheet-accent, .band, .on-slab, .dhead, .hrow:hover, .hrow[data-hot],
+      .mcard:hover, .rank-medal[data-rank="1"]) {
+    --fig: 255 255 255;
   }
 
   .mono {
-    font-family: var(--font-display), system-ui, sans-serif;
+    font-family: var(--font-mono), ui-monospace, monospace;
     font-variant-numeric: tabular-nums lining-nums;
     letter-spacing: -0.02em;
   }
 
-  .eyebrow {
-    font-size: 0.75rem;
-    line-height: 1;
-    font-weight: 700;
-    letter-spacing: 0.02em;
-    color: rgb(var(--accent));
+  /* The match card: an ink sheet that a Klein slab wipes up behind. */
+  .mcard {
+    @apply relative isolate flex h-full min-w-0 flex-col overflow-hidden border border-line bg-surface;
   }
 
-  .eyebrow-chip {
-    @apply inline-flex items-center gap-1.5 rounded-md border border-line bg-surface px-2.5 py-1 text-[11px] font-semibold text-muted;
+  .mcard::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: rgb(var(--slab));
+    clip-path: inset(100% 0 0 0);
+    transition: clip-path 0.6s var(--io);
   }
 
-  .segmented {
-    @apply flex items-center gap-0.5 rounded-lg border border-line bg-surface2 p-1;
+  .mcard:hover::before {
+    clip-path: inset(0 0 0 0);
   }
 
-  .segmented-item {
-    @apply relative inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-md px-3 text-xs font-semibold text-muted transition-colors duration-150;
+  .mcard-band {
+    @apply flex items-center gap-2 border-line px-3.5;
+    border-top: 1px solid var(--rule);
   }
 
-  .segmented-item:hover {
-    @apply bg-surface text-ink;
+  /* Everything set inside the sheet inverts once the slab arrives. */
+  .mcard:hover :is(.mcard-ink, .mcard b, .mcard strong) {
+    color: #fff;
   }
 
-  .segmented-item[data-active="true"] {
-    background: rgb(var(--ink));
-    color: rgb(var(--bg));
+  .mcard:hover :is(.mcard-mute, .mcard [data-dim]) {
+    color: rgb(255 255 255 / 0.68);
   }
 
-  .segmented-item[data-live="true"][data-active="true"],
-  .segmented-item[data-active="true"] {
-    background: rgb(var(--accent));
-    color: rgb(var(--accent-ink));
+  .mcard:hover .leaders {
+    background: repeating-linear-gradient(90deg, #fff 0 1px, transparent 1px 5px);
+    opacity: 1;
   }
 
-  .chip-filter {
-    @apply inline-flex h-10 shrink-0 items-center gap-1.5 rounded-md border border-line bg-surface px-3 text-xs font-semibold text-muted sm:h-8 transition-colors duration-150;
+  .mcard:hover .mcard-rule {
+    border-color: rgb(255 255 255 / 0.22);
   }
 
-  .chip-filter:hover {
-    @apply border-line-strong text-ink;
+  .mcard:hover .mcard-live {
+    background: #fff;
+    color: #0a1400;
   }
 
-  .chip-filter[data-active="true"] {
-    border-color: rgb(var(--accent) / 0.5);
-    background: rgb(var(--accent-soft));
-    color: rgb(var(--accent));
-  }
-
-  .chip-follow[data-active="true"] {
-    border-color: rgb(var(--ink));
-    background: rgb(var(--ink));
-    color: rgb(var(--bg));
-  }
-
-  .count-badge {
-    @apply inline-flex min-w-[20px] items-center justify-center rounded px-1.5 py-0.5 text-[10px] font-semibold tabular-nums text-current;
-    background: rgb(var(--ink) / 0.06);
-  }
-
-  .count-badge[data-active="true"] {
-    background: rgb(var(--bg) / 0.16);
-    color: inherit;
-  }
-
-  .tabs-bar {
-    @apply flex items-center gap-1 rounded-lg border border-line bg-surface2 p-1;
-  }
-
-  .tab-link {
-    @apply flex h-10 flex-1 items-center justify-center whitespace-nowrap rounded-md px-2 text-xs font-semibold text-muted transition-colors duration-150 hover:bg-surface hover:text-ink sm:flex-none sm:px-4;
-  }
-
-  .tab-link[data-active="true"] {
-    background: rgb(var(--ink));
-    color: rgb(var(--bg));
-  }
-
-  .gradient-text {
-    color: rgb(var(--accent));
-  }
-
-  .hero-shell {
-    background: rgb(var(--surface));
-  }
-
-  .hero-grid {
-    display: none;
-  }
-
-  .match-card-shell {
-    @apply relative border-t border-line/70 transition-colors duration-150 first:border-t-0;
-  }
-
-  .match-card-shell:hover {
-    background: rgb(var(--accent-soft) / 0.34);
-  }
-
-  .featured-card {
-    background: rgb(var(--panel));
-    border: 1px solid rgb(var(--panel-ink) / 0.12);
-  }
-
-
-  .grain {
-    position: relative;
-    isolation: isolate;
-  }
-
-  .grain > * {
-    position: relative;
-    z-index: 1;
-  }
-
-  .rank-medal {
-    @apply grid h-6 w-6 place-items-center rounded text-[10px] font-bold tabular-nums;
-  }
-
-  .rank-medal[data-rank="1"] {
-    background: rgb(var(--gold));
-    color: #2a1d06;
-  }
-
-  .rank-medal[data-rank="2"] {
-    background: rgb(var(--line));
-    color: rgb(var(--ink));
-  }
-
-  .rank-medal[data-rank="3"] {
-    background: #C4834A;
-    color: #24140A;
-  }
-
-  .rank-medal[data-rank="4"], .rank-medal[data-rank="5"] {
-    @apply bg-surface2 text-faint;
+  .mcard:hover .mcard-dot {
+    background: #fff;
   }
 
   .tnum {
-    font-variant-numeric: tabular-nums;
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+
+  /* Dot leaders — fills the gap between a name and its figure. */
+  .leaders {
+    height: 1px;
+    min-width: 12px;
+    flex: 1 1 auto;
+    align-self: flex-end;
+    margin-bottom: 0.42em;
+    background: repeating-linear-gradient(
+      90deg,
+      rgb(var(--faint)) 0 1px,
+      transparent 1px 5px
+    );
+    opacity: 0.6;
+  }
+
+  .leaders:hover {
+    opacity: 1;
+  }
+
+  /* ============================================================
+     SURFACES — hairlines do the work, not boxes.
+     ============================================================ */
+
+  .card {
+    @apply border border-line bg-surface;
+  }
+
+  .card-hover {
+    @apply relative isolate overflow-hidden transition-colors duration-300;
+  }
+
+  .card-hover::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: rgb(var(--slab));
+    clip-path: inset(100% 0 0 0);
+    transition: clip-path 0.6s var(--io);
+  }
+
+  .card-hover:hover::before {
+    clip-path: inset(0 0 0 0);
+  }
+
+  .card-hover:hover {
+    color: #fff;
+    border-color: rgb(var(--slab));
+  }
+
+  .card-hover:hover :is(b, strong, .tnum, .mono, .num-md, .num-lg) {
+    color: #fff;
+  }
+
+  .rule {
+    border-top: 1px solid var(--rule);
+  }
+
+  /* The scorecard row: hairline top, generous height, accent wipes in. */
+  .hrow {
+    @apply relative isolate block w-full;
+    border-top: 1px solid var(--rule);
+    padding: 11px 12px;
+    text-align: left;
+  }
+
+  .hrow:first-child {
+    border-top: 0;
+  }
+
+  .hrow::before {
+    content: "";
+    position: absolute;
+    inset: -1px -10px 0;
+    z-index: -1;
+    background: rgb(var(--slab));
+    clip-path: inset(0 100% 0 0);
+    transition: clip-path 0.55s var(--io);
+  }
+
+  .hrow:hover::before,
+  .hrow[data-hot]::before {
+    clip-path: inset(0 0 0 0);
+  }
+
+  .hrow:is(:hover, [data-hot]),
+  .hrow:is(:hover, [data-hot]) :is(b, strong, span, em, p, .tnum, .mono, .dname, .dnum) {
+    color: #fff;
+  }
+
+  .hrow:is(:hover, [data-hot]) :is(.dnote, .dcell, .tile-mute) {
+    color: rgb(255 255 255 / 0.62);
+  }
+
+  .hrow:is(:hover, [data-hot]) .tile-dim {
+    color: rgb(255 255 255 / 0.72);
+  }
+
+  .hrow:is(:hover, [data-hot]) .leaders {
+    opacity: 1;
+    background: repeating-linear-gradient(
+      90deg,
+      rgb(255 255 255 / 0.55) 0 1px,
+      transparent 1px 5px
+    );
+  }
+
+  /* Rows that carry their own saturated chips flip them on the slab. */
+  .hrow:is(:hover, [data-hot]) .tile-dot {
+    background: #fff;
+  }
+
+  .hrow:is(:hover, [data-hot]) .tile-rule {
+    border-color: rgb(255 255 255 / 0.22);
+  }
+
+  /* A live row is blue before you touch it — the list reads as a fixture card. */
+  .hrow[data-live] {
+    background: rgb(var(--slab) / 0.1);
+    box-shadow: inset 2px 0 0 rgb(var(--slab));
+  }
+
+  /* LIVE is the one signal that never becomes the surface, so it keeps its lime
+     plate. Last in the block, so the row-wide white cannot swallow it. */
+  .hrow:is(:hover, [data-hot]) .tile-live {
+    background: rgb(var(--live));
+    color: #0a1400;
+  }
+
+  .hrow:is(:hover, [data-hot]) .tile-live .tile-dot {
+    background: #0a1400;
+  }
+
+  /* Accent bar that grows down the left edge of a row. */
+  .barl {
+    position: relative;
+  }
+
+  .barl::before {
+    content: "";
+    position: absolute;
+    left: -12px;
+    top: -1px;
+    bottom: 0;
+    width: 3px;
+    background: rgb(var(--slab));
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform 0.5s var(--ease);
+  }
+
+  .barl:hover::before,
+  .barl[data-hot]::before {
+    transform: none;
+  }
+
+  /* Bled section: negative-margin by the column pad, then re-pad inside. */
+  .sheet {
+    margin-inline: calc(var(--pad) * -1);
+    padding: clamp(40px, 6vw, 88px) var(--pad);
+  }
+
+  .sheet-accent {
+    background: radial-gradient(
+        90% 70% at 85% 0%,
+        rgb(var(--pop) / 0.5),
+        transparent 60%
+      ),
+      radial-gradient(70% 80% at 0% 100%, rgb(var(--accent-deep) / 0.85), transparent 70%),
+      rgb(var(--slab));
+    color: #fff;
+  }
+
+  .sheet-ink {
+    background: rgb(var(--bg));
+    border-block: 1px solid var(--rule);
+  }
+
+  /* On a blue spread the furniture turns white: bands, blocks, rules, numerals.
+     Reading order stays intact because the slab is the loudest thing present. */
+  .sheet-accent {
+    --rule: rgb(255 255 255 / 0.26);
+    --line: 172 190 252;
+    --line-strong: 224 232 255;
+    --ink: 255 255 255;
+    --muted: 208 217 255;
+    --faint: 182 195 250;
+    --surface: 44 74 250;
+    --surface2: 26 52 218;
+    --accent: 255 255 255;
+    --accent-soft: 26 52 218;
+    --fig: 255 255 255;
+    --panel: 44 74 250;
+    --panel-ink: 255 255 255;
+    --panel-muted: 208 217 255;
+  }
+
+  .sheet-accent :is(.band, .dhead) {
+    background: #fff;
+    border-bottom-color: rgb(var(--accent-deep) / 0.3);
+    color: rgb(var(--slab));
+  }
+
+  .sheet-accent .band :is(h3, a, b, strong, .dname, .tnum) {
+    color: rgb(var(--slab));
+  }
+
+  .sheet-accent .band > span {
+    color: rgb(var(--slab) / 0.72);
+  }
+
+  .sheet-accent .band .segmented-item[data-active="true"] {
+    background: rgb(var(--slab));
+    color: #fff;
+  }
+
+  .sheet-accent .blk {
+    border-color: rgb(255 255 255 / 0.34);
+    border-top-color: #fff;
+    background: rgb(255 255 255 / 0.07);
+  }
+
+  .sheet-accent .dhead th {
+    color: rgb(var(--slab) / 0.78);
+  }
+
+  .sheet-accent .dhead th:first-child,
+  .sheet-accent .dhead th[data-lead] {
+    color: rgb(var(--slab));
+  }
+
+  .sheet-accent .dtag {
+    border-color: rgb(255 255 255 / 0.45);
+    color: #fff;
+  }
+
+  .sheet-accent .mini {
+    border-color: rgb(255 255 255 / 0.34);
+    background: rgb(255 255 255 / 0.1);
+    box-shadow: inset 2px 0 0 #fff;
+  }
+
+  .sheet-accent .kicker b {
+    background: #fff;
+    color: rgb(var(--slab));
+  }
+
+  /* A block that IS the slab: live series, live fixtures, featured rows.
+     White band, white rules, white figures — the blue does the shouting. */
+  .blk-blue {
+    border: 1px solid rgb(255 255 255 / 0.26);
+    border-top: 2px solid #fff;
+    background:
+      radial-gradient(90% 70% at 85% 0%, rgb(var(--pop) / 0.45), transparent 62%),
+      radial-gradient(70% 80% at 0% 100%, rgb(var(--accent-deep) / 0.8), transparent 70%),
+      rgb(var(--slab));
+    --ink: 255 255 255;
+    --muted: 208 217 255;
+    --faint: 184 197 251;
+    --line: 172 190 252;
+    --rule: rgb(255 255 255 / 0.28);
+    --surface: 44 74 250;
+    --surface2: 26 52 218;
+    --accent: 255 255 255;
+    --fig: 255 255 255;
+    color: #fff;
+  }
+
+  .blk-blue .band {
+    background: #fff;
+    border-bottom-color: rgb(var(--accent-deep) / 0.28);
+    color: rgb(var(--slab));
+  }
+
+  .blk-blue .band :is(h3, a, b, strong, .dname, .tnum) {
+    color: rgb(var(--slab));
+  }
+
+  .blk-blue .band > span {
+    color: rgb(var(--slab) / 0.72);
+  }
+
+  .blk-blue .dtag {
+    border-color: rgb(255 255 255 / 0.45);
+    color: #fff;
+  }
+
+  .blk-blue .leaders {
+    background: repeating-linear-gradient(
+      90deg,
+      rgb(255 255 255 / 0.5) 0 1px,
+      transparent 1px 5px
+    );
+  }
+
+  .blk-blue:hover {
+    border-color: #fff;
+  }
+
+  /* 12-column section head: kicker full width, headline 8, lede 4. */
+  .sec-head {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    align-items: end;
+    gap: 22px 0;
+    padding: clamp(32px, 5vw, 72px) 0 clamp(24px, 3.6vw, 48px);
+    border-bottom: 2px solid rgb(var(--slab));
+  }
+
+  .sec-head > .kicker {
+    grid-column: 1 / -1;
+  }
+
+  .sec-head > h2 {
+    grid-column: 1 / span 8;
+  }
+
+  .sec-head > .lede {
+    grid-column: 9 / span 4;
+    padding-bottom: 0.6em;
+    font-size: 13px;
+    line-height: 1.45;
+    color: rgb(var(--muted));
+  }
+
+  @media (max-width: 760px) {
+    .sec-head > h2,
+    .sec-head > .lede {
+      grid-column: 1 / -1;
+    }
+  }
+
+  /* Column rhythm IS the card: top rule + padding, no gap. */
+  .gcols {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .gcols > * {
+    border-top: 1px solid var(--rule);
+    padding: 12px 20px 0 0;
+  }
+
+  /* Inside a block the grid needs its own margins — the band above is flush. */
+  .blk > .gcols,
+  .blk > .flow {
+    padding: 14px 16px 18px;
+  }
+
+  .blk > .gcols > *,
+  .blk > .flow > * {
+    padding-right: 16px;
+  }
+
+  @media (max-width: 1023px) {
+    .gcols {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 760px) {
+    .gcols {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  /* Horizontal process chain — used for over-by-over. */
+  .flow {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+  }
+
+  .flow > * {
+    border-left: 1px solid var(--rule);
+    border-top: 2px solid rgb(var(--slab));
+    padding: 10px 12px 0 0;
+  }
+
+  @media (max-width: 760px) {
+    .flow {
+      grid-auto-flow: row;
+    }
+  }
+
+  /* ============================================================
+     CONTROLS — square, hard-edged, accent-filled when active.
+     ============================================================ */
+
+  .segmented {
+    @apply flex items-center border border-line;
+  }
+
+  .segmented-item {
+    @apply relative inline-flex h-9 shrink-0 items-center justify-center gap-2 px-3 text-[11px] font-bold uppercase tracking-[0.06em] text-muted transition-colors duration-150;
+  }
+
+  .segmented-item + .segmented-item {
+    border-left: 1px solid var(--rule);
+  }
+
+  .segmented-item:hover {
+    color: rgb(var(--ink));
+    background: rgb(var(--slab) / 0.20);
+  }
+
+  .segmented-item[data-active="true"] {
+    background: rgb(var(--slab));
+    color: #fff;
+  }
+
+  .chip-filter {
+    @apply inline-flex h-8 shrink-0 items-center gap-1.5 border border-line px-3 text-[11px] font-bold uppercase tracking-[0.06em] text-muted transition-colors duration-150;
+  }
+
+  .chip-filter:hover {
+    border-color: rgb(var(--slab));
+    color: rgb(var(--accent));
+  }
+
+  .chip-filter[data-active="true"] {
+    border-color: rgb(var(--slab));
+    background: rgb(var(--slab));
+    color: #fff;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1 border border-line px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.06em] text-muted;
+  }
+
+  .tab-link {
+    @apply flex h-9 items-center whitespace-nowrap border-b-2 px-3 text-[12px] font-bold uppercase tracking-[0.06em] text-muted transition-colors duration-150;
+    border-bottom-color: transparent;
+  }
+
+  .tab-link:hover {
+    color: rgb(var(--ink));
+  }
+
+  .tab-link[data-active="true"] {
+    border-bottom-color: rgb(var(--slab));
+    background: rgb(var(--slab));
+    color: #fff;
+  }
+
+  .btn-accent {
+    @apply inline-flex items-center gap-2 border border-accent bg-accent px-4 py-2 text-[11px] font-bold uppercase tracking-[0.08em] text-white transition-colors duration-200;
+  }
+
+  .btn-accent:hover {
+    background: rgb(var(--bg));
+    color: rgb(var(--ink));
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center gap-2 border border-line px-4 py-2 text-[11px] font-bold uppercase tracking-[0.08em] text-muted transition-colors duration-200;
+  }
+
+  .btn-ghost:hover {
+    border-color: rgb(var(--slab));
+    color: rgb(var(--accent));
+  }
+
+  .count-badge {
+    @apply inline-flex min-w-[18px] items-center justify-center px-1 text-[10px] font-bold tabular-nums;
+    height: 15px;
+    border: 1px solid rgb(var(--slab) / 0.34);
+    background: rgb(var(--slab) / 0.14);
+    color: rgb(var(--accent));
+  }
+
+  /* Anywhere the surface is already a blue slab, the chip inverts. */
+  :is(.tab-link[data-active="true"], .chip-filter[data-active="true"],
+      .hrow:hover, .hrow[data-hot], .band, .blk-blue, .dhead,
+      .sheet-accent, .spread, .on-slab)
+    .count-badge {
+    border-color: rgb(255 255 255 / 0.45);
+    background: rgb(255 255 255 / 0.16);
+    color: #fff;
+  }
+
+  .rank-medal {
+    @apply grid h-5 w-5 place-items-center text-[10px] font-bold tabular-nums;
+    border: 1px solid var(--rule);
+    color: rgb(var(--muted));
+  }
+
+  .rank-medal[data-rank="1"] {
+    background: rgb(var(--slab));
+    border-color: rgb(var(--slab));
+    color: #fff;
+  }
+
+  .rank-medal[data-rank="2"],
+  .rank-medal[data-rank="3"] {
+    border-color: rgb(var(--ink) / 0.4);
+    color: rgb(var(--ink));
+  }
+
+  /* On a slab the medals invert, same as everything else that is filled. */
+  :is(.hrow:hover, .hrow[data-hot], .sheet-accent, .blk-blue, .spread)
+    .rank-medal[data-rank="1"] {
+    background: #fff;
+    border-color: #fff;
+    color: rgb(var(--slab));
+  }
+
+  :is(.hrow:hover, .hrow[data-hot], .sheet-accent, .blk-blue, .spread) .rank-medal {
+    border-color: rgb(255 255 255 / 0.5);
+    color: #fff;
+  }
+
+  .underlink {
+    background: linear-gradient(rgb(var(--slab)), rgb(var(--slab))) 0 100% / 0% 1px
+      no-repeat;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 2px;
+    transition: background-size 0.5s var(--ease);
+  }
+
+  .underlink:hover {
+    background-size: 100% 100%;
+    color: #fff;
+    border-bottom-color: rgb(var(--slab));
+  }
+
+  /* ============================================================
+     STATE
+     ============================================================ */
+
+  .livedot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: rgb(var(--live));
+    animation: pulse-dot 1.8s ease-in-out infinite;
+  }
+
+  .statelive {
+    background: rgb(var(--live));
+    color: #0a1400;
+  }
+
+  .shimmer {
+    background: linear-gradient(
+      90deg,
+      rgb(var(--surface2)) 20%,
+      rgb(var(--line) / 0.6) 40%,
+      rgb(var(--surface2)) 60%
+    );
+    background-size: 200% 100%;
+    @apply animate-shimmer;
+  }
+
+  /* ============================================================
+     TOUCH FEEL — every control answers the hand.
+     ============================================================ */
+
+  :is(.btn-accent, .btn-ghost, .segmented-item, .chip-filter, .tab-link,
+      .hrow, .mcard, .card-hover, .palette-button):active {
+    transform: translateY(1px);
+  }
+
+  :is(.btn-accent, .btn-ghost, .segmented-item, .chip-filter) {
+    transition: color 0.2s var(--ease), background-color 0.2s var(--ease),
+      border-color 0.2s var(--ease), transform 0.35s var(--ease);
+  }
+
+  /* Tabs: the rule draws itself in from the left, half on hover, full on call. */
+  .tab-link {
+    position: relative;
+  }
+
+  .tab-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 2px;
+    background: rgb(var(--slab));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.45s var(--io);
+  }
+
+  .tab-link:hover::after {
+    transform: scaleX(0.35);
+  }
+
+  .tab-link[data-active="true"]::after {
+    transform: scaleX(1);
+  }
+
+  .drow {
+    transition: background-color 0.2s var(--ease), box-shadow 0.35s var(--ease);
+  }
+
+  /* Names underline with a wipe rather than a colour pop. */
+  .dname {
+    background: linear-gradient(rgb(var(--slab)), rgb(var(--slab))) 0 100% / 0% 1px no-repeat;
+    transition: background-size 0.45s var(--ease), color 0.2s var(--ease);
+  }
+
+  .dname:hover {
+    background-size: 100% 100%;
+  }
+
+  /* Modal backdrop — the stock darkened, not a neutral grey. */
+  .scrim {
+    background: rgb(var(--scrim) / 0.82);
+  }
+
+  .table-scroll {
+    @apply overflow-x-auto no-scrollbar;
+    -webkit-overflow-scrolling: touch;
   }
 
   .no-scrollbar {
@@ -310,53 +1443,462 @@ body {
     display: none;
   }
 
-  .shimmer {
-    background: linear-gradient(
-      90deg,
-      rgb(var(--surface2)) 20%,
-      rgb(var(--line) / 0.65) 40%,
-      rgb(var(--surface2)) 60%
-    );
-    background-size: 200% 100%;
-    @apply animate-shimmer;
-  }
-
-  .glass {
-    background: rgb(var(--surface) / 0.9);
-    backdrop-filter: blur(18px) saturate(1.1);
-    -webkit-backdrop-filter: blur(18px) saturate(1.1);
-  }
-
-  .table-scroll {
-    @apply overflow-x-auto no-scrollbar;
-    -webkit-overflow-scrolling: touch;
-  }
-
   .site-header {
     background: rgb(var(--header));
     color: rgb(var(--header-ink));
-    border-bottom: 1px solid rgb(var(--line));
+    border-bottom: 1px solid var(--rule);
+  }
+
+  /* A blue spread with the whole token ladder turned round. Anything can sit
+     on it — utilities included — because every colour resolves through a var. */
+  .on-slab {
+    --ink: 255 255 255;
+    --muted: 206 215 255;
+    --faint: 176 190 250;
+    --line: 152 172 252;
+    --line-strong: 214 224 255;
+    --rule: rgb(255 255 255 / 0.26);
+    --surface: 42 72 248;
+    --surface2: 24 50 216;
+    --accent: 255 255 255;
+    --accent-soft: 24 50 216;
+    --pop: 255 255 255;
+    --fig: 255 255 255;
+    --win: 255 255 255;
+    --panel: 42 72 248;
+    --panel-ink: 255 255 255;
+    --panel-muted: 206 215 255;
+    color: #fff;
+  }
+
+  .on-slab .logo-mark {
+    background: #fff;
+    color: rgb(var(--slab));
+  }
+
+  .on-slab :is(.sec-head, .blk) {
+    border-bottom-color: #fff;
+    border-top-color: #fff;
+  }
+
+  .on-slab .blk {
+    border-color: #fff;
+    border-top-width: 2px;
+    background: rgb(255 255 255 / 0.08);
+  }
+
+  .on-slab .kicker {
+    color: rgb(255 255 255 / 0.82);
+  }
+
+  .on-slab .kicker b {
+    background: #fff;
+    color: rgb(var(--slab));
+  }
+
+  .on-slab .leaders {
+    background: repeating-linear-gradient(
+      90deg,
+      rgb(255 255 255 / 0.45) 0 1px,
+      transparent 1px 5px
+    );
+  }
+
+  .on-slab .btn-ghost {
+    border-color: rgb(255 255 255 / 0.4);
+    color: #fff;
+  }
+
+  .on-slab .btn-ghost:hover {
+    background: #fff;
+    color: rgb(var(--slab));
   }
 
   .stagger > * {
-    animation: rise 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: rise 0.7s var(--ease) both;
   }
 
-  .stagger > *:nth-child(2) { animation-delay: 35ms; }
-  .stagger > *:nth-child(3) { animation-delay: 70ms; }
-  .stagger > *:nth-child(4) { animation-delay: 105ms; }
-  .stagger > *:nth-child(5) { animation-delay: 140ms; }
-  .stagger > *:nth-child(6) { animation-delay: 175ms; }
-  .stagger > *:nth-child(7) { animation-delay: 210ms; }
-  .stagger > *:nth-child(8) { animation-delay: 245ms; }
-  .stagger > *:nth-child(n+9) { animation-delay: 280ms; }
+  /* ============================================================
+     DATA SURFACES — a scorecard is a list of rules, not a card.
+     ============================================================ */
+
+  /* A block of innings/squad/stats content. */
+  .blk {
+    border: 1px solid var(--rule);
+    border-top: 2px solid rgb(var(--slab));
+    background: rgb(var(--surface));
+    overflow: hidden;
+  }
+
+  /* Section bar inside a block — a Klein slab, the loudest blue on the page. */
+  .band {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: 1px solid rgb(var(--accent-deep));
+    background: rgb(var(--slab));
+    color: #fff;
+    padding: 7px 16px;
+  }
+
+  .band > h3 {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #fff;
+  }
+
+  .band > span {
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgb(255 255 255 / 0.66);
+  }
+
+  /* Anything set inside the slab inverts with it. */
+  .band :is(a, b, strong, .dname, .tnum) {
+    color: #fff;
+  }
+
+  .band a:hover {
+    color: #fff;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .band .segmented {
+    border-color: rgb(255 255 255 / 0.32);
+  }
+
+  .band .segmented-item {
+    color: rgb(255 255 255 / 0.72);
+  }
+
+  .band .segmented-item:hover {
+    color: #fff;
+    background: rgb(255 255 255 / 0.14);
+  }
+
+  .band .segmented-item + .segmented-item {
+    border-left-color: rgb(255 255 255 / 0.28);
+  }
+
+  .band .segmented-item[data-active="true"] {
+    background: #fff;
+    color: rgb(var(--slab));
+  }
+
+  .band .swatch {
+    border-color: rgb(255 255 255 / 0.45);
+  }
+
+  /* The one saturated spread. Reserved for a team + its running total. */
+  .spread {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    background: radial-gradient(
+        90% 70% at 85% 0%,
+        rgb(var(--pop) / 0.5),
+        transparent 60%
+      ),
+      radial-gradient(70% 80% at 0% 100%, rgb(var(--accent-deep) / 0.85), transparent 70%),
+      rgb(var(--slab));
+    color: #fff;
+    padding: 14px 16px;
+    --ink: 255 255 255;
+    --muted: 208 217 255;
+    --faint: 184 197 251;
+    --fig: 255 255 255;
+    --rule: rgb(255 255 255 / 0.28);
+    --line: 172 190 252;
+    --accent: 255 255 255;
+  }
+
+  .spread .leaders {
+    background: repeating-linear-gradient(
+      90deg,
+      rgb(255 255 255 / 0.5) 0 1px,
+      transparent 1px 5px
+    );
+  }
+
+  /* Figure strip: label … value, the leaders doing the alignment. */
+  .figs {
+    border-top: 1px solid var(--rule);
+    padding: 12px 16px 14px;
+  }
+
+  .figs > div {
+    border-top: 1px solid var(--rule);
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 6px 0;
+  }
+
+  .figs > div:first-child {
+    border-top: 0;
+  }
+
+  .figs dt {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgb(var(--faint));
+    flex: 0 0 auto;
+  }
+
+  .figs dd {
+    font-size: 12px;
+    color: rgb(var(--ink));
+    flex: 0 0 auto;
+  }
+
+  /* Data table: hairline rows, tint + left bar on hover. */
+  .dtable {
+    width: 100%;
+    table-layout: fixed;
+    text-align: left;
+    font-size: 12.5px;
+  }
+
+  .dhead {
+    border-bottom: 1px solid rgb(var(--accent-deep));
+    background: rgb(var(--slab));
+  }
+
+  .dhead th {
+    padding: 7px 8px;
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgb(255 255 255 / 0.82);
+  }
+
+  .dhead th:first-child,
+  .dhead th[data-lead] {
+    color: #fff;
+    padding-left: 16px;
+  }
+
+  .dhead th:last-child,
+  .dhead th[data-trail] {
+    padding-right: 16px;
+  }
+
+  .drow {
+    border-top: 1px solid var(--rule);
+    transition: background-color 0.2s var(--ease);
+  }
+
+  .drow:first-child {
+    border-top: 0;
+  }
+
+  .drow:nth-child(even) {
+    background: rgb(var(--slab) / 0.045);
+  }
+
+  .drow:hover {
+    background: rgb(var(--slab) / 0.13);
+    box-shadow: inset 3px 0 0 rgb(var(--slab));
+  }
+
+  .drow:hover a {
+    color: rgb(var(--accent));
+  }
+
+  .drow td {
+    padding: 9px 8px;
+    vertical-align: top;
+  }
+
+  .drow td:first-child,
+  .drow td[data-lead] {
+    padding-left: 16px;
+  }
+
+  .drow td:last-child,
+  .drow td[data-trail] {
+    padding-right: 16px;
+  }
+
+  .drow[data-hot] {
+    background: rgb(var(--slab) / 0.11);
+    box-shadow: inset 3px 0 0 rgb(var(--slab));
+  }
+
+  .dname {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: rgb(var(--ink));
+  }
+
+  .dname:hover {
+    color: rgb(var(--accent));
+  }
+
+  .dnote {
+    margin-top: 3px;
+    font-size: 10.5px;
+    line-height: 1.35;
+    color: rgb(var(--faint));
+  }
+
+  .dnum {
+    font-size: 15px;
+    font-weight: 800;
+    line-height: 1;
+    font-variant-numeric: tabular-nums lining-nums;
+    letter-spacing: -0.03em;
+  }
+
+  .dcell {
+    font-size: 11.5px;
+    color: rgb(var(--muted));
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+
+  /* Sub-label chips: C / WK / 100 / 50 / Not out. */
+  .dtag {
+    display: inline-flex;
+    height: 15px;
+    align-items: center;
+    border: 1px solid rgb(var(--slab) / 0.4);
+    padding: 0 3px;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    line-height: 1;
+    color: rgb(var(--accent));
+  }
+
+  .dtag[data-tone="milestone"] {
+    border-color: rgb(var(--slab));
+    background: rgb(var(--slab));
+    color: #fff;
+  }
+
+  /* Unbeaten is a fact, not a signal — lime stays reserved for LIVE. */
+  .dtag[data-tone="unbeaten"] {
+    border-color: rgb(var(--ink) / 0.32);
+    color: rgb(var(--muted));
+  }
+
+  /* Mini panel used for FoW / over cards — hairline, never filled pastel. */
+  .mini {
+    border: 1px solid rgb(var(--slab) / 0.28);
+    background: rgb(var(--accent-soft) / 0.75);
+    box-shadow: inset 2px 0 0 rgb(var(--slab));
+    padding: 10px 11px;
+  }
+
+  /* Milestone figure rendered as architecture, not a badge. */
+  .wktbadge {
+    display: grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    flex: 0 0 auto;
+    background: rgb(var(--wkt));
+    color: #fff;
+    font-size: 11px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+
+  .wktchip {
+    display: inline-grid;
+    place-items: center;
+    min-width: 26px;
+    height: 22px;
+    padding: 0 4px;
+    font-size: 13px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    border: 1px solid rgb(var(--line-strong));
+    color: rgb(var(--ink));
+  }
+
+  .wktchip[data-heavy] {
+    background: rgb(var(--slab));
+    border-color: rgb(var(--slab));
+    color: #fff;
+  }
+
+  /* Stacked run-source bar: adjacent segments, seams instead of gaps. */
+  .stack {
+    display: flex;
+    height: 10px;
+    width: 100%;
+    border: 1px solid var(--rule);
+  }
+
+  .stack > span {
+    display: block;
+    border-right: 1px solid rgb(var(--bg) / 0.6);
+  }
+
+  .stack > span:last-child {
+    border-right: 0;
+  }
+
+  .swatch {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    flex: 0 0 auto;
+    margin-top: 3px;
+    border: 1px solid var(--rule);
+  }
+
+  .stagger > *:nth-child(2) {
+    animation-delay: 70ms;
+  }
+  .stagger > *:nth-child(3) {
+    animation-delay: 140ms;
+  }
+  .stagger > *:nth-child(4) {
+    animation-delay: 210ms;
+  }
+  .stagger > *:nth-child(5) {
+    animation-delay: 280ms;
+  }
+  .stagger > *:nth-child(6) {
+    animation-delay: 350ms;
+  }
+  .stagger > *:nth-child(7) {
+    animation-delay: 420ms;
+  }
+  .stagger > *:nth-child(8) {
+    animation-delay: 490ms;
+  }
+  .stagger > *:nth-child(n + 9) {
+    animation-delay: 560ms;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
 }
 
 .bottom-nav {
-  background: rgb(var(--surface));
-  backdrop-filter: blur(24px) saturate(1.6);
-  -webkit-backdrop-filter: blur(24px) saturate(1.6);
-  padding-bottom: env(safe-area-inset-bottom);
+  background: rgb(var(--bg));
+  border-top: 1px solid var(--rule);
+  /* Android reports a zero inset, so keep a real gap under the labels. */
+  padding-bottom: max(8px, env(safe-area-inset-bottom));
 }
 
 @media (max-width: 1023px) {
@@ -381,13 +1923,624 @@ body {
   display: block;
 }
 
+/* Route change: an accent page-turn wipes across, content enters through it. */
+.turn {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.turn i {
+  position: absolute;
+  inset: 0 -4vw;
+  background: linear-gradient(
+      90deg,
+      rgb(255 255 255 / 0.85) 0 2px,
+      transparent 2px 40px
+    ),
+    linear-gradient(90deg, rgb(var(--slab)), rgb(var(--accent-deep)));
+  transform: translateX(110%) skewX(-6deg);
+  animation: turn 0.95s var(--io) both;
+}
+
+@keyframes turn {
+  0% {
+    transform: translateX(110%) skewX(-6deg);
+  }
+  46% {
+    transform: translateX(0) skewX(0);
+  }
+  100% {
+    transform: translateX(-112%) skewX(6deg);
+  }
+}
+
+.pagein {
+  animation: pagein 0.85s var(--ease) 0.42s backwards;
+}
+
+@keyframes pagein {
+  from {
+    opacity: 0;
+    transform: translateX(28px);
+    clip-path: inset(0 0 0 60%);
+  }
+}
+
+/* ============================================================
+   THE COVER — the printed front page. A masthead strip, a numeral
+   read as architecture, one headline line picked out in solid
+   accent, and a contents index that wipes blue on the way past.
+   ============================================================ */
+
+.cover {
+  padding: clamp(14px, 2vw, 30px) 0 clamp(22px, 3vw, 44px);
+}
+
+.cover-top,
+.cover-cols {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: clamp(14px, 1.6vw, 26px);
+}
+
+.cover-top > *,
+.cover-cols > * {
+  min-width: 0;
+  padding: 0 16px 0 0;
+}
+
+@media (min-width: 1024px) {
+  .cover-top,
+  .cover-cols {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.cover-mast {
+  font-family: var(--font-display), var(--font-sans), sans-serif;
+  font-size: clamp(26px, 2.6vw, 40px);
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  line-height: 0.92;
+  text-transform: uppercase;
+  grid-column: 1 / -1;
+  margin-bottom: 14px;
+}
+
+@media (min-width: 1024px) {
+  .cover-mast {
+    grid-column: auto;
+    margin-bottom: 0;
+  }
+}
+
+.cover-note {
+  font-size: 11px;
+  line-height: 1.45;
+  color: rgb(var(--muted));
+  padding-top: 2px;
+}
+
+.cover-no {
+  text-align: right;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: rgb(var(--ink));
+}
+
+.cover-no span {
+  display: block;
+  margin-top: 2px;
+  font-weight: 400;
+  text-transform: none;
+  color: rgb(var(--muted));
+}
+
+@media (min-width: 700px) and (max-width: 1023px) {
+  .cover-no {
+    text-align: left;
+  }
+}
+
+.cover-mid {
+  position: relative;
+  display: grid;
+  gap: clamp(10px, 1.4vw, 20px);
+  padding: clamp(20px, 3vw, 40px) 0 clamp(22px, 3.2vw, 42px);
+}
+
+@media (min-width: 1024px) {
+  .cover-mid {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+    align-items: end;
+    column-gap: clamp(24px, 3vw, 56px);
+  }
+}
+
+/* The issue figure: bigger than the word it stands for. */
+.cover-num {
+  font-size: clamp(72px, 15vw, 210px);
+  font-weight: 800;
+  letter-spacing: -0.08em;
+  line-height: 0.74;
+  margin-left: -0.04em;
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgb(var(--fig));
+  background: linear-gradient(
+    180deg,
+    rgb(var(--fig) / 0) 44%,
+    rgb(var(--fig) / 0.55)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+@media (min-width: 1024px) {
+  .cover-num {
+    -webkit-text-stroke-width: 2px;
+    font-size: clamp(120px, 17vw, 320px);
+  }
+}
+
+.cover-tag {
+  font-family: var(--font-display), var(--font-sans), sans-serif;
+  font-size: clamp(28px, 4.4vw, 62px);
+  font-weight: 500;
+  letter-spacing: -0.045em;
+  line-height: 1;
+  color: rgb(var(--muted));
+}
+
+.cover-tag mark {
+  color: rgb(var(--accent-ink));
+}
+
+/* Currently — the almanac column. Hairlines only. */
+.dl {
+  margin: 0;
+}
+
+.dl > div {
+  display: grid;
+  grid-template-columns: 82px minmax(0, 1fr);
+  gap: 8px;
+  align-items: baseline;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.dl dt {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgb(var(--muted));
+}
+
+.dl dd {
+  margin: 0;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+@media (max-width: 1023px) {
+  .cover-dl {
+    display: none;
+  }
+}
+
+.cover-h {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: rgb(var(--ink));
+  margin-bottom: 6px;
+}
+
+.cover-cols > * {
+  border-top: 1px solid var(--rule);
+  padding-top: 10px;
+  margin-top: 6px;
+}
+
+/* The contents index: a hairline list that a slab sweeps along. */
+.rows {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rows .hrow {
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: baseline;
+  padding: 6px 0;
+  font-size: 12px;
+}
+
+.rows .hrow::before {
+  inset: 0 -6px;
+}
+
+.rows .hrow > * {
+  position: relative;
+}
+
+.rows .hrow b {
+  color: rgb(var(--faint));
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.rows .hrow em {
+  font-style: normal;
+  color: rgb(var(--muted));
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.cover-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 12px;
+  color: rgb(var(--ink));
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 2px;
+  background: linear-gradient(rgb(var(--slab)), rgb(var(--slab))) 0 100% / 0% 1px
+    no-repeat;
+  transition: background-size 0.5s var(--ease), color 0.25s, border-color 0.25s;
+}
+
+.cover-link:hover,
+.cover-link:focus-visible {
+  background-size: 100% 100%;
+  color: rgb(var(--accent-ink));
+  border-bottom-color: transparent;
+}
+
+/* Palette voices. Grid stays grotesque, crimson goes wide-black,
+   amber sets the cover line in italic serif. */
+html[data-pal="crimson"] .cover-mast,
+html[data-pal="crimson"] .cover-tag {
+  font-weight: 900;
+  font-stretch: 118%;
+  text-transform: uppercase;
+  letter-spacing: -0.035em;
+}
+
+html[data-pal="crimson"] .cover-tag {
+  font-size: clamp(26px, 4vw, 54px);
+  color: rgb(var(--ink));
+}
+
+html[data-pal="amber"] .cover-tag {
+  font-family: var(--font-serif), Georgia, serif;
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  font-size: clamp(30px, 4.8vw, 68px);
+  color: rgb(var(--muted));
+}
+
+html[data-pal="amber"] .cover-tag mark {
+  font-family: var(--font-display), var(--font-sans), sans-serif;
+  font-style: normal;
+  text-transform: uppercase;
+  letter-spacing: -0.04em;
+  font-weight: 700;
+  font-size: 0.86em;
+}
+
+/* ============================================================
+   MICRO-INTERACTIONS — transform/opacity only, nothing reflows.
+   ============================================================ */
+
+/* A light band that crosses a filled surface on hover, like ink on gloss. */
+.sheen {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.sheen::after {
+  content: "";
+  position: absolute;
+  inset: -40% -20%;
+  z-index: -1;
+  background: linear-gradient(
+    100deg,
+    transparent 38%,
+    rgb(255 255 255 / 0.34) 50%,
+    transparent 62%
+  );
+  transform: translateX(-120%);
+  transition: transform 0.72s var(--io);
+  pointer-events: none;
+}
+
+.sheen:hover::after,
+.sheen:focus-visible::after {
+  transform: translateX(120%);
+}
+
+/* Anything that navigates earns a nudge, so direction is felt not just read. */
+.nudge svg {
+  transition: transform 0.34s var(--io);
+}
+
+.nudge:hover svg,
+.nudge:focus-visible svg {
+  transform: translate(2px, -2px);
+}
+
+.nudge-down:hover svg {
+  transform: translateY(2px);
+}
+
+/* Leader dots that walk while you read the row. */
+@keyframes march {
+  to {
+    background-position-x: 5px;
+  }
+}
+
+.hrow:is(:hover, [data-hot]) .leaders {
+  animation: march 0.6s linear infinite;
+}
+
+/* Scores arrive a beat after the name, sliding into their column. */
+.hrow :is(.dnum, .tile-ink) {
+  transition: transform 0.4s var(--ease), color 0.2s var(--ease);
+}
+
+.hrow:is(:hover, [data-hot]) :is(.dnum, .tile-ink) {
+  transform: translateX(-3px);
+}
+
+/* A badge leans in when its row goes slab. */
+.hrow :is(.avatar, .badge) {
+  transition: transform 0.42s var(--io), box-shadow 0.42s var(--io);
+}
+
+.hrow:is(:hover, [data-hot]) :is(.avatar, .badge) {
+  transform: translateX(2px) scale(1.06);
+}
+
+/* Match cards lift on their hairline, never on a shadow. */
+.mcard {
+  transition: transform 0.42s var(--io), color 0.2s var(--ease);
+}
+
+.mcard:hover {
+  transform: translateY(-2px);
+}
+
+.mcard:active {
+  transform: translateY(1px);
+}
+
+/* Filled chips and buttons sink 1px under the finger. */
+.btn-accent,
+.btn-ghost,
+.chip-filter,
+.tab-link,
+.palette-button,
+.wktchip,
+.ball-chip {
+  will-change: transform;
+}
+
+/* The live signal breathes instead of blinking. */
+@keyframes halo {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgb(var(--live) / 0.55);
+  }
+  70% {
+    box-shadow: 0 0 0 5px rgb(var(--live) / 0);
+  }
+}
+
+.statelive {
+  animation: halo 2.4s var(--ease) infinite;
+}
+
+/* A wicket is an event — the chip lands with weight. */
+@keyframes pop {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  62% {
+    transform: scale(1.14);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.wktchip[data-heavy] {
+  animation: pop 0.42s var(--io) both;
+}
+
+/* Ball chips deal in from the left, one after another. */
+@keyframes deal {
+  from {
+    opacity: 0;
+    transform: translateX(-8px) scale(0.86);
+  }
+}
+
+.ball-chip {
+  animation: deal 0.44s var(--io) both;
+}
+
+.ball-chip:nth-child(2) { animation-delay: 40ms; }
+.ball-chip:nth-child(3) { animation-delay: 80ms; }
+.ball-chip:nth-child(4) { animation-delay: 120ms; }
+.ball-chip:nth-child(5) { animation-delay: 160ms; }
+.ball-chip:nth-child(6) { animation-delay: 200ms; }
+.ball-chip:nth-child(7) { animation-delay: 240ms; }
+.ball-chip:nth-child(8) { animation-delay: 280ms; }
+
+.ball-chip:hover {
+  transform: translateY(-2px);
+  transition: transform 0.2s var(--io);
+}
+
+/* Focus is a drawn ring, not a browser default. */
+:where(a, button, input, summary, [tabindex]):focus-visible {
+  outline: 2px solid rgb(var(--accent));
+  outline-offset: 3px;
+  transition: outline-offset 0.25s var(--io);
+}
+
+:where(a, button, input, summary, [tabindex]):focus-visible:active {
+  outline-offset: 1px;
+}
+
+/* Reveal gains a hair of scale so the page settles rather than appears. */
+[data-rv] {
+  transform: translateY(14px) scale(0.994);
+}
+
+[data-rv][data-in] {
+  transform: none;
+}
+
+/* Tab bar: the active slab wipes in behind the label. */
+.tab-link {
+  position: relative;
+  isolation: isolate;
+}
+
+.tab-link::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: rgb(var(--slab));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s var(--io);
+}
+
+.tab-link[data-active="true"]::before {
+  transform: scaleX(1);
+}
+
+.tab-link:not([data-active="true"]):hover::before {
+  transform: scaleX(1);
+  background: rgb(var(--slab) / 0.09);
+}
+
+/* Bottom nav: the active label rises, the number gives way. */
+.bottom-nav a span:first-child {
+  transition: transform 0.3s var(--io), opacity 0.3s var(--ease);
+}
+
+.bottom-nav a[data-active="true"] span:first-child {
+  transform: translateY(-2px);
+}
+
+/* Palette swap should not snap — the surface cross-fades for 400ms. */
+html.pal-fade,
+html.pal-fade *,
+html.pal-fade *::before,
+html.pal-fade *::after {
+  transition: background-color 0.4s var(--ease), border-color 0.4s var(--ease),
+    color 0.4s var(--ease) !important;
+}
+
+/* Sticky live rail gets a hairline edge once it can scroll. */
+.rail {
+  scrollbar-width: none;
+}
+
+.rail::-webkit-scrollbar {
+  display: none;
+}
+
+/* Collapsible innings: the body opens on an interpolated row track. */
+.disc > summary {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  cursor: pointer;
+  list-style: none;
+  outline-offset: -2px;
+}
+
+.disc > summary::-webkit-details-marker {
+  display: none;
+}
+
+.disc .spread {
+  transition: filter 0.25s var(--ease);
+}
+
+.disc > summary:hover .spread {
+  filter: brightness(1.12);
+}
+
+.disc-mark {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  flex: none;
+  border-left: 1px solid rgb(255 255 255 / 0.5);
+  background: rgb(255 255 255 / 0.16);
+  color: #fff;
+  transition: background-color 0.3s var(--ease), color 0.3s var(--ease),
+    transform 0.45s var(--io);
+}
+
+.disc[open] .disc-mark {
+  transform: rotate(180deg);
+}
+
+.disc > summary:hover .disc-mark {
+  background: #fff;
+  color: rgb(var(--slab));
+}
+
+.disc-body {
+  animation: disc-open 0.42s var(--io) both;
+}
+
+@keyframes disc-open {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    animation: none !important;
+    transition: none !important;
     scroll-behavior: auto !important;
+  }
+
+  .turn,
+  .frame {
+    display: none;
+  }
+
+  [data-rv],
+  .lines .line > span {
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
   }
 }

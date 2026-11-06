@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { BlueHero } from "@/components/ui/blue-hero";
+import { BlueHero, HeroChip, HeroFolio } from "@/components/ui/blue-hero";
 
 export function Breadcrumbs({
   items,
@@ -14,7 +14,7 @@ export function Breadcrumbs({
     <nav
       aria-label="Breadcrumb"
       className={cn(
-        "flex flex-wrap items-center gap-1.5 text-[11px] font-medium text-faint",
+        "flex flex-wrap items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.08em] text-faint",
         className
       )}
     >
@@ -42,6 +42,8 @@ export function PageHeader({
   actions,
   children,
   className,
+  tone = "accent",
+  folio,
 }: {
   eyebrow?: React.ReactNode;
   title: React.ReactNode;
@@ -50,37 +52,54 @@ export function PageHeader({
   actions?: React.ReactNode;
   children?: React.ReactNode;
   className?: string;
+  tone?: "ink" | "accent";
+  folio?: string | number;
 }) {
   return (
     <BlueHero
+      tone={tone}
       className={cn(
-        "mt-3 px-6 py-7 sm:px-9 sm:py-8 [&_.text-faint]:text-white/60 [&_.text-muted]:text-white/75",
+        "mt-3 px-[var(--pad)] py-8 sm:py-10",
+        tone === "accent" && "text-white",
         className
       )}
-    >
-      <header>
-        <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
-          <div className="min-w-0">
+    >      <header>
+        <div className="grid grid-cols-12 items-end gap-x-6 gap-y-5">
+          <div className="col-span-12 min-w-0 lg:col-span-8">
             {eyebrow ? (
-              <div className="inline-flex flex-wrap items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-[12px] font-semibold text-white">
-                {eyebrow}
+              <div className="mb-3 flex flex-wrap items-center gap-2.5">
+                <HeroChip>{eyebrow}</HeroChip>
               </div>
             ) : null}
-            <h1 className="mt-4 font-display text-[30px] font-bold leading-tight tracking-[-0.02em] sm:text-[40px]">
+            <h1 className="text-[clamp(30px,4.6vw,64px)] uppercase leading-[0.92] tracking-[-0.05em]">
               {title}
             </h1>
             {description ? (
-              <p className="mt-3 max-w-2xl text-[14px] leading-relaxed text-white/75">{description}</p>
+              <p className="mt-4 max-w-[58ch] text-[13px] leading-relaxed opacity-75">
+                {description}
+              </p>
             ) : null}
-            {meta ? <div className="mt-2 text-[13px] text-white/60">{meta}</div> : null}
+            {meta ? (
+              <div className="mt-2 text-[11px] uppercase tracking-[0.08em] opacity-60">
+                {meta}
+              </div>
+            ) : null}
           </div>
-          {actions ? (
-            <div className="flex shrink-0 flex-wrap items-center gap-2 pt-1 [&_button]:border-white/30 [&_button]:bg-white/10 [&_button]:text-white">
+
+          {folio ? (
+            <div className="col-span-12 flex justify-end lg:col-span-4">
+              <HeroFolio n={folio} className="!text-[clamp(72px,11vw,180px)]" />
+            </div>
+          ) : actions ? (
+            <div className="col-span-12 flex flex-wrap items-end gap-2 lg:col-span-4 lg:justify-end">
               {actions}
             </div>
           ) : null}
         </div>
-        {children ? <div className="mt-6">{children}</div> : null}
+        {actions && folio ? (
+          <div className="mt-6 flex flex-wrap items-center gap-2">{actions}</div>
+        ) : null}
+        {children ? <div className="mt-7">{children}</div> : null}
       </header>
     </BlueHero>
   );

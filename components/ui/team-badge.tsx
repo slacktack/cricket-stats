@@ -38,17 +38,13 @@ export function TeamBadge({
     <span
       aria-hidden="true"
       className={cn(
-        "relative grid shrink-0 place-items-center overflow-hidden",
-        className,
-        "rounded-full border-0 bg-transparent"
+        "badge relative grid shrink-0 place-items-center overflow-hidden border border-line",
+        className
       )}
       style={{
         width: size,
         height: size,
-        background: logo
-          ? "#FFFFFF"
-          : color,
-        boxShadow: "inset 0 0 0 1px rgb(0 0 0 / 0.08)",
+        background: logo ? "#FFFFFF" : color,
       }}
     >
       {logo ? (
@@ -61,13 +57,16 @@ export function TeamBadge({
           decoding="async"
           className={cn(
             "absolute inset-0 h-full w-full",
-            flag ? "scale-[1.3] object-cover" : "object-contain p-[12%]"
+            flag ? "scale-[1.3] object-cover" : "object-contain p-[10%]"
           )}
         />
       ) : (
         <span
-          className="font-display font-bold leading-none tracking-[-0.02em]"
-          style={{ fontSize: Math.max(8, Math.round(size * scale)), color: readableOn(color) }}
+          className="text-[10px] font-extrabold uppercase leading-none tracking-[-0.03em]"
+          style={{
+            fontSize: Math.max(8, Math.round(size * scale)),
+            color: readableOn(color),
+          }}
         >
           {code}
         </span>
@@ -88,7 +87,7 @@ export function PlayerAvatar({
   return (
     <span
       className={cn(
-        "relative grid shrink-0 place-items-center overflow-hidden rounded-full border border-line bg-surface2",
+        "avatar relative grid shrink-0 place-items-center overflow-hidden border border-line bg-surface2",
         className
       )}
       style={{ width: size, height: size }}
@@ -105,8 +104,8 @@ export function PlayerAvatar({
         />
       ) : (
         <span
-          className="grid h-full w-full place-items-center text-sm font-bold text-faint"
-          style={{ fontSize: Math.max(10, size * 0.3) }}
+          className="grid h-full w-full place-items-center font-bold text-faint"
+          style={{ fontSize: Math.max(10, size * 0.28) }}
         >
           {getInitials(player.name)}
         </span>

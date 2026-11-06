@@ -1,27 +1,44 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Inter_Tight, JetBrains_Mono } from "next/font/google";
+import { Archivo, Cormorant_Garamond, Hanken_Grotesk, Geist_Mono, Space_Mono } from "next/font/google";
 import "./globals.css";
 import { FavoritesProvider } from "@/components/providers/favorites-provider";
 import { ToastProvider } from "@/components/providers/toast-provider";
 import { SiteFooter, SiteHeader, SiteNav, SiteSidebar } from "@/components/site-chrome";
+import { PageTurn, RevealRoot, ScrollFrame, Stock } from "@/components/motion";
 
-const sans = Inter({
+const sans = Hanken_Grotesk({
   subsets: ["latin"],
   variable: "--font-sans",
   display: "swap",
 });
 
-const display = Inter_Tight({
+const display = Archivo({
   subsets: ["latin"],
-  variable: "--font-display",
-  weight: ["600", "700", "800"],
+  weight: ["400", "700", "800", "900"],
+  variable: "--font-archivo",
   display: "swap",
 });
 
-const mono = JetBrains_Mono({
+const monoCrimson = Space_Mono({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-space-mono",
+  display: "swap",
+});
+
+const mono = Geist_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
   weight: ["400", "500", "700"],
+  display: "swap",
+});
+
+/* Amber's heading voice — a serif, and italic when it is quoted. */
+const serif = Cormorant_Garamond({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
+  variable: "--font-serif",
   display: "swap",
 });
 
@@ -94,8 +111,8 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#EEF4FF" },
-    { media: "(prefers-color-scheme: dark)", color: "#070D1F" },
+    { media: "(prefers-color-scheme: light)", color: "#EDEDED" },
+    { media: "(prefers-color-scheme: dark)", color: "#050505" },
   ],
   colorScheme: "light dark",
 };
@@ -105,25 +122,31 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth">
-      <body className={`${sans.variable} ${display.variable} ${mono.variable} font-sans`}>
-                <script
+      <body
+        className={`${sans.variable} ${display.variable} ${serif.variable} ${mono.variable} ${monoCrimson.variable} font-sans`}
+      >
+        <script
           dangerouslySetInnerHTML={{
             __html:
-              "try{if(localStorage.getItem('chauka-theme')!=='light'){document.documentElement.classList.add('dark')}}catch(e){document.documentElement.classList.add('dark')}",
+              "try{var p=localStorage.getItem('chauka-palette');if(p==='crimson'||p==='amber'){document.documentElement.setAttribute('data-pal',p)}if(localStorage.getItem('chauka-theme')!=='light'){document.documentElement.classList.add('dark')}}catch(e){document.documentElement.classList.add('dark')}",
           }}
         />
+        <RevealRoot />
+        <Stock />
+        <ScrollFrame />
+        <PageTurn />
         <a
           href="#main"
-          className="fixed left-4 top-4 z-[100] -translate-y-24 rounded-full bg-accent px-4 py-2.5 text-sm font-semibold text-accent-ink transition focus:translate-y-0"
+          className="fixed left-4 top-4 z-[100] -translate-y-24 bg-slab px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.08em] text-white transition-transform focus:translate-y-0"
         >
           Skip to content
         </a>
         <ToastProvider>
           <FavoritesProvider>
             <SiteSidebar />
-            <div className="lg:pl-[76px]">
+            <div className="lg:pl-[var(--rail)]">
               <SiteHeader />
-              <main id="main" className="min-h-[calc(100vh-5rem)]">
+              <main id="main" className="relative z-10 min-h-[calc(100vh-5rem)]">
                 {children}
               </main>
               <SiteFooter />

@@ -18,39 +18,66 @@ export function SquadsView({ detail }: { detail: MatchDetail }) {
 
   return (
     <div className="mt-4 grid gap-4 lg:grid-cols-2">
-      {detail.squads.map((squad) => (
-        <section key={squad.team.id} className="card overflow-hidden">
-          <div className="flex items-center gap-3 border-b border-line bg-surface2/60 px-4 py-3">
-            <TeamBadge team={squad.team} size={30} />
-            <Link href={`/teams/${squad.team.id}`} className="min-w-0 flex-1 truncate text-sm font-bold transition-colors hover:text-accent">
-              {squad.team.name}
-            </Link>
-            <span className="text-xs text-faint">{squad.players.length} players</span>
-          </div>
-          <div className="divide-y divide-line/70">
-            {squad.players.map((player, index) => (
-              <div key={`${player.id}-${index}`} className="flex items-center gap-3 px-4 py-2.5">
-                <PlayerAvatar player={{ id: player.id, name: player.name, faceImageId: player.faceImageId }} size={40} />
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    {player.id ? (
-                      <Link href={`/players/${player.id}`} className="truncate text-sm font-semibold transition-colors hover:text-accent">
-                        {player.name}
-                      </Link>
-                    ) : (
-                      <span className="truncate text-sm font-semibold">{player.name}</span>
-                    )}
-                    {player.captain ? <span className="rounded bg-accent-soft px-1 text-[11px] font-bold text-accent">C</span> : null}
-                    {player.keeper ? <span className="rounded bg-surface2 px-1 text-[10px] font-bold text-muted">WK</span> : null}
-                    {player.substitute ? <span className="rounded bg-surface2 px-1 text-[10px] text-faint">SUB</span> : null}
-                    {player.isOverseas ? <span className="rounded bg-warn/10 px-1 text-[10px] text-warn">OS</span> : null}
-                  </div>
-                  <p className="truncate text-xs text-faint">
-                    {[player.role, player.battingStyle, player.bowlingStyle].filter(Boolean).join(" · ") || "Player"}
-                  </p>
-                </div>
+      {detail.squads.map((squad, i) => (
+        <section key={squad.team.id} data-rv style={{ "--gd": `${i * 70}ms` } as React.CSSProperties}>
+          <div className="blk">
+            <div className="band">
+              <div className="flex min-w-0 items-center gap-2.5">
+                <TeamBadge team={squad.team} size={24} />
+                <Link
+                  href={`/teams/${squad.team.id}`}
+                  className="min-w-0 truncate text-[13px] font-bold text-ink transition-colors hover:text-accent"
+                >
+                  {squad.team.name}
+                </Link>
               </div>
-            ))}
+              <span>{squad.players.length} players</span>
+            </div>
+            <table className="dtable">
+              <colgroup>
+                <col />
+                <col className="w-[54px]" />
+              </colgroup>
+              <tbody>
+                {squad.players.map((player, index) => (
+                  <tr key={`${player.id}-${index}`} className="drow">
+                    <td data-lead>
+                      <div className="flex items-center gap-2.5">
+                        <PlayerAvatar
+                          player={{ id: player.id, name: player.name, faceImageId: player.faceImageId }}
+                          size={30}
+                        />
+                        <div className="min-w-0 flex-1">
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            {player.id ? (
+                              <Link href={`/players/${player.id}`} className="dname truncate">
+                                {player.name}
+                              </Link>
+                            ) : (
+                              <span className="dname truncate">{player.name}</span>
+                            )}
+                            {player.captain ? <span className="dtag" data-tone="milestone">C</span> : null}
+                            {player.keeper ? <span className="dtag">WK</span> : null}
+                            {player.substitute ? <span className="dtag">Sub</span> : null}
+                            {player.isOverseas ? <span className="dtag">OS</span> : null}
+                          </div>
+                          <p className="dnote truncate">
+                            {[player.role, player.battingStyle, player.bowlingStyle]
+                              .filter(Boolean)
+                              .join(" · ") || "Player"}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+                    <td data-trail className="text-right">
+                      <span className="mono text-[11px] text-faint tabular-nums">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </section>
       ))}

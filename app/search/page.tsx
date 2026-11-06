@@ -21,9 +21,9 @@ export default async function SearchPage({
 
   return (
     <div className="container-page py-5 sm:py-6">
-      <BlueHero className="px-6 py-7 sm:px-9 sm:py-9">
+      <BlueHero tone="accent" className="px-6 py-7 sm:px-9 sm:py-9">
         <HeroChip>Find anything</HeroChip>
-        <h1 className="mt-4 font-display text-[32px] font-bold leading-none tracking-[-0.02em] sm:text-[44px]">
+        <h1 className="display mt-4 text-[clamp(30px,5vw,52px)] font-bold uppercase leading-[0.9] tracking-[-0.04em]">
           Search
         </h1>
         <div className="mt-5 flex flex-wrap gap-3">

@@ -20,6 +20,7 @@ import { timeAgo, cn, normalizeSearch } from "@/lib/utils";
 import { useFavorites } from "@/components/providers/favorites-provider";
 import { useToast } from "@/components/providers/toast-provider";
 import { centreRank, MatchStage } from "@/components/home/match-centre";
+import { IssueCover } from "@/components/home/issue-cover";
 import { LiveDot } from "@/components/ui/pills";
 import { TeamBadge } from "@/components/ui/team-badge";
 
@@ -191,31 +192,36 @@ export function HomeFeed({
   }
 
   return (
-    <div className="grid gap-6 py-6 lg:grid-cols-[minmax(0,1fr)_340px] xl:grid-cols-[minmax(0,1fr)_380px]">
-      <div className="min-w-0">
-        {selected ? <MatchStage key={selected.id} match={selected} /> : null}
-      </div>
+    <>
+      <IssueCover matches={feed.matches} updatedAt={feed.updatedAt} />
+
+      <div className="grid gap-6 pb-6 lg:grid-cols-[minmax(0,1fr)_340px] xl:grid-cols-[minmax(0,1fr)_380px]">
+        <div className="min-w-0">
+          {selected ? <MatchStage key={selected.id} match={selected} /> : null}
+        </div>
 
       <aside className="min-w-0 lg:sticky lg:top-[calc(var(--header-h)+1.5rem)] lg:max-h-[calc(100vh-var(--header-h)-3rem)] lg:overflow-y-auto lg:pr-1 no-scrollbar">
-        <div className="flex items-center gap-2">
-          <h2 className="font-display text-[20px] font-bold tracking-[-0.01em]">All matches</h2>
-          <span className="ml-auto text-[12px] text-faint" suppressHydrationWarning>
-            {stale ? "Reconnecting" : timeAgo(feed.updatedAt)}
+        <div className="band !px-3">
+          <h3>All matches</h3>
+          <span className="flex items-center gap-2 shrink-0">
+            <span className="dcell !text-white/70" suppressHydrationWarning>
+              {stale ? "Reconnecting" : timeAgo(feed.updatedAt)}
+            </span>
+            <button
+              type="button"
+              onClick={() => void refresh(false)}
+              disabled={refreshing}
+              aria-label="Refresh matches"
+              className="grid h-6 w-6 place-items-center text-white/70 transition-colors hover:bg-white hover:text-[rgb(var(--slab))] disabled:opacity-50"
+            >
+              <RefreshCw className={cn("h-3.5 w-3.5", refreshing && "animate-spin")} />
+            </button>
           </span>
-          <button
-            type="button"
-            onClick={() => void refresh(false)}
-            disabled={refreshing}
-            aria-label="Refresh matches"
-            className="grid h-8 w-8 place-items-center rounded-lg text-muted transition-colors hover:bg-surface hover:text-ink disabled:opacity-50"
-          >
-            <RefreshCw className={cn("h-4 w-4", refreshing && "animate-spin")} />
-          </button>
         </div>
 
         <label className="relative mt-3 flex items-center">
           <span className="sr-only">Filter matches</span>
-          <Search className="pointer-events-none absolute left-3 h-4 w-4 text-faint" />
+          <Search className="pointer-events-none absolute left-2.5 h-3.5 w-3.5 text-faint" />
           <input
             type="text"
             inputMode="search"
@@ -224,21 +230,25 @@ export function HomeFeed({
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Team, series or city"
-            className="h-10 w-full rounded-xl bg-surface pl-9 pr-9 text-[14px] text-ink outline-none ring-1 ring-transparent transition placeholder:text-faint focus:ring-accent/60"
+            className="h-9 w-full border border-line bg-surface pl-8 pr-8 text-[13px] text-ink outline-none transition-colors placeholder:text-faint focus:border-slab"
           />
           {query ? (
             <button
               type="button"
               onClick={() => setQuery("")}
               aria-label="Clear filter"
-              className="absolute right-1 grid h-8 w-8 place-items-center rounded-lg text-faint hover:text-ink"
+              className="absolute right-1 grid h-7 w-7 place-items-center text-faint hover:text-accent"
             >
-              <X className="h-4 w-4" />
+              <X className="h-3.5 w-3.5" />
             </button>
           ) : null}
         </label>
 
-        <div className="mt-3 flex gap-4 border-b border-line text-[14px]" role="tablist" aria-label="Match state">
+        <div
+          className="mt-3 flex items-end border-b border-line"
+          role="tablist"
+          aria-label="Match state"
+        >
           {STATE_TABS.map((item) => {
             const active = tab === item.key;
             return (
@@ -248,20 +258,18 @@ export function HomeFeed({
                 role="tab"
                 aria-selected={active}
                 onClick={() => setTab(item.key)}
-                className={cn(
-                  "-mb-px flex items-center gap-1.5 border-b-2 pb-2.5 font-semibold transition-colors",
-                  active ? "border-accent text-ink" : "border-transparent text-faint hover:text-ink"
-                )}
+                className="tab-link !px-2"
+                data-active={active ? "true" : undefined}
               >
                 {item.key === "live" ? <LiveDot /> : null}
                 {item.label}
-                <span className="tnum text-[12px] font-medium text-faint">{counts[item.key]}</span>
+                <span className="count-badge">{counts[item.key]}</span>
               </button>
             );
           })}
         </div>
 
-        <div className="no-scrollbar mt-3 flex gap-1.5 overflow-x-auto">
+        <div className="no-scrollbar mt-2.5 flex gap-1 overflow-x-auto">
           {CATEGORIES.map((item) => {
             const active = category === item;
             const count = categoryCount(item);
@@ -272,12 +280,11 @@ export function HomeFeed({
                 type="button"
                 onClick={() => setCategory(item)}
                 aria-pressed={active}
-                className={cn(
-                  "h-7 shrink-0 rounded-full px-3 text-[12px] font-medium transition-colors",
-                  active ? "bg-ink text-bg" : "bg-surface text-muted hover:text-ink"
-                )}
+                className="chip-filter !h-7"
+                data-active={active ? "true" : undefined}
               >
                 {item}
+                <span className="count-badge">{categoryCount(item)}</span>
               </button>
             );
           })}
@@ -286,24 +293,26 @@ export function HomeFeed({
             onClick={() => setFollowing((value) => !value)}
             disabled={!favorites.hydrated}
             aria-pressed={following}
-            className={cn(
-              "inline-flex h-7 shrink-0 items-center gap-1 rounded-full px-3 text-[12px] font-medium transition-colors",
-              following ? "bg-ink text-bg" : "bg-surface text-muted hover:text-ink"
-            )}
+            className="chip-filter !h-7 inline-flex items-center gap-1.5"
+            data-active={following ? "true" : undefined}
           >
             <Heart className={cn("h-3 w-3", following && "fill-current")} />
             Following
           </button>
         </div>
 
-        <div className="mt-4 space-y-5 pb-4">
+        <div className="mt-4 pb-4">
           {groups.length === 0 ? (
-            <div className="rounded-2xl bg-surface p-6 text-center text-[13px] text-muted">
+            <div className="blk px-5 py-8 text-center text-[12px] text-muted">
               {following && !favorites.hasFavorites
                 ? "Follow a team or series to build your own list."
                 : `No ${tab === "all" ? "" : tab === "completed" ? "results " : `${tab} `}matches${query.trim() ? ` for “${query.trim()}”` : ""}.`}
               {tab !== "all" && counts.all > 0 ? (
-                <button type="button" onClick={() => setTab("all")} className="mt-2 block w-full font-semibold text-accent">
+                <button
+                  type="button"
+                  onClick={() => setTab("all")}
+                  className="mt-2 block w-full text-[11px] font-extrabold uppercase tracking-[0.08em] text-accent"
+                >
                   Show all {counts.all}
                 </button>
               ) : null}
@@ -314,23 +323,25 @@ export function HomeFeed({
               const open = expanded.has(group.key) || !collapsible;
               const shown = open ? group.matches : group.matches.slice(0, COLLAPSE_AFTER);
               return (
-                <section key={group.key} aria-label={group.name}>
-                  <div className="mb-2 flex items-center gap-2 px-1">
+                <section key={group.key} aria-label={group.name} className="mt-5 first:mt-0">
+                  <div className="mb-1.5 flex items-baseline gap-2 border-b-2 border-slab pb-1">
                     {group.seriesId ? (
                       <Link
                         href={`/series/${group.seriesId}`}
-                        className="min-w-0 flex-1 truncate text-[12px] font-semibold uppercase tracking-[0.05em] text-faint hover:text-ink"
+                        className="min-w-0 flex-1 truncate text-[10px] font-extrabold uppercase tracking-[0.12em] text-accent hover:text-ink"
                       >
                         {group.name}
                       </Link>
                     ) : (
-                      <span className="min-w-0 flex-1 truncate text-[12px] font-semibold uppercase tracking-[0.05em] text-faint">
+                      <span className="min-w-0 flex-1 truncate text-[10px] font-extrabold uppercase tracking-[0.12em] text-accent">
                         {group.name}
                       </span>
                     )}
-                    <span className="text-[12px] text-faint">{group.matches.length}</span>
+                    <span className="dnum shrink-0 text-[12px] text-faint">
+                      {group.matches.length}
+                    </span>
                   </div>
-                  <div className="space-y-2">
+                  <div className="border-t border-line-strong">
                     {shown.map((match) => (
                       <MatchTile
                         key={match.id}
@@ -344,10 +355,10 @@ export function HomeFeed({
                     <button
                       type="button"
                       onClick={() => toggleGroup(group.key)}
-                      className="mt-2 flex w-full items-center justify-center gap-1 py-1.5 text-[12px] font-medium text-faint hover:text-ink"
+                      className="mt-1 flex w-full items-center justify-center gap-1 border-t border-line py-1.5 text-[10px] font-extrabold uppercase tracking-[0.08em] text-faint hover:text-accent"
                     >
                       {open ? "Show fewer" : `${group.matches.length - COLLAPSE_AFTER} more`}
-                      <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", open && "rotate-180")} />
+                      <ChevronDown className={cn("h-3 w-3 transition-transform", open && "rotate-180")} />
                     </button>
                   ) : null}
                 </section>
@@ -357,9 +368,14 @@ export function HomeFeed({
         </div>
       </aside>
     </div>
+    </>
   );
 }
 
+/**
+ * The list item is a ruled row, not a card: hairline top, leader dots carrying
+ * the eye to the figure, and the selected row filled by the Klein slab.
+ */
 function MatchTile({
   match,
   active,
@@ -370,68 +386,71 @@ function MatchTile({
   onSelect: () => void;
 }) {
   const live = match.state === "live";
+
   return (
     <button
       type="button"
       onClick={onSelect}
       aria-pressed={active}
-      className={cn(
-        "block w-full rounded-2xl p-3.5 text-left transition-colors",
-        active
-          ? "bg-gradient-to-br from-[#1d4ed8] to-[#3b6cff] text-white shadow-[0_12px_30px_-14px_rgb(37_99_235/0.9)]"
-          : "bg-surface hover:bg-surface2"
-      )}
+      data-hot={active ? "" : undefined}
+      data-live={live ? "" : undefined}
+      className="hrow tile !px-2.5 text-left"
     >
-      <div className="flex items-center gap-2 text-[11px]">
-        <span
-          className={cn(
-            "rounded-full px-2 py-0.5 font-semibold",
-            active ? "bg-white/20 text-white" : "bg-surface2 text-muted"
-          )}
-        >
+      <div className="flex items-center gap-2">
+        <span className="tile-dim text-[9px] font-extrabold uppercase tracking-[0.1em] text-muted">
           {matchFormat(match)}
         </span>
-        <span className={cn("min-w-0 flex-1 truncate", active ? "text-white/70" : "text-faint")}>
+        <span className="tile-mute min-w-0 flex-1 truncate text-[10px] uppercase tracking-[0.04em] text-muted">
           {match.description}
         </span>
         {live ? (
-          <span className={cn("inline-flex items-center gap-1 font-semibold", active ? "text-white" : "text-live")}>
-            <LiveDot className={active ? "bg-white" : undefined} />
-            LIVE
+          <span className="tile-live inline-flex shrink-0 items-center gap-1 bg-live px-1 text-[9px] font-extrabold uppercase leading-[15px] tracking-[0.1em] text-[#0a1400]">
+            <span className="tile-dot h-[5px] w-[5px] rounded-full bg-[#0a1400] animate-pulse-dot" />
+            Live
           </span>
         ) : (
-          <span className={cn(active ? "text-white/70" : "text-faint")} suppressHydrationWarning>
+          <span className="tile-mute shrink-0 text-[9px] font-bold uppercase tracking-[0.1em] text-faint" suppressHydrationWarning>
             {match.state === "upcoming" ? upcomingLine(match) : "Result"}
           </span>
         )}
       </div>
-      <div className="mt-2.5 space-y-1.5">
+
+      <div className="mt-2">
         {match.teams.map((team) => {
           const score = teamScoreText(match, team);
           const batting = live && match.currentBattingTeamId === team.id;
           const winner = match.state === "completed" && match.winnerTeamId === team.id;
+          const plain = score === "—" || score === "Yet to bat";
+
           return (
-            <div key={team.id} className="flex items-center gap-2.5">
-              <TeamBadge team={team} size={26} />
-              <span className={cn("min-w-0 flex-1 truncate text-[14px] font-semibold", winner && !active && "text-win")}>
+            <div
+              key={team.id}
+              className="tile-rule flex items-baseline gap-2 border-t border-line py-1 first:border-t-0"
+            >
+              <TeamBadge team={team} size={16} className="self-center" />
+              <span className="tile-ink shrink-0 text-[13px] font-extrabold uppercase leading-none tracking-[-0.03em] text-ink">
                 {team.shortName}
-                {batting ? <span className={cn("ml-1.5 inline-block h-1.5 w-1.5 rounded-full align-middle", active ? "bg-white" : "bg-live")} /> : null}
+                {batting ? (
+                  <span className="tile-dot ml-1 inline-block h-[5px] w-[5px] rounded-full bg-live align-middle" />
+                ) : null}
               </span>
-              <span className="tnum text-[15px] font-bold">
-                {score === "—" || score === "Yet to bat" ? (
-                  <span className={cn("text-[12px] font-medium", active ? "text-white/60" : "text-faint")}>
-                    {score === "—" ? "" : "Yet to bat"}
-                  </span>
-                ) : (
-                  score
+              <span className="leaders" />
+              <span
+                className={cn(
+                  "tile-ink dnum shrink-0 text-right !text-[14px]",
+                  plain && "text-[10px] font-medium tile-mute",
+                  winner && "underline decoration-2 underline-offset-4"
                 )}
+              >
+                {plain ? (score === "—" ? "—" : "Yet to bat") : score.replace("/", "-")}
               </span>
             </div>
           );
         })}
       </div>
+
       <p
-        className={cn("mt-2.5 truncate text-[12px]", active ? "text-white/80" : "text-muted")}
+        className="tile-mute mt-1.5 truncate text-[11px] text-muted"
         suppressHydrationWarning
       >
         {match.state === "upcoming" ? match.venue?.city ?? "" : matchStatusText(match)}

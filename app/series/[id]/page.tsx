@@ -12,6 +12,7 @@ import { ShareButton } from "@/components/share-button";
 import { SeriesMatches } from "@/components/series/series-matches";
 import { EmptyState } from "@/components/ui/empty-state";
 import { TeamBadge } from "@/components/ui/team-badge";
+import { LiveDot } from "@/components/ui/pills";
 import type { SeriesInfo, SeriesStats } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -52,16 +53,14 @@ export async function generateMetadata({ params }: SeriesPageProps): Promise<Met
 
 function StatsTable({ stats }: { stats: SeriesStats }) {
   return (
-    <div className="overflow-hidden rounded-2xl bg-surface">
-      <div className="flex items-center justify-between gap-3 bg-gradient-to-r from-[#0a1a4f] via-[#1435a8] to-[#2a5cff] px-4 py-3.5 text-white">
-        <h2 className="display text-[18px] font-bold leading-none tracking-[-0.02em]">
-          {stats.title}
-        </h2>
-        <span className="mono text-[10px] uppercase tracking-[0.06em] text-white/70">
+    <div className="blk">
+      <div className="band">
+        <h3>{stats.title}</h3>
+        <span className="dcell shrink-0">
           {stats.rows.length} entries
         </span>
       </div>
-      <div className="divide-y divide-line/70 md:hidden">
+      <div className="divide-y divide-[var(--rule)] md:hidden">
         {stats.rows.map((row, index) => (
           <div key={`${row.id}-${index}`} className="px-4 py-3">
             <div className="flex items-start gap-3">
@@ -144,13 +143,11 @@ function PointsTab({ series }: { series: SeriesInfo }) {
   return (
     <div className="mt-4 space-y-4">
       {series.pointsTable.map((group, groupIndex) => (
-        <section key={`${group.groupName}-${groupIndex}`} className="overflow-hidden rounded-2xl bg-surface">
-          <div className="flex items-center justify-between gap-3 bg-gradient-to-r from-[#0a1a4f] via-[#1435a8] to-[#2a5cff] px-4 py-3.5 text-white">
-            <h2 className="display truncate text-[18px] font-bold leading-none tracking-[-0.02em]">
-              {group.groupName}
-            </h2>
+        <section key={`${group.groupName}-${groupIndex}`} className="blk">
+          <div className="band">
+            <h3 className="truncate">{group.groupName}</h3>
             {series.pointsUpdatedAt ? (
-              <span className="mono shrink-0 text-[10px] uppercase tracking-[0.05em] text-white/70">
+              <span className="dcell shrink-0">
                 Updated {timeAgo(series.pointsUpdatedAt)}
               </span>
             ) : null}
@@ -228,7 +225,7 @@ function TeamsTab({ series }: { series: SeriesInfo }) {
   return (
     <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
       {series.teams.map((team, index) => (
-        <Link key={`${team.id}-${index}`} href={`/teams/${team.id}`} className="flex items-center gap-3 rounded-2xl bg-surface p-4 transition-colors hover:bg-surface2">
+        <Link key={`${team.id}-${index}`} href={`/teams/${team.id}`} className="blk group flex items-center gap-3 p-3.5 transition-colors hover:border-slab">
           <TeamBadge team={team} size={40} />
           <span className="min-w-0 truncate text-[14px] font-semibold">{team.name}</span>
         </Link>
@@ -259,12 +256,12 @@ export default async function SeriesDetailPage({ params, searchParams }: SeriesP
     <div className="container-page py-4 sm:py-6">
       <Breadcrumbs items={[{ label: "Series", href: "/series" }, { label: series.name }]} />
 
-      <BlueHero className="mt-3 px-6 py-7 sm:px-9 sm:py-8">
+      <BlueHero tone="accent" className="mt-3 px-[var(--pad)] py-8 sm:py-10">
         <div className="flex flex-wrap items-center gap-2">
           {series.format ? <HeroChip>{series.format.toUpperCase()}</HeroChip> : null}
           {live > 0 ? (
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#22c55e] px-3 py-1 text-[12px] font-bold text-[#052e16]">
-              <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-[#052e16]" />
+            <span className="inline-flex items-center gap-1.5 border border-live bg-live px-2 py-0.5 text-[11px] font-extrabold uppercase leading-[16px] tracking-[0.08em] text-[#0a1400]">
+              <LiveDot className="!bg-[#0a1400]" />
               {live} live
             </span>
           ) : (
@@ -276,10 +273,10 @@ export default async function SeriesDetailPage({ params, searchParams }: SeriesP
           </div>
         </div>
 
-        <h1 className="mt-5 font-display text-[30px] font-bold leading-tight tracking-[-0.02em] sm:text-[40px]">
+        <h1 className="display mt-5 text-[clamp(28px,4vw,52px)] uppercase leading-[0.94]">
           {series.name}
         </h1>
-        <p className="mt-2 text-[14px] text-white/75">
+        <p className="mt-2 text-[13px] text-white/75">
           {formatDateRange(series.startDate, series.endDate)}
         </p>
 
@@ -288,10 +285,10 @@ export default async function SeriesDetailPage({ params, searchParams }: SeriesP
             <div className="flex items-center gap-4">
               {series.teams.map((team, index) => (
                 <div key={team.id} className="flex items-center gap-4">
-                  {index === 1 ? <span className="font-display text-[15px] text-white/50">vs</span> : null}
+                  {index === 1 ? <span className="dcell !text-[13px] uppercase tracking-[0.1em] text-white/75">vs</span> : null}
                   <Link href={`/teams/${team.id}`} className="flex items-center gap-3">
                     <TeamBadge team={team} size={56} />
-                    <span className="font-display text-[20px] font-bold">{team.shortName}</span>
+                    <span className="dname !text-[18px] uppercase">{team.shortName}</span>
                   </Link>
                 </div>
               ))}
@@ -299,7 +296,7 @@ export default async function SeriesDetailPage({ params, searchParams }: SeriesP
           ) : (
             <div className="flex flex-wrap -space-x-2">
               {series.teams.slice(0, 10).map((team) => (
-                <TeamBadge key={team.id} team={team} size={44} className="ring-2 ring-[#1435a8]" />
+                <TeamBadge key={team.id} team={team} size={44} className="ring-1 ring-white/45" />
               ))}
               {series.teams.length > 10 ? (
                 <span className="ml-4 self-center text-[13px] text-white/70">+{series.teams.length - 10} teams</span>
@@ -327,7 +324,7 @@ export default async function SeriesDetailPage({ params, searchParams }: SeriesP
                 aria-selected={active}
                 className={cn(
                   "-mb-px shrink-0 border-b-2 py-3.5 text-[15px] font-semibold transition-colors",
-                  active ? "border-accent text-accent" : "border-transparent text-muted hover:text-ink"
+                  active ? "border-slab text-accent" : "border-transparent text-muted hover:text-ink"
                 )}
               >
                 {item.label}

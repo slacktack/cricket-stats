@@ -59,7 +59,7 @@ export default async function TeamPage({ params }: TeamPageProps) {
             <TeamBadge team={data.team} size={64} />
             <span className="min-w-0">
               <span className="block text-[0.8em] leading-[1.02] [text-wrap:balance]">{data.team.name}</span>
-              <span className="mt-1 block text-sm font-medium tracking-normal text-faint">{data.team.shortName}</span>
+              <span className="mt-1 block text-[13px] font-bold uppercase leading-tight tracking-[0.02em] opacity-70">{data.team.shortName}</span>
             </span>
           </span>
         }
@@ -85,10 +85,10 @@ export default async function TeamPage({ params }: TeamPageProps) {
               <Link
                 key={series.id}
                 href={`/series/${series.id}`}
-                className="inline-flex min-h-9 items-center gap-1.5 rounded-full bg-white/15 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-white/25"
+                className="inline-flex min-h-9 items-center gap-1.5 border border-white/35 bg-white/10 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.06em] text-white transition-colors hover:border-white hover:bg-white hover:text-[rgb(var(--slab))]"
               >
                 {series.live > 0 ? <LiveDot /> : null}
-                <span className="max-w-[260px] truncate">{series.name}</span>
+                <span className="max-w-[240px] truncate sm:max-w-[340px]">{series.name}</span>
               </Link>
             ))}
           </div>
@@ -107,20 +107,22 @@ export default async function TeamPage({ params }: TeamPageProps) {
         <div className="mt-4 space-y-7">
           {groups.map((group) => (
             <section key={group.key}>
-              <div className="flex items-baseline gap-2 border-b border-line-strong pb-2">
+              <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 border-b-2 border-slab pb-2">
                 {group.seriesId ? (
-                  <Link href={`/series/${group.seriesId}`} className="min-w-0 text-[15px] font-bold leading-snug transition-colors hover:text-accent">
+                  <Link href={`/series/${group.seriesId}`} className="display min-w-0 max-w-full truncate text-[16px] font-bold uppercase leading-snug tracking-[-0.02em] transition-colors hover:text-accent sm:text-[19px]">
                     {group.name}
                   </Link>
                 ) : (
-                  <h2 className="text-[15px] font-bold leading-snug">{group.name}</h2>
+                  <h2 className="display min-w-0 max-w-full truncate text-[16px] font-bold uppercase leading-snug tracking-[-0.02em] sm:text-[19px]">
+                    {group.name}
+                  </h2>
                 )}
                 {group.live > 0 ? (
-                  <span className="inline-flex shrink-0 items-center gap-1 text-xs font-semibold text-live">
+                  <span className="inline-flex shrink-0 items-center gap-1 text-[11px] font-bold uppercase tracking-[0.06em] text-live">
                     <LiveDot /> {group.live} live
                   </span>
                 ) : null}
-                <span className="ml-auto shrink-0 text-xs text-faint">
+                <span className="ml-auto shrink-0 text-[10px] font-bold uppercase tracking-[0.1em] text-faint">
                   {group.matches.length} {group.matches.length === 1 ? "match" : "matches"}
                 </span>
               </div>

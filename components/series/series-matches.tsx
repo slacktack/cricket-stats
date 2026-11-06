@@ -2,11 +2,10 @@
 
 import { useState } from "react";
 import type { MatchSummary, SeriesInfo } from "@/lib/types";
-import { cn } from "@/lib/utils";
+import { cn, formatTime, pad } from "@/lib/utils";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { matchFormat, matchStatusText, teamOversText, teamScoreText } from "@/lib/match-display";
-import { formatTime } from "@/lib/utils";
 import { LiveDot } from "@/components/ui/pills";
 import { TeamBadge } from "@/components/ui/team-badge";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -67,7 +66,7 @@ export function SeriesMatches({
 
   return (
     <div className="mt-4">
-      <div className="flex gap-1.5" role="tablist" aria-label="Match state">
+      <div className="flex gap-0 border-b border-line" role="tablist" aria-label="Match state">
         {(
           [
             ["upcoming", "Live & upcoming"],
@@ -82,35 +81,29 @@ export function SeriesMatches({
             aria-selected={filter === key}
             data-active={filter === key}
             onClick={() => select(key)}
-            className={cn(
-              "inline-flex h-9 items-center gap-1.5 rounded-full px-4 text-[13px] font-semibold transition-colors",
-              filter === key ? "bg-accent text-accent-ink" : "bg-surface text-muted hover:text-ink"
-            )}
+            className="tab-link -mb-px"
           >
             {label}
-            <span className="tnum text-[12px] opacity-70">{counts[key]}</span>
+            <span className="count-badge">{counts[key]}</span>
           </button>
         ))}
       </div>
 
       {visible.length === 0 ? (
-        <EmptyState
-          title="Nothing here"
-          description="No matches in this view yet."
-          className="mt-4"
-        />
+        <EmptyState title="Nothing here" description="No matches in this view yet." className="mt-4" />
       ) : (
-        <div className="mt-5 space-y-7">
+        <div className="mt-6 space-y-8">
           {visible.map((group, index) => (
-            <section key={`${group.label}-${index}`}>
-              <div className="flex items-baseline gap-2">
-                <h2 className="font-display text-[17px] font-bold">{group.label}</h2>
-                <span className="text-xs text-faint">
-                  {group.matches.length}{" "}
-                  {group.matches.length === 1 ? "match" : "matches"}
+            <section key={`${group.label}-${index}`} data-rv style={{ "--gd": `${index * 60}ms` } as React.CSSProperties}>
+              <div className="flex items-baseline gap-2 border-b-2 border-slab pb-1.5">
+                <h2 className="text-[11px] font-bold uppercase tracking-[0.12em] text-ink">
+                  {group.label}
+                </h2>
+                <span className="ml-auto tnum text-[11px] text-faint">
+                  {pad(group.matches.length)} {group.matches.length === 1 ? "match" : "matches"}
                 </span>
               </div>
-              <div className="mt-3 space-y-2.5">
+              <div>
                 {group.matches.map((match) => (
                   <FixtureRow key={match.id} match={match} />
                 ))}
@@ -122,17 +115,11 @@ export function SeriesMatches({
 
       {total > PAGE ? (
         <div className="mt-6 flex flex-col items-center gap-2">
-          <p className="text-xs text-faint">
+          <p className="tnum text-[11px] uppercase tracking-[0.1em] text-faint">
             Showing {shown} of {total}
           </p>
           {limit < total ? (
-            <button
-              type="button"
-              onClick={() => setLimit((value) => value + PAGE)}
-              className={cn(
-                "inline-flex h-11 items-center justify-center rounded-full bg-surface px-6 text-sm font-semibold text-ink transition-colors duration-150 hover:bg-surface2"
-              )}
-            >
+            <button type="button" onClick={() => setLimit((value) => value + PAGE)} className="btn-ghost">
               Show {Math.min(PAGE, total - limit)} more
             </button>
           ) : null}
@@ -149,40 +136,46 @@ function FixtureRow({ match }: { match: MatchSummary }) {
   return (
     <Link
       href={`/match/${match.id}`}
+      data-hot={live ? "" : undefined}
       className={cn(
-        "group grid grid-cols-[56px_minmax(0,1fr)_auto] items-center gap-3 rounded-2xl p-3 transition-colors sm:grid-cols-[64px_minmax(0,1fr)_minmax(0,220px)_auto] sm:gap-5 sm:p-4",
-        live ? "bg-gradient-to-r from-[#0f2a8a] to-[#2a5cff] text-white" : "bg-surface hover:bg-surface2"
+        "hrow tile group grid grid-cols-[42px_minmax(0,1fr)_auto] items-center gap-3",
+        "sm:grid-cols-[42px_minmax(0,1fr)_minmax(0,230px)_28px] sm:gap-4"
       )}
     >
-      <div
-        className={cn(
-          "flex h-14 flex-col items-center justify-center rounded-xl sm:h-16",
-          live ? "bg-white/15" : "bg-surface2"
-        )}
-        suppressHydrationWarning
-      >
-        <span className={cn("text-[11px] font-semibold uppercase", live ? "text-white/70" : "text-faint")}>
+      <div className="flex flex-col items-center gap-0.5 tile-rule border-r pr-2" suppressHydrationWarning>
+        <span className="text-[9px] font-bold uppercase tracking-[0.1em] tile-dim text-faint">
           {date.toLocaleDateString("en-IN", { month: "short" })}
         </span>
-        <span className="tnum font-display text-[22px] font-bold leading-none">{date.getDate()}</span>
+        <span className="text-[19px] font-extrabold leading-none tracking-[-0.03em] tnum">
+          {pad(date.getDate())}
+        </span>
       </div>
 
-      <div className="min-w-0 space-y-1.5">
+      <div className="min-w-0 space-y-1">
         {match.teams.map((team) => {
           const score = teamScoreText(match, team);
           const overs = teamOversText(match, team);
           const winner = done && match.winnerTeamId === team.id;
           return (
-            <div key={team.id} className="flex min-w-0 items-center gap-2.5">
-              <TeamBadge team={team} size={26} />
-              <span className={cn("min-w-0 flex-1 truncate text-[14px] font-semibold", winner && !live && "text-win")}>
+            <div key={team.id} className="flex min-w-0 items-center gap-2">
+              <TeamBadge team={team} size={22} />
+              <span
+                className={cn(
+                  "min-w-0 flex-1 truncate text-[13px] font-bold",
+                  winner && !live && "text-win"
+                )}
+              >
                 <span className="sm:hidden">{team.shortName}</span>
                 <span className="hidden sm:inline">{team.name}</span>
               </span>
               {score !== "—" && score !== "Yet to bat" ? (
-                <span className="tnum shrink-0 text-[15px] font-bold">
+                <span className="dnum shrink-0 !text-[14px]">
                   {score}
-                  {overs ? <span className={cn("ml-1 text-[11px] font-normal", live ? "text-white/60" : "text-faint")}>({overs.replace(" ov", "")})</span> : null}
+                  {overs ? (
+                    <span className="ml-1 text-[10px] font-medium tile-dim text-faint">
+                      {overs.replace(" ov", "")}
+                    </span>
+                  ) : null}
                 </span>
               ) : null}
             </div>
@@ -191,32 +184,26 @@ function FixtureRow({ match }: { match: MatchSummary }) {
       </div>
 
       <div className="col-span-3 min-w-0 sm:col-span-1">
-        <p className={cn("text-[12px] font-medium", live ? "text-white/70" : "text-faint")}>
-          {matchFormat(match)} · {match.description}
+        <p className="truncate text-[10px] font-bold uppercase tracking-[0.08em] tile-dim text-faint">
+          {matchFormat(match)}
         </p>
         <p
-          className={cn(
-            "mt-0.5 line-clamp-2 text-[13px] font-semibold",
-            live ? "text-white" : done ? "text-win" : "text-ink"
-          )}
+          className="mt-0.5 line-clamp-2 text-[12px] font-semibold tile-dim text-muted"
           suppressHydrationWarning
         >
           {live ? (
-            <span className="mr-1.5 inline-flex items-center gap-1 text-[#4ade80]">
-              <LiveDot className="bg-[#4ade80]" />
+            <span className="mr-1.5 inline-flex items-center gap-1 align-middle text-live">
+              <LiveDot className="tile-dot bg-live" />
               LIVE
             </span>
           ) : null}
-          {match.state === "upcoming" ? `${formatTime(match.startTime)} · ${match.venue?.city ?? ""}` : matchStatusText(match)}
+          {match.state === "upcoming"
+            ? `${formatTime(match.startTime)} · ${match.venue?.city ?? ""}`
+            : matchStatusText(match)}
         </p>
       </div>
 
-      <ChevronRight
-        className={cn(
-          "row-start-1 hidden h-5 w-5 shrink-0 transition-transform group-hover:translate-x-0.5 sm:col-start-4 sm:block",
-          live ? "text-white/70" : "text-faint"
-        )}
-      />
+      <ChevronRight className="row-start-1 hidden h-4 w-4 shrink-0 tile-dim text-faint transition-transform group-hover:translate-x-0.5 sm:col-start-4 sm:block" />
     </Link>
   );
 }

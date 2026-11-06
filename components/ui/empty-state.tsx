@@ -22,20 +22,18 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center rounded-xl border border-dashed border-line-strong bg-surface px-6 py-14 text-center",
+        "flex flex-col items-center justify-center border border-line bg-surface px-6 py-14 text-center",
         className
       )}
     >
       {icon ? (
-        <div className="mb-4 grid h-10 w-10 place-items-center rounded-md border border-accent/15 bg-accent-soft text-accent">
-          {icon}
-        </div>
+        <div className="mb-5 grid h-11 w-11 place-items-center bg-slab text-white">{icon}</div>
       ) : null}
-      <h3 className="display text-[26px] font-bold leading-tight tracking-[-0.025em]">
+      <h3 className="display text-[clamp(22px,3vw,30px)] font-bold leading-none tracking-[-0.04em]">
         {title}
       </h3>
       {description ? (
-        <p className="mt-2 max-w-sm text-[12px] font-medium leading-relaxed text-muted">
+        <p className="mt-3 max-w-sm text-[12px] font-medium leading-relaxed text-muted">
           {description}
         </p>
       ) : null}

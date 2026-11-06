@@ -70,6 +70,13 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
     ? (requested as MatchTab)
     : fallback;
 
+  const content = {
+    scorecard: <ScorecardView detail={detail} overs={overs} />,
+    commentary: <CommentaryView detail={detail} />,
+    squads: <SquadsView detail={detail} />,
+    info: <MatchInfo detail={detail} />,
+  }[tab];
+
   return (
     <div className="container-page py-4 sm:py-6">
       <Breadcrumbs
@@ -86,57 +93,58 @@ export default async function MatchPage({ params, searchParams }: MatchPageProps
         <MatchBanner match={summary} detail={detail} showLink={false} />
       </div>
 
-      <div className="mt-3 flex flex-wrap items-center gap-2">
-        <span className="mr-1 text-xs font-semibold text-faint">Follow</span>
-        <FollowTeamIcon team={summary.teams[0]} showLabel />
-        <FollowTeamIcon team={summary.teams[1]} showLabel />
-        <ShareButton
-          title={`${matchShortTitle(summary)} · Chauka`}
-          text={summary.status}
-          className="ml-auto"
-        />
-      </div>
+      <div className="mt-4 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,420px)] lg:items-start lg:gap-7 xl:grid-cols-[minmax(0,1fr)_460px] xl:gap-9">
+        {/* The live rail rides beside the scorecard, so the numbers never scroll away. */}
+        <aside className="rail order-1 min-w-0 lg:order-2 lg:sticky lg:top-[calc(var(--header-h)+12px)] lg:max-h-[calc(100vh-var(--header-h)-24px)] lg:overflow-y-auto lg:pr-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="mr-1 text-xs font-semibold text-faint">Follow</span>
+            <FollowTeamIcon team={summary.teams[0]} showLabel />
+            <FollowTeamIcon team={summary.teams[1]} showLabel />
+            <ShareButton
+              title={`${matchShortTitle(summary)} · Chauka`}
+              text={summary.status}
+              className="ml-auto"
+            />
+          </div>
 
-      <LivePanel detail={detail} />
+          <LivePanel detail={detail} />
 
-      {overs && overs.innings.some((item) => item.overs.length > 0) ? (
-        <GameProgress
-          data={overs}
-          oversLimit={oversLimit(summary.formatRaw)}
-          className="mt-5 rounded-2xl border-0"
-        />
-      ) : null}
+          {overs && overs.innings.some((item) => item.overs.length > 0) ? (
+            <GameProgress
+              data={overs}
+              oversLimit={oversLimit(summary.formatRaw)}
+              className="mt-4"
+            />
+          ) : null}
+        </aside>
 
-      <div className="sticky top-[var(--header-h)] z-20 mt-5 border-b border-line bg-bg">
-        <div className="flex items-center" role="tablist" aria-label="Match sections">
-          {TABS.map((item) => {
-            const active = tab === item.key;
-            return (
-              <Link
-                key={item.key}
-                href={`/match/${matchId}?tab=${item.key}`}
-                scroll={false}
-                role="tab"
-                aria-selected={active}
-                className={cn(
-                  "flex h-12 flex-1 items-center justify-center border-b-2 px-3 text-xs font-bold transition-colors sm:h-12 sm:flex-none sm:px-5 sm:text-[13px]",
-                  active
-                    ? "border-accent text-accent"
-                    : "border-transparent text-muted hover:text-ink"
-                )}
-              >
-                {item.label}
-              </Link>
-            );
-          })}
+        <div className="order-2 mt-5 min-w-0 lg:order-1 lg:mt-0">
+          <div className="sticky top-[var(--header-h)] z-20 border-b border-line bg-bg">
+            <div className="flex items-center" role="tablist" aria-label="Match sections">
+              {TABS.map((item) => {
+                const active = tab === item.key;
+                return (
+                  <Link
+                    key={item.key}
+                    href={`/match/${matchId}?tab=${item.key}`}
+                    scroll={false}
+                    role="tab"
+                    aria-selected={active}
+                    data-active={active}
+                    className={cn(
+                      "tab-link !h-12 flex-1 justify-center px-3 text-xs sm:flex-none sm:!text-[13px] sm:px-5",
+                      active ? "text-accent" : "text-muted"
+                    )}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="pb-8 pt-5">{content}</div>
         </div>
-      </div>
-
-      <div className="pb-8">
-        {tab === "scorecard" ? <ScorecardView detail={detail} overs={overs} /> : null}
-        {tab === "commentary" ? <CommentaryView detail={detail} /> : null}
-        {tab === "squads" ? <SquadsView detail={detail} /> : null}
-        {tab === "info" ? <MatchInfo detail={detail} /> : null}
       </div>
     </div>
   );

@@ -12,13 +12,18 @@ export function ballKind(raw: string): Kind {
   return "run";
 }
 
+/**
+ * Six outcomes, but only two get a fill — a wicket and a six. Everything else
+ * is differentiated by rule weight and ink, so a batted-over strip reads as
+ * text rather than confetti.
+ */
 const KIND_STYLE: Record<Kind, string> = {
-  dot: "bg-[#3a3a3e] text-[#d4d4d8]",
-  run: "bg-[#8a6a10] text-white",
-  four: "bg-[#1d5fa8] text-white",
-  six: "bg-[#15803d] text-white",
-  wicket: "bg-wkt text-white",
-  extra: "bg-[#5b4b8a] text-white",
+  dot: "border border-line text-faint",
+  run: "border border-line-strong text-ink",
+  four: "border border-slab text-accent font-bold",
+  six: "bg-slab text-white font-bold",
+  wicket: "bg-wkt text-white font-bold",
+  extra: "border border-dashed border-line-strong text-muted",
 };
 
 export function BallChip({
@@ -36,7 +41,7 @@ export function BallChip({
     <span
       title={ball}
       className={cn(
-        "tnum inline-grid shrink-0 place-items-center rounded-full font-semibold leading-none",
+        "ball-chip tnum inline-grid shrink-0 place-items-center border-0 leading-none",
         KIND_STYLE[kind],
         className
       )}

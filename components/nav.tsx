@@ -2,61 +2,75 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BarChart3, Radio, Search, Trophy } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, pad } from "@/lib/utils";
 
 const ITEMS = [
   {
     href: "/",
     label: "Matches",
-    icon: Radio,
     active: (path: string) => path === "/" || path.startsWith("/match"),
   },
   {
     href: "/series",
     label: "Series",
-    icon: Trophy,
     active: (path: string) => path.startsWith("/series"),
   },
   {
     href: "/rankings",
     label: "Rankings",
-    icon: BarChart3,
     active: (path: string) => path.startsWith("/rankings"),
   },
   {
     href: "/search",
     label: "Search",
-    icon: Search,
     active: (path: string) => path.startsWith("/search"),
   },
 ];
 
+/** The print rail: a contents column, not an icon strip. */
 export function SideNav() {
   const pathname = usePathname();
   return (
-    <nav aria-label="Primary" className="flex flex-col items-center gap-2">
-      {ITEMS.filter((item) => item.href !== "/search").map((item) => {
-        const isActive = item.active(pathname);
-        const Icon = item.icon;
-        return (
-          <Link
-            key={item.href}
-            href={item.href}
-            aria-current={isActive ? "page" : undefined}
-            title={item.label}
-            className={cn(
-              "group relative grid h-11 w-11 place-items-center rounded-xl transition-colors duration-150",
-              isActive ? "bg-white text-[#1d4ed8]" : "text-white/70 hover:bg-white/10 hover:text-white"
-            )}
-          >
-            <Icon className="h-5 w-5" strokeWidth={isActive ? 2.2 : 1.8} />
-            <span className="pointer-events-none absolute left-full ml-3 whitespace-nowrap rounded-md bg-ink px-2 py-1 text-[12px] font-medium text-bg opacity-0 transition-opacity group-hover:opacity-100">
-              {item.label}
-            </span>
-          </Link>
-        );
-      })}
+    <nav aria-label="Primary" className="w-full">
+      <p className="kicker mb-2 !text-[9px]">Contents</p>
+      <ul className="border-t border-line">
+        {ITEMS.map((item, i) => {
+          const isActive = item.active(pathname);
+          return (
+            <li key={item.href} className="border-b border-line">
+              <Link
+                href={item.href}
+                aria-current={isActive ? "page" : undefined}
+                className={cn(
+                  "group relative isolate flex h-10 items-center gap-2.5 overflow-hidden px-1 text-[12px] font-bold uppercase tracking-[0.04em] transition-colors duration-150",
+                  isActive ? "text-white" : "text-muted hover:text-white"
+                )}
+              >
+                <span
+                  aria-hidden="true"
+                  className={cn(
+                    "w-[18px] shrink-0 text-[10px] font-normal tabular-nums transition-opacity",
+                    isActive ? "text-white/70" : "text-faint opacity-60"
+                  )}
+                >
+                  {pad(i + 1)}
+                </span>
+                <span className="relative z-10 truncate">{item.label}</span>
+                <span
+                  className={cn(
+                    "absolute inset-0 -z-0 bg-slab transition-transform duration-[450ms]",
+                    isActive
+                      ? "scale-x-100"
+                      : "scale-x-0 origin-left group-hover:scale-x-100"
+                  )}
+                  style={{ transitionTimingFunction: "var(--ease)" }}
+                  aria-hidden="true"
+                />
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
     </nav>
   );
 }
@@ -66,24 +80,28 @@ export function BottomNav() {
   return (
     <nav
       aria-label="Primary"
-      className="bottom-nav fixed inset-x-0 bottom-0 z-50 border-t border-line lg:hidden"
+      className="bottom-nav fixed inset-x-0 bottom-0 z-50 lg:hidden"
     >
-      <ul className="mx-auto grid max-w-md grid-cols-4">
-        {ITEMS.map((item) => {
+      <ul className="mx-auto grid max-w-lg grid-cols-4 divide-x divide-line">
+        {ITEMS.map((item, i) => {
           const isActive = item.active(pathname);
-          const Icon = item.icon;
           return (
             <li key={item.href}>
               <Link
                 href={item.href}
                 aria-current={isActive ? "page" : undefined}
                 className={cn(
-                  "flex h-14 flex-col items-center justify-center gap-1 text-[10px] font-medium transition-colors duration-150",
-                  isActive ? "text-accent" : "text-faint active:text-ink"
+                  "relative flex h-[52px] flex-col items-center justify-center gap-0.5 text-[9px] font-bold uppercase tracking-[0.08em] transition-colors duration-150",
+                  isActive ? "text-ink" : "text-faint active:text-muted"
                 )}
               >
-                <Icon className="h-5 w-5" strokeWidth={isActive ? 2.2 : 1.8} />
+                <span className="tabular-nums text-[9px] text-faint">
+                  {pad(i + 1)}
+                </span>
                 {item.label}
+                {isActive ? (
+                  <span className="absolute inset-x-5 top-0 h-[2px] bg-slab" />
+                ) : null}
               </Link>
             </li>
           );

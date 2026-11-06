@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BlueHero, HeroChip } from "@/components/ui/blue-hero";
-import { ArrowDown, ArrowUp, Minus } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpRight, Minus } from "lucide-react";
 import { getRankingCategory } from "@/lib/data/rankings";
 import { loadPage } from "@/lib/page-data";
 import { cn } from "@/lib/utils";
@@ -52,10 +52,16 @@ function hrefFor(
   return `/rankings?gender=${gender}&category=${category}&format=${format}`;
 }
 
-function Trend({ direction, value }: { direction?: "up" | "down" | "flat"; value?: number }) {
+function Trend({
+  direction,
+  value,
+}: {
+  direction?: "up" | "down" | "flat";
+  value?: number;
+}) {
   if (direction === "up") {
     return (
-      <span className="inline-flex items-center gap-0.5 text-win">
+      <span className="dnum inline-flex items-center gap-0.5 !text-[11px] text-accent">
         <ArrowUp className="h-3 w-3" />
         {value ? Math.abs(value) : ""}
       </span>
@@ -63,7 +69,7 @@ function Trend({ direction, value }: { direction?: "up" | "down" | "flat"; value
   }
   if (direction === "down") {
     return (
-      <span className="inline-flex items-center gap-0.5 text-live">
+      <span className="dnum inline-flex items-center gap-0.5 !text-[11px] text-wkt">
         <ArrowDown className="h-3 w-3" />
         {value ? Math.abs(value) : ""}
       </span>
@@ -85,7 +91,8 @@ export async function generateMetadata({
   const gender = asGender(query.gender);
   const category = asCategory(query.category);
   const format = asFormat(query.format);
-  const categoryLabel = CATEGORIES.find((item) => item.key === category)?.label ?? "Batting";
+  const categoryLabel =
+    CATEGORIES.find((item) => item.key === category)?.label ?? "Batting";
   const formatLabel = FORMATS.find((item) => item.key === format)?.label ?? "ODI";
   return {
     title: `${gender === "men" ? "Men's" : "Women's"} ${formatLabel} ${categoryLabel} Rankings`,
@@ -105,90 +112,124 @@ export default async function RankingsPage({
   const data = await loadPage(getRankingCategory(gender, category));
   const entries = data[format];
   const isTeams = category === "teams";
-  const categoryLabel = CATEGORIES.find((item) => item.key === category)?.label ?? "Batting";
+  const categoryLabel =
+    CATEGORIES.find((item) => item.key === category)?.label ?? "Batting";
   const formatLabel = FORMATS.find((item) => item.key === format)?.label ?? "ODI";
+  const top = entries[0];
 
   return (
     <div className="container-page py-5 sm:py-6">
-      <BlueHero className="px-6 py-7 sm:px-9 sm:py-9">
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-          <div>
+      <BlueHero tone="accent" className="px-[var(--pad)] py-9 sm:py-11">
+        <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+          <div className="min-w-0">
             <HeroChip>ICC rankings · updated weekly</HeroChip>
-            <h1 className="mt-4 font-display text-[32px] font-bold leading-none tracking-[-0.02em] sm:text-[44px]">
-              {gender === "men" ? "Men's" : "Women's"} {formatLabel} {categoryLabel.toLowerCase()}
+            <h1 className="display mt-4 text-[clamp(30px,4.4vw,62px)] uppercase leading-[0.92]">
+              {gender === "men" ? "Men's" : "Women's"} {formatLabel}{" "}
+              {categoryLabel.toLowerCase()}
             </h1>
-            <p className="mt-3 max-w-md text-[14px] leading-relaxed text-white/75">
-              The official ICC player and team rankings.
+            <p className="mt-4 max-w-[42ch] text-[13px] leading-relaxed text-white/75">
+              The official ICC player and team rankings, ordered by rating
+              points, with the movement since the last weekly update.
             </p>
           </div>
-          {entries[0] ? (
-            <div className="flex items-center gap-4 rounded-2xl bg-white/10 p-4 pr-6">
-              {isTeams ? null : (
+
+          {top ? (
+            <Link
+              href={isTeams ? `/teams/${top.id}` : `/players/${top.id}`}
+              className="group flex shrink-0 items-center gap-4 bg-white px-4 py-3.5 text-[rgb(var(--slab))]"
+            >
+              {isTeams ? (
+                <TeamBadge
+                  team={{
+                    name: top.name,
+                    shortName: top.name,
+                    imageId: top.imageId,
+                  }}
+                  size={44}
+                />
+              ) : (
                 <PlayerAvatar
-                  player={{ id: entries[0].id, name: entries[0].name, faceImageId: entries[0].faceImageId }}
-                  size={64}
+                  player={{
+                    id: top.id,
+                    name: top.name,
+                    faceImageId: top.faceImageId,
+                  }}
+                  size={56}
                 />
               )}
-              <div>
-                <p className="text-[12px] font-semibold text-[#fbbf24]">No. 1</p>
-                <p className="font-display text-[20px] font-bold leading-tight">{entries[0].name}</p>
-                <p className="tnum text-[13px] text-white/70">
-                  {entries[0].country ? `${entries[0].country} · ` : ""}
-                  {entries[0].rating} rating
-                </p>
-              </div>
-            </div>
+              <span className="min-w-0">
+                <span className="block text-[9.5px] font-extrabold uppercase leading-none tracking-[0.16em] opacity-72">
+                  World No. 1
+                </span>
+                <span className="mt-1.5 block max-w-[22ch] truncate text-[17px] font-extrabold uppercase leading-tight tracking-[-0.02em]">
+                  {top.name}
+                </span>
+                <span className="mt-1 block text-[11.5px] font-semibold opacity-70">
+                  {top.country ? `${top.country} · ` : ""}
+                  <b className="tnum text-[13px]">{top.rating}</b> rating
+                </span>
+              </span>
+              <ArrowUpRight className="h-4 w-4 shrink-0 opacity-40 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:opacity-100" />
+            </Link>
           ) : null}
         </div>
       </BlueHero>
 
-      <section className="mt-5 space-y-3 rounded-2xl bg-surface p-3">
-        <div
-          className="no-scrollbar -mx-3 flex items-center gap-1.5 overflow-x-auto px-3"
-          role="tablist"
-          aria-label="Ranking category"
-        >
-          {CATEGORIES.map((item) => (
-            <Link
-              key={item.key}
-              href={hrefFor(gender, item.key, format)}
-              role="tab"
-              aria-selected={category === item.key}
-              aria-current={category === item.key ? "page" : undefined}
-              data-active={category === item.key}
-              className="chip-filter"
-            >
-              {item.label}
-            </Link>
-          ))}
+      <section className="blk mt-5">
+        <div className="band">
+          <h3>Table</h3>
+          <span className="dcell shrink-0">
+            {gender === "men" ? "Men" : "Women"} · {formatLabel}
+          </span>
         </div>
-
-        <div className="flex flex-wrap items-center gap-2 border-t border-line pt-2.5">
-          <div className="segmented" role="group" aria-label="Gender">
-            {(["men", "women"] as const).map((value) => (
-              <Link
-                key={value}
-                href={hrefFor(value, category, format)}
-                data-active={gender === value}
-                aria-current={gender === value ? "page" : undefined}
-                className="segmented-item px-4"
-              >
-                {value === "men" ? "Men" : "Women"}
-              </Link>
-            ))}
-          </div>
-          <div className="segmented ml-auto" role="group" aria-label="Format">
-            {FORMATS.map((item) => (
+        <div className="px-4 py-3.5">
+          <div
+            className="no-scrollbar -mx-1 flex items-center gap-1.5 overflow-x-auto px-1"
+            role="tablist"
+            aria-label="Ranking category"
+          >
+            {CATEGORIES.map((item) => (
               <Link
                 key={item.key}
-                href={hrefFor(gender, category, item.key)}
-                aria-current={format === item.key ? "page" : undefined}
-                data-active={format === item.key}
-                className="segmented-item px-3.5"
+                href={hrefFor(gender, item.key, format)}
+                role="tab"
+                aria-selected={category === item.key}
+                aria-current={category === item.key ? "page" : undefined}
+                data-active={category === item.key}
+                className="chip-filter"
               >
                 {item.label}
               </Link>
             ))}
+          </div>
+
+          <div className="mt-3.5 flex flex-wrap items-center gap-2 border-t border-line pt-3.5">
+            <div className="segmented" role="group" aria-label="Gender">
+              {(["men", "women"] as const).map((value) => (
+                <Link
+                  key={value}
+                  href={hrefFor(value, category, format)}
+                  data-active={gender === value}
+                  aria-current={gender === value ? "page" : undefined}
+                  className="segmented-item px-4"
+                >
+                  {value === "men" ? "Men" : "Women"}
+                </Link>
+              ))}
+            </div>
+            <div className="segmented ml-auto" role="group" aria-label="Format">
+              {FORMATS.map((item) => (
+                <Link
+                  key={item.key}
+                  href={hrefFor(gender, category, item.key)}
+                  aria-current={format === item.key ? "page" : undefined}
+                  data-active={format === item.key}
+                  className="segmented-item px-3.5"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -202,128 +243,151 @@ export default async function RankingsPage({
           className="mt-4"
         />
       ) : (
-        <div className="mt-4 overflow-hidden rounded-xl border border-line-strong bg-surface">
-          <div className="flex flex-wrap items-end justify-between gap-2 border-b-2 border-panel-ink/25 bg-panel px-4 py-3.5 text-panel-ink">
-            <div>
-              <p className="font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-panel-muted">
-                Official table
-              </p>
-              <h2 className="display mt-1 text-[24px] font-bold leading-none tracking-[-0.025em]">
-                {formatLabel} · {categoryLabel}
-              </h2>
-            </div>
-            <span className="mono text-[11px] uppercase tracking-[0.04em] text-panel-muted">
-              {entries.length} entries
-            </span>
+        <section className="blk mt-4">
+          <div className="band">
+            <h3>
+              {formatLabel} · {categoryLabel}
+            </h3>
+            <span className="dcell shrink-0">{entries.length} entries</span>
           </div>
-          <div className="divide-y divide-line/70 md:hidden">
+
+          <ol className="md:hidden">
             {entries.map((entry, index) => (
-              <Link
-                key={`${entry.id}-${index}`}
-                href={isTeams ? `/teams/${entry.id}` : `/players/${entry.id}`}
-                className={cn(
-                  "group flex items-center gap-3 px-4 py-3 transition-colors active:bg-accent/[0.04]",
-                  entry.rank <= 3 && "bg-gold/[0.06]"
-                )}
-              >
-                <span className="w-6 shrink-0 text-right">
-                  {entry.rank <= 3 ? (
-                    <span className="rank-medal ml-auto" data-rank={entry.rank}>
-                      {entry.rank}
+              <li key={`${entry.id}-${index}`}>
+                <Link
+                  href={isTeams ? `/teams/${entry.id}` : `/players/${entry.id}`}
+                  className="hrow !px-4 !py-3"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="w-6 shrink-0 text-right">
+                      {entry.rank <= 3 ? (
+                        <span className="rank-medal ml-auto" data-rank={entry.rank}>
+                          {entry.rank}
+                        </span>
+                      ) : (
+                        <span className="dnum !text-[12px] text-muted">
+                          {entry.rank}
+                        </span>
+                      )}
                     </span>
-                  ) : (
-                    <span className="mono text-xs font-semibold text-muted">{entry.rank}</span>
-                  )}
-                </span>
-                {isTeams ? (
-                  <TeamBadge
-                    team={{ name: entry.name, shortName: entry.name, imageId: entry.imageId }}
-                    size={38}
-                  />
-                ) : (
-                  <PlayerAvatar
-                    player={{ id: entry.id, name: entry.name, faceImageId: entry.faceImageId }}
-                    size={44}
-                  />
-                )}
-                <span className="min-w-0 flex-1">
-                  <span className="block truncate text-sm font-bold">{entry.name}</span>
-                  <span className="mt-1 block text-xs text-faint">
-                    {isTeams ? "Team" : entry.country ?? "—"}
-                    {entry.matches ? ` · ${entry.matches} matches` : ""}
-                  </span>
-                </span>
-                <span className="shrink-0 text-right">
-                  <span className="mono block text-[19px] font-bold leading-none tracking-[-0.03em]">
-                    {entry.rating}
-                  </span>
-                  <span className="mt-1 block text-[11px] text-faint">
-                    Rating
-                  </span>
-                </span>
-                <span className="w-8 shrink-0 text-right text-xs font-semibold">
-                  <Trend direction={entry.trend} value={entry.trendValue} />
-                </span>
-              </Link>
+                    {isTeams ? (
+                      <TeamBadge
+                        team={{
+                          name: entry.name,
+                          shortName: entry.name,
+                          imageId: entry.imageId,
+                        }}
+                        size={34}
+                      />
+                    ) : (
+                      <PlayerAvatar
+                        player={{
+                          id: entry.id,
+                          name: entry.name,
+                          faceImageId: entry.faceImageId,
+                        }}
+                        size={38}
+                      />
+                    )}
+                    <span className="min-w-0 flex-1">
+                      <span className="dname block truncate !text-[13.5px]">
+                        {entry.name}
+                      </span>
+                      <span className="dnote">
+                        {isTeams ? "Team" : entry.country ?? "—"}
+                        {entry.matches ? ` · ${entry.matches} matches` : ""}
+                      </span>
+                    </span>
+                    <span className="shrink-0 text-right">
+                      <span className="dnum block !text-[19px]">{entry.rating}</span>
+                      <span className="dcell !text-[9.5px] uppercase tracking-[0.1em]">
+                        Rating
+                      </span>
+                    </span>
+                    <span className="w-8 shrink-0 text-right">
+                      <Trend direction={entry.trend} value={entry.trendValue} />
+                    </span>
+                  </div>
+                </Link>
+              </li>
             ))}
-          </div>
+          </ol>
+
           <div className="table-scroll hidden md:block">
-            <table className="w-full min-w-[680px] text-left text-xs">
-              <thead className="border-b border-line-strong bg-surface2/60 text-[10px] font-bold uppercase tracking-[0.1em] text-faint">
+            <table className="dtable min-w-[680px]">
+              <thead className="dhead">
                 <tr>
-                  <th className="px-4 py-2.5 text-right font-semibold">Rank</th>
-                  <th className="px-3 py-2.5 font-semibold">{isTeams ? "Team" : "Player"}</th>
-                  {!isTeams ? <th className="px-2 py-2.5 font-semibold">Country</th> : null}
-                  <th className="px-2 py-2.5 text-right font-semibold">Matches</th>
-                  <th className="px-2 py-2.5 text-right font-semibold">Rating</th>
-                  <th className="px-2 py-2.5 text-right font-semibold">Points</th>
-                  <th className="px-4 py-2.5 text-center font-semibold">Trend</th>
+                  <th className="w-[64px] text-right" data-lead>
+                    Rank
+                  </th>
+                  <th>{isTeams ? "Team" : "Player"}</th>
+                  {!isTeams ? <th className="w-[110px]">Country</th> : null}
+                  <th className="w-[80px] text-right">Matches</th>
+                  <th className="w-[80px] text-right">Rating</th>
+                  <th className="w-[80px] text-right">Points</th>
+                  <th className="w-[64px] text-right" data-trail>
+                    Trend
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {entries.map((entry, index) => (
                   <tr
                     key={`${entry.id}-${index}`}
-                    className={cn(
-                      "group border-b border-line/70 transition-colors last:border-0 hover:bg-accent/[0.035]",
-                      entry.rank <= 3 && "bg-gold/[0.06]"
-                    )}
+                    className={cn("drow", entry.rank === 1 && "group")}
+                    data-hot={entry.rank === 1 ? "" : undefined}
                   >
-                    <td className="px-4 py-3 text-right font-bold tabular-nums">
+                    <td data-lead className="text-right">
                       {entry.rank <= 3 ? (
                         <span className="rank-medal ml-auto" data-rank={entry.rank}>
                           {entry.rank}
                         </span>
                       ) : (
-                        <span className="mono text-xs font-semibold text-muted">{entry.rank}</span>
+                        <span className="dnum !text-[12px] text-muted">
+                          {entry.rank}
+                        </span>
                       )}
                     </td>
-                    <td className="px-3 py-3">
+                    <td>
                       <Link
                         href={isTeams ? `/teams/${entry.id}` : `/players/${entry.id}`}
-                        className="flex items-center gap-2.5 font-semibold transition-colors hover:text-accent"
+                        className="flex items-center gap-2.5"
                       >
                         {isTeams ? (
                           <TeamBadge
-                            team={{ name: entry.name, shortName: entry.name, imageId: entry.imageId }}
-                            size={32}
+                            team={{
+                              name: entry.name,
+                              shortName: entry.name,
+                              imageId: entry.imageId,
+                            }}
+                            size={30}
                           />
                         ) : (
                           <PlayerAvatar
-                            player={{ id: entry.id, name: entry.name, faceImageId: entry.faceImageId }}
-                            size={54}
+                            player={{
+                              id: entry.id,
+                              name: entry.name,
+                              faceImageId: entry.faceImageId,
+                            }}
+                            size={44}
                           />
                         )}
-                        <span className="truncate transition-colors group-hover:text-accent">
+                        <span className="dname truncate !text-[13.5px]">
                           {entry.name}
                         </span>
                       </Link>
                     </td>
-                    {!isTeams ? <td className="px-2 py-3 text-muted">{entry.country ?? "—"}</td> : null}
-                    <td className="mono px-2 py-3 text-right text-muted">{entry.matches ?? "—"}</td>
-                    <td className="mono px-2 py-3 text-right font-medium">{entry.rating}</td>
-                    <td className="mono px-2 py-3 text-right text-muted">{entry.points ?? "—"}</td>
-                    <td className="px-4 py-3 text-center text-[11px]">
+                    {!isTeams ? (
+                      <td className="dcell">{entry.country ?? "—"}</td>
+                    ) : null}
+                    <td className="dnum text-right !text-[13px] text-muted">
+                      {entry.matches ?? "—"}
+                    </td>
+                    <td className="dnum text-right !text-[15px]">{entry.rating}</td>
+                    <td className="dnum text-right !text-[13px] text-muted">
+                      {entry.points ?? "—"}
+                    </td>
+                    <td data-trail className="text-right">
                       <Trend direction={entry.trend} value={entry.trendValue} />
                     </td>
                   </tr>
@@ -331,18 +395,17 @@ export default async function RankingsPage({
               </tbody>
             </table>
           </div>
-        </div>
+        </section>
       )}
 
-      <div className="mt-4 flex flex-wrap gap-5 text-xs font-semibold text-muted">
-        <Link href="/series" className="transition-colors hover:text-accent">
+      <div className="mt-6 flex flex-wrap items-baseline gap-5 border-t border-line pt-3 text-[11px] font-bold uppercase tracking-[0.08em]">
+        <Link href="/series" className="underlink text-accent">
           Browse series
         </Link>
-        <Link href="/search" className="transition-colors hover:text-accent">
+        <Link href="/search" className="underlink text-accent">
           Find a player
         </Link>
       </div>
     </div>
   );
-
 }

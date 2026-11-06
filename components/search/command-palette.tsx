@@ -28,9 +28,13 @@ export function SearchButton({ variant }: { variant: "sidebar" | "icon" | "rail"
         onClick={open}
         aria-label="Search (⌘K)"
         title="Search (⌘K)"
-        className="grid h-11 w-11 place-items-center rounded-xl text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+        className="flex h-8 w-full items-center gap-2 border border-line px-2 text-[11px] font-bold uppercase tracking-[0.06em] text-faint transition-colors hover:border-slab hover:text-accent"
       >
-        <Search className="h-5 w-5" />
+        <Search className="h-3.5 w-3.5" />
+        Search
+        <span className="ml-auto font-mono text-[9px] tracking-normal normal-case">
+          ⌘K
+        </span>
       </button>
     );
   }
@@ -40,7 +44,7 @@ export function SearchButton({ variant }: { variant: "sidebar" | "icon" | "rail"
         type="button"
         onClick={open}
         aria-label="Search"
-        className="grid h-9 w-9 place-items-center rounded-lg border border-line bg-surface text-header-ink transition-colors hover:border-line-strong"
+        className="grid h-9 w-9 place-items-center border border-line bg-surface text-header-ink transition-colors hover:border-slab hover:text-accent"
       >
         <Search className="h-[18px] w-[18px]" />
       </button>
@@ -50,11 +54,11 @@ export function SearchButton({ variant }: { variant: "sidebar" | "icon" | "rail"
     <button
       type="button"
       onClick={open}
-      className="flex h-10 w-full items-center gap-2.5 rounded-lg border border-line bg-bg px-3 text-left text-[13px] text-faint transition-colors hover:border-line-strong hover:text-ink"
+      className="flex h-8 w-full items-center gap-2 border border-line px-2 text-[11px] font-bold uppercase tracking-[0.06em] text-faint transition-colors hover:border-slab hover:text-accent"
     >
-      <Search className="h-4 w-4 shrink-0" />
-      <span className="flex-1 truncate">Search</span>
-      <kbd className="rounded border border-line px-1.5 py-0.5 font-mono text-[10px]">⌘K</kbd>
+      <Search className="h-3.5 w-3.5 shrink-0" />
+      <span className="flex-1 truncate normal-case tracking-normal">Search</span>
+      <kbd className="border border-line px-1 font-mono text-[9px]">⌘K</kbd>
     </button>
   );
 }
@@ -270,7 +274,7 @@ export function CommandPalette() {
     <>
       {open ? (
         <div
-          className="fixed inset-0 z-[90] flex items-start justify-center bg-black/55 px-3 pt-[8vh] backdrop-blur-sm"
+          className="scrim fixed inset-0 z-[90] flex items-start justify-center px-3 pt-[8vh]"
           onMouseDown={(event) => {
             if (event.target === event.currentTarget) close();
           }}
@@ -278,12 +282,12 @@ export function CommandPalette() {
           aria-modal="true"
           aria-label="Search"
         >
-          <div className="flex max-h-[80vh] w-full max-w-[640px] flex-col overflow-hidden rounded-2xl border border-line-strong bg-surface text-ink shadow-lift backdrop-blur-xl animate-pop">
-            <div className="flex items-center gap-2 border-b border-line px-3">
+          <div className="flex max-h-[80vh] w-full max-w-[640px] flex-col overflow-hidden border border-line-strong bg-surface text-ink animate-pop">
+            <div className="flex items-center gap-2 border-b-2 border-slab bg-slab px-3">
               {loading ? (
-                <Loader2 className="h-5 w-5 shrink-0 animate-spin text-accent" />
+                <Loader2 className="h-5 w-5 shrink-0 animate-spin text-white" />
               ) : (
-                <Search className="h-5 w-5 shrink-0 text-faint" />
+                <Search className="h-5 w-5 shrink-0 text-white/70" />
               )}
               <input
                 ref={inputRef}
@@ -294,13 +298,13 @@ export function CommandPalette() {
                 aria-label="Search"
                 autoComplete="off"
                 spellCheck={false}
-                className="h-14 min-w-0 flex-1 bg-transparent text-[16px] font-semibold outline-none placeholder:font-medium placeholder:text-faint"
+                className="h-12 min-w-0 flex-1 bg-transparent text-[15px] font-bold text-white outline-none placeholder:font-medium placeholder:text-white/45"
               />
               <button
                 type="button"
                 onClick={close}
                 aria-label="Close search"
-                className="grid h-9 w-9 place-items-center rounded-md text-faint hover:bg-surface2 hover:text-ink"
+                className="grid h-8 w-8 place-items-center text-white/60 transition-colors hover:text-white"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -309,24 +313,22 @@ export function CommandPalette() {
             <div ref={listRef} className="min-h-0 flex-1 overflow-y-auto p-2">
               {!query.trim() ? (
                 <div className="p-2">
-                  <p className="text-[12px] font-bold uppercase tracking-[0.08em] text-faint">
-                    Jump to
-                  </p>
-                  <div className="mt-2 grid gap-1">
+                  <p className="kicker">Jump to</p>
+                  <div className="mt-2">
                     {QUICK.map((item) => (
                       <button
                         key={item.href}
                         type="button"
                         onClick={() => go(item.href)}
-                        className="flex h-11 items-center justify-between rounded-lg px-3 text-left text-[14px] font-bold hover:bg-surface2"
+                        className="hrow flex items-center justify-between text-left text-[13px] font-bold"
                       >
                         {item.label}
-                        <ArrowRight className="h-4 w-4 text-faint" />
+                        <ArrowRight className="h-4 w-4 opacity-50" />
                       </button>
                     ))}
                   </div>
-                  <p className="mt-4 text-[12px] text-faint">
-                    Tip: press <kbd className="rounded border border-line px-1">/</kbd> anywhere
+                  <p className="mt-4 px-1 text-[11px] text-faint">
+                    Tip: press <kbd className="border border-line px-1 font-mono">/</kbd> anywhere
                     to search.
                   </p>
                 </div>
@@ -337,7 +339,7 @@ export function CommandPalette() {
               ) : (
                 sections.map((section) => (
                   <div key={section.title} className="mb-2">
-                    <p className="px-3 pb-1 pt-2 text-[11px] font-extrabold uppercase tracking-[0.1em] text-faint">
+                    <p className="kicker px-3 pb-1 pt-2">
                       {section.title}
                     </p>
                     {section.items.map((item) => {
@@ -350,16 +352,14 @@ export function CommandPalette() {
                           data-index={current}
                           onMouseEnter={() => setActive(current)}
                           onClick={() => go(item.href)}
-                          className={cn(
-                            "flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left transition-colors",
-                            active === current ? "bg-accent-soft" : "hover:bg-surface2"
-                          )}
+                          className="hrow tile flex w-full items-center gap-2 text-left"
+                          data-hot={active === current ? "" : undefined}
                         >
                           {item.node}
                           <ArrowRight
                             className={cn(
                               "h-4 w-4 shrink-0",
-                              active === current ? "text-accent" : "text-transparent"
+                              active === current ? "opacity-70" : "opacity-0"
                             )}
                           />
                         </button>
@@ -374,7 +374,7 @@ export function CommandPalette() {
               <button
                 type="button"
                 onClick={() => go(allHref)}
-                className="flex h-11 items-center justify-center gap-1.5 border-t border-line text-[13px] font-bold text-accent hover:bg-surface2"
+                className="flex h-11 items-center justify-center gap-1.5 border-t border-line text-[11px] font-bold uppercase tracking-[0.08em] text-accent transition-colors hover:bg-slab hover:text-white"
               >
                 See all results for “{query.trim()}”
                 <ArrowRight className="h-4 w-4" />

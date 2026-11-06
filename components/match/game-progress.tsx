@@ -10,6 +10,10 @@ type Mode = "worm" | "manhattan";
 const H = 260;
 const M = { top: 16, right: 16, bottom: 28, left: 36 };
 
+/* Klein carries series one, paper white carries series two, coral is only ever a wicket. */
+const SERIES = ["rgb(var(--accent))", "rgb(var(--ink) / 0.85)"] as const;
+const WICKET = "rgb(var(--wkt))";
+
 function niceMax(value: number): number {
   if (value <= 0) return 10;
   const step = value > 200 ? 50 : value > 100 ? 25 : value > 40 ? 10 : value > 16 ? 5 : 2;
@@ -56,7 +60,7 @@ export function GameProgress({
   if (innings.length === 0) return null;
 
   const colorOf = (team: string) =>
-    teams.indexOf(team) === 1 ? "rgb(var(--s2))" : "rgb(var(--s1))";
+    SERIES[Math.max(0, Math.min(teams.indexOf(team), SERIES.length - 1))];
   const lastOver = Math.max(...innings.map((item) => item.overs.at(-1)?.over ?? 0));
   const maxX = Math.max(oversLimit && lastOver <= oversLimit ? oversLimit : lastOver, 5);
   const plotW = width - M.left - M.right;
@@ -90,40 +94,40 @@ export function GameProgress({
   const tooltipLeft = hover === null ? 0 : x(hover - (mode === "manhattan" ? 0.5 : 0));
 
   return (
-    <section className={cn("rounded-xl border border-line bg-surface p-4", className)}>
-      <div className="flex flex-wrap items-center gap-3">
-        <h3 className="font-display text-[15px] font-semibold">Game progress</h3>
-        <div className="flex items-center gap-3 text-[12px] text-muted">
-          {teams.map((team) => (
-            <span key={team} className="inline-flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 rounded-full" style={{ background: colorOf(team) }} />
-              {team}
+    <section data-rv style={{ "--gd": "0ms" } as React.CSSProperties} className={cn("blk", className)}>
+      <div className="band flex-wrap">
+        <h3>{mode === "worm" ? "Cumulative runs" : "Runs per over"}</h3>
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-muted">
+            {teams.map((team) => (
+              <span key={team} className="inline-flex items-center gap-1.5">
+                <span className="swatch mt-0" style={{ background: colorOf(team) }} />
+                {team}
+              </span>
+            ))}
+            <span className="inline-flex items-center gap-1.5">
+              <span className="swatch mt-0" style={{ background: WICKET }} />
+              Wicket
             </span>
-          ))}
-          <span className="inline-flex items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-full border-2 border-ink bg-surface" />
-            Wicket
-          </span>
-        </div>
-        <div className="ml-auto flex rounded-lg border border-line bg-bg/60 p-0.5 text-[12px]">
-          {(["worm", "manhattan"] as Mode[]).map((item) => (
-            <button
-              key={item}
-              type="button"
-              onClick={() => setMode(item)}
-              aria-pressed={mode === item}
-              className={cn(
-                "h-7 rounded-md px-3 font-medium capitalize transition-colors",
-                mode === item ? "bg-surface2 text-ink" : "text-faint hover:text-ink"
-              )}
-            >
-              {item === "worm" ? "Runs" : "Per over"}
-            </button>
-          ))}
+          </div>
+          <div className="segmented ml-auto">
+            {(["worm", "manhattan"] as Mode[]).map((item) => (
+              <button
+                key={item}
+                type="button"
+                onClick={() => setMode(item)}
+                aria-pressed={mode === item}
+                data-active={mode === item}
+                className="segmented-item"
+              >
+                {item === "worm" ? "Runs" : "Per over"}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
-      <div ref={ref} className="relative mt-3">
+      <div ref={ref} className="relative px-2 pb-2 pt-3">
         <svg
           width={width}
           height={H}
@@ -138,7 +142,7 @@ export function GameProgress({
                 x2={width - M.right}
                 y1={y(tick)}
                 y2={y(tick)}
-                stroke="rgb(var(--line))"
+                style={{ stroke: tick === 0 ? "rgb(var(--line-strong))" : "rgb(var(--line))" }}
                 strokeDasharray={tick === 0 ? undefined : "2 4"}
               />
               <text
@@ -146,7 +150,7 @@ export function GameProgress({
                 y={y(tick)}
                 dy="0.32em"
                 textAnchor="end"
-                className="fill-faint text-[11px]"
+                className="fill-faint text-[10px] font-semibold tabular-nums"
               >
                 {tick}
               </text>
@@ -158,7 +162,7 @@ export function GameProgress({
               x={x(tick)}
               y={H - 8}
               textAnchor="middle"
-              className="fill-faint text-[11px]"
+              className="fill-faint text-[10px] font-semibold tabular-nums"
             >
               {tick}
             </text>
@@ -170,7 +174,7 @@ export function GameProgress({
               x2={tooltipLeft}
               y1={M.top}
               y2={M.top + plotH}
-              stroke="rgb(var(--line-strong))"
+              style={{ stroke: "rgb(var(--line-strong))" }}
             />
           ) : null}
 
@@ -186,7 +190,7 @@ export function GameProgress({
                     <path
                       d={d}
                       fill="none"
-                      stroke={color}
+                      style={{ stroke: color }}
                       strokeWidth={2}
                       strokeLinejoin="round"
                       strokeDasharray={index >= 2 ? "6 4" : undefined}
@@ -198,9 +202,9 @@ export function GameProgress({
                           key={o.over}
                           cx={x(o.over)}
                           cy={y(o.score)}
-                          r={4.5}
-                          fill="rgb(var(--surface))"
-                          stroke="rgb(var(--ink))"
+                          r={4}
+                          fill="none"
+                          style={{ stroke: WICKET }}
                           strokeWidth={2}
                         />
                       ))}
@@ -213,8 +217,7 @@ export function GameProgress({
                               cx={x(o.over)}
                               cy={y(o.score)}
                               r={5}
-                              fill={color}
-                              stroke="rgb(var(--surface))"
+                              style={{ fill: color, stroke: "rgb(var(--bg))" }}
                               strokeWidth={2}
                             />
                           ))
@@ -225,25 +228,22 @@ export function GameProgress({
             : innings.map((item, index) => {
                 const color = colorOf(item.team);
                 return (
-                  <g key={item.inningsId} opacity={index >= 2 ? 0.6 : 1}>
+                  <g key={item.inningsId} opacity={index >= 2 ? 0.55 : 1}>
                     {item.overs.map((o) => {
                       const left = x(o.over - 1) + 2 + index * (barW + barGap);
                       const top = y(o.runs);
                       const h = Math.max(0, M.top + plotH - top);
-                      const r = Math.min(3, barW / 2, h);
                       return (
-                        <g key={o.over} opacity={hover === null || hover === o.over ? 1 : 0.45}>
-                          <path
-                            d={`M${left},${top + h} V${top + r} Q${left},${top} ${left + r},${top} H${left + barW - r} Q${left + barW},${top} ${left + barW},${top + r} V${top + h} Z`}
-                            fill={color}
-                          />
+                        <g key={o.over} opacity={hover === null || hover === o.over ? 1 : 0.4}>
+                          <rect x={left} y={top} width={barW} height={h} style={{ fill: color }} />
                           {Array.from({ length: o.wicketsInOver }, (_, k) => (
-                            <circle
+                            <rect
                               key={k}
-                              cx={left + barW / 2}
-                              cy={top - 6 - k * 9}
-                              r={3.5}
-                              fill="rgb(var(--ink))"
+                              x={left + barW / 2 - 2}
+                              y={top - 8 - k * 8}
+                              width={4}
+                              height={4}
+                              style={{ fill: WICKET }}
                             />
                           ))}
                         </g>
@@ -266,25 +266,25 @@ export function GameProgress({
 
         {hover !== null && hoverRows.length > 0 ? (
           <div
-            className="pointer-events-none absolute top-2 z-10 w-max max-w-[260px] rounded-lg border border-line bg-surface2/95 px-3 py-2 text-[12px] shadow-lift backdrop-blur"
-            style={{
-              left: Math.min(Math.max(tooltipLeft + 12, 0), width - 250),
-            }}
+            className="pointer-events-none absolute top-2 z-10 w-max max-w-[280px] border border-line bg-surface px-3 py-2"
+            style={{ left: Math.min(Math.max(tooltipLeft + 12, 0), width - 250) }}
           >
-            <p className="font-semibold text-ink">Over {hover}</p>
+            <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-faint">
+              Over {hover}
+            </p>
             {hoverRows.map(({ item, point }) => (
-              <div key={item.inningsId} className="mt-1.5">
-                <p className="flex items-center gap-1.5 text-muted">
-                  <span className="h-2 w-2 rounded-full" style={{ background: colorOf(item.team) }} />
-                  <span className="font-medium text-ink">{item.team}</span>
-                  <span className="tnum">
+              <div key={item.inningsId} className="mt-2 border-t border-line pt-2 first:border-0">
+                <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[11.5px]">
+                  <span className="swatch mt-0" style={{ background: colorOf(item.team) }} />
+                  <span className="font-bold text-ink">{item.team}</span>
+                  <span className="dnum">
                     {point!.score}/{point!.wickets}
                   </span>
-                  <span className="tnum text-faint">
-                    · {point!.runs} this over · RR {(point!.score / point!.over).toFixed(1)}
+                  <span className="text-faint">
+                    +{point!.runs} this over · RR {(point!.score / point!.over).toFixed(2)}
                   </span>
                 </p>
-                <div className="mt-1 flex flex-wrap gap-1">
+                <div className="mt-1.5 flex flex-wrap gap-1">
                   {point!.balls.map((ball, k) => (
                     <BallChip key={k} ball={ball} size={18} />
                   ))}

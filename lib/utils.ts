@@ -320,8 +320,12 @@ export function normalizeSearch(value: string): string {
     .trim();
 }
 
-export function clamp(value: number, min: number, max: number): number {
-  return Math.min(max, Math.max(min, value));
+/** Editorial zero-pad: pad(1) => "01". */
+export function pad(value: number): string {
+  return String(value).padStart(2, "0");
+}
+
+export function clamp(value: number, min: number, max: number): number {  return Math.min(max, Math.max(min, value));
 }
 
 export function uniqueBy<T>(items: T[], key: (item: T) => string | number): T[] {

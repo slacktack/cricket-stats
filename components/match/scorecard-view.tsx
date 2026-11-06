@@ -7,11 +7,12 @@ import { BallChip } from "@/components/ui/ball-chip";
 import { EmptyState } from "@/components/ui/empty-state";
 import { TeamBadge } from "@/components/ui/team-badge";
 import { MatchNumbers } from "@/components/match/match-numbers";
+import { Disclosure } from "@/components/match/disclosure";
 
 function PlayerLink({ id, name }: { id: number; name: string }) {
-  if (!id) return <span>{name}</span>;
+  if (!id) return <span className="dname">{name}</span>;
   return (
-    <Link href={`/players/${id}`} className="font-semibold transition-colors hover:text-accent">
+    <Link href={`/players/${id}`} className="dname">
       {name}
     </Link>
   );
@@ -19,20 +20,13 @@ function PlayerLink({ id, name }: { id: number; name: string }) {
 
 function Tag({
   children,
-  tone = "muted",
+  tone,
 }: {
   children: React.ReactNode;
-  tone?: "muted" | "accent" | "gold";
+  tone?: "milestone" | "unbeaten";
 }) {
   return (
-    <span
-      className={cn(
-        "mono inline-flex h-[19px] items-center rounded px-1.5 text-[10px] font-semibold uppercase tracking-[0.06em]",
-        tone === "accent" && "bg-accent/10 text-accent",
-        tone === "gold" && "bg-gold/25 text-warn",
-        tone === "muted" && "border border-line-strong text-faint"
-      )}
-    >
+    <span className="dtag" data-tone={tone}>
       {children}
     </span>
   );
@@ -46,48 +40,71 @@ function ordinal(value: number): string {
 
 function SectionBar({ title, aside }: { title: string; aside?: React.ReactNode }) {
   return (
-    <div className="flex items-center justify-between gap-3 border-y border-line bg-surface2/60 px-4 py-2.5">
-      <h3 className="text-xs font-bold text-accent">{title}</h3>
-      {aside ? <span className="min-w-0 truncate text-xs text-faint">{aside}</span> : null}
+    <div className="band">
+      <h3>{title}</h3>
+      {aside ? <span>{aside}</span> : null}
     </div>
   );
 }
+
+/**
+ * Four run sources, four roles: grey is the middle, Klein is the four, lime is
+ * the six, the seam is the extras. No new hues.
+ */
+const SOURCE_TONE = {
+  running: "rgb(var(--faint))",
+  fours: "rgb(var(--accent))",
+  sixes: "rgb(var(--live))",
+  extras: "rgb(var(--line-strong))",
+} as const;
 
 function RunSourceBar({ innings }: { innings: InningsDetail }) {
   const sources = runSources(innings);
   if (sources.total === 0) return null;
   const segments = [
-    { key: "running", label: "Running", value: sources.running, note: "", tone: "bg-[#b8901a]" },
-    { key: "fours", label: "Fours", value: sources.fours, note: `${sources.fourCount}×4`, tone: "bg-[#2f74d0]" },
-    { key: "sixes", label: "Sixes", value: sources.sixes, note: `${sources.sixCount}×6`, tone: "bg-[#16a34a]" },
-    { key: "extras", label: "Extras", value: sources.extras, note: "", tone: "bg-[#7c6bc4]" },
-  ];
+    { key: "running", label: "Running", value: sources.running, note: "" },
+    { key: "fours", label: "Fours", value: sources.fours, note: `${sources.fourCount}×4` },
+    { key: "sixes", label: "Sixes", value: sources.sixes, note: `${sources.sixCount}×6` },
+    { key: "extras", label: "Extras", value: sources.extras, note: "" },
+  ] as const;
+
   return (
     <div className="px-4 py-4">
-      <h3 className="text-[13px] font-bold">How the runs came</h3>
-      <div className="mt-3 flex h-3 w-full gap-0.5 overflow-hidden rounded-full" role="img" aria-label="Run sources">
+      <h3 className="text-[10px] font-extrabold uppercase tracking-[0.14em]">
+        How the runs came
+      </h3>
+      <div
+        className="stack mt-3"
+        role="img"
+        aria-label="Run sources"
+      >
         {segments
           .filter((segment) => segment.value > 0)
           .map((segment) => (
             <span
               key={segment.key}
-              className={segment.tone}
-              style={{ width: `${(segment.value / sources.total) * 100}%` }}
+              style={{
+                width: `${(segment.value / sources.total) * 100}%`,
+                background: SOURCE_TONE[segment.key],
+              }}
             />
           ))}
       </div>
-      <dl className="mt-3.5 grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-4">
+      <dl className="mt-4 grid grid-cols-2 gap-x-6 gap-y-3 sm:grid-cols-4">
         {segments.map((segment) => (
           <div key={segment.key} className="flex items-start gap-2">
-            <span className={cn("mt-1 h-2.5 w-2.5 shrink-0 rounded-sm", segment.tone)} />
-            <div>
-              <dt className="text-xs text-faint">
+            <span
+              className="swatch"
+              style={{ background: SOURCE_TONE[segment.key] }}
+            />
+            <div className="min-w-0">
+              <dt className="text-[10px] font-bold uppercase tracking-[0.08em] text-faint">
                 {segment.label}
                 {segment.note ? ` · ${segment.note}` : ""}
               </dt>
-              <dd className="mono text-[17px] font-bold leading-tight">
+              <dd className="dnum mt-0.5 text-[19px]">
                 {segment.value}
-                <span className="ml-1 text-xs font-medium text-faint">
+                <span className="ml-1.5 text-[10px] font-medium tracking-normal text-faint">
                   {Math.round((segment.value / sources.total) * 100)}%
                 </span>
               </dd>
@@ -104,23 +121,26 @@ function WicketStrip({ innings }: { innings: InningsDetail }) {
   if (wickets.length === 0) return null;
   return (
     <div className="border-t border-line px-4 py-4">
-      <h3 className="text-[13px] font-bold">Fall of wickets</h3>
-      <ol className="no-scrollbar -mx-4 mt-3 flex snap-x gap-2 overflow-x-auto px-4 pb-1">
+      <h3 className="text-[10px] font-extrabold uppercase tracking-[0.14em]">
+        Fall of wickets
+      </h3>
+      <ol className="no-scrollbar -mx-4 mt-3 flex snap-x gap-px overflow-x-auto px-4 bg-[image:repeating-linear-gradient(90deg,var(--rule)_0_1px,transparent_1px_8px)]">
         {wickets.map((wicket, index) => (
           <li
             key={`${wicket.order}-${index}`}
-            className="w-[150px] shrink-0 snap-start rounded-xl bg-surface2 p-3"
+            className="w-[150px] shrink-0 snap-start border border-line bg-surface p-2.5"
           >
             <div className="flex items-center gap-2">
-              <span className="grid h-6 w-6 place-items-center rounded-full bg-wkt text-[11px] font-bold text-white">
-                {wicket.wickets}
-              </span>
-              <span className="tnum text-[16px] font-bold">
-                {wicket.runs}/{wicket.wickets}
+              <span className="wktbadge">{wicket.wickets}</span>
+              <span className="dnum text-[17px]">
+                {wicket.runs}
+                <span className="text-faint">/{wicket.wickets}</span>
               </span>
             </div>
-            <p className="mt-2 truncate text-[13px] font-semibold">{wicket.batsmanName}</p>
-            <p className="tnum text-[12px] text-faint">{formatOvers(wicket.overs)} ov</p>
+            <p className="mt-2 truncate text-[12.5px] font-bold">{wicket.batsmanName}</p>
+            <p className="dcell mt-0.5">
+              {formatOvers(wicket.overs)} ov
+            </p>
           </li>
         ))}
       </ol>
@@ -135,21 +155,30 @@ function OverScroller({ overs }: { overs?: InningsOvers }) {
   return (
     <div className="border-t border-line px-4 py-4">
       <div className="flex items-baseline justify-between gap-3">
-        <h3 className="text-[13px] font-bold">Over by over</h3>
-        <span className="text-[12px] text-faint">Latest first · scroll →</span>
+        <h3 className="text-[10px] font-extrabold uppercase tracking-[0.14em]">
+          Over by over
+        </h3>
+        <span className="text-[10px] uppercase tracking-[0.08em] text-faint">
+          Latest first
+        </span>
       </div>
       <ol className="no-scrollbar -mx-4 mt-3 flex snap-x gap-2 overflow-x-auto px-4 pb-1">
         {list.map((over) => (
           <li
             key={over.over}
             className={cn(
-              "w-[176px] shrink-0 snap-start rounded-xl p-3",
-              over.wicketsInOver > 0 ? "bg-wkt/10 ring-1 ring-wkt/30" : "bg-surface2"
+              "mini w-[176px] shrink-0 snap-start",
+              over.wicketsInOver > 0 && "border-wkt/60"
             )}
           >
             <div className="flex items-baseline justify-between">
-              <span className="text-[12px] font-semibold text-faint">Over {over.over}</span>
-              <span className={cn("tnum text-[18px] font-bold", over.runs === best && "text-live")}>
+              <span className="dcell">Over {over.over}</span>
+              <span
+                className={cn(
+                  "dnum text-[19px]",
+                  over.runs === best && "text-live"
+                )}
+              >
                 {over.runs}
               </span>
             </div>
@@ -158,9 +187,11 @@ function OverScroller({ overs }: { overs?: InningsOvers }) {
                 <BallChip key={index} ball={ball} size={22} />
               ))}
             </div>
-            <p className="tnum mt-2 text-[12px] text-muted">
+            <p className="dcell mt-2">
               {over.score}/{over.wickets}
-              {over.bowler ? <span className="text-faint"> · {over.bowler}</span> : null}
+              {over.bowler ? (
+                <span className="text-faint"> · {over.bowler}</span>
+              ) : null}
             </p>
           </li>
         ))}
@@ -175,33 +206,50 @@ function Partnerships({ innings }: { innings: InningsDetail }) {
   const max = Math.max(...list.map((item) => item.totalRuns), 1);
   return (
     <div className="border-t border-line px-4 py-4">
-      <h3 className="text-[13px] font-bold">Partnerships</h3>
-      <ul className="mt-3.5 space-y-4">
+      <h3 className="text-[10px] font-extrabold uppercase tracking-[0.14em]">
+        Partnerships
+      </h3>
+      <ul className="mt-4 space-y-5">
         {list.map((item, index) => (
           <li key={`${item.order}-${index}`}>
-            <div className="flex items-baseline justify-between gap-3">
-              <span className="text-xs font-semibold text-faint">{ordinal(item.order)} wicket</span>
-              <p className="mono shrink-0 text-[15px] font-bold">
+            <div className="flex items-baseline gap-2">
+              <span className="text-[10px] font-extrabold uppercase tracking-[0.1em] text-faint">
+                {ordinal(item.order)} wkt
+              </span>
+              <span className="leaders" />
+              <p className="dnum shrink-0 text-[17px]">
                 {item.totalRuns}
-                <span className="ml-1 text-xs font-medium text-faint">({item.totalBalls}b)</span>
+                <span className="ml-1 text-[10px] font-medium text-faint">
+                  ({item.totalBalls}b)
+                </span>
               </p>
             </div>
-            <p className="mt-0.5 text-[13px] font-semibold leading-snug">
+            <p className="mt-1 text-[12.5px] font-bold leading-snug">
               {item.bat1Name} &amp; {item.bat2Name}
             </p>
             <div
-              className="mt-1.5 flex h-2.5 gap-px"
+              className="stack mt-2"
               style={{ width: `${Math.max(6, (item.totalRuns / max) * 100)}%` }}
             >
-              <span className="rounded-l-full bg-accent" style={{ flex: Math.max(item.bat1Runs, 0.01) }} />
-              <span className="rounded-r-full bg-accent/45" style={{ flex: Math.max(item.bat2Runs, 0.01) }} />
+              <span
+                style={{
+                  flex: Math.max(item.bat1Runs, 0.01),
+                  background: "rgb(var(--accent))",
+                }}
+              />
+              <span
+                style={{
+                  flex: Math.max(item.bat2Runs, 0.01),
+                  background: "rgb(var(--accent) / 0.35)",
+                }}
+              />
             </div>
-            <div className="mt-1 flex justify-between gap-3 text-[11px] text-faint">
+            <div className="dcell mt-1 flex justify-between gap-3">
               <span className="truncate">
-                {item.bat1Runs} ({item.bat1Balls})
+                {item.bat1Name.split(" ").pop()} {item.bat1Runs} ({item.bat1Balls})
               </span>
               <span className="truncate text-right">
-                {item.bat2Runs} ({item.bat2Balls})
+                {item.bat2Runs} ({item.bat2Balls}) {item.bat2Name.split(" ").pop()}
               </span>
             </div>
           </li>
@@ -221,6 +269,7 @@ function InningsCard({ innings, overs }: { innings: InningsDetail; overs?: Innin
   ]
     .filter(Boolean)
     .join(", ");
+
   const topScore = Math.max(0, ...innings.batsmen.map((batter) => batter.runs));
   const topBatter = innings.batsmen.find((batter) => batter.runs === topScore);
 
@@ -233,54 +282,53 @@ function InningsCard({ innings, overs }: { innings: InningsDetail; overs?: Innin
   const worstEcon = economies.length ? Math.max(...economies) : 0;
 
   return (
-    <section className="overflow-hidden rounded-2xl bg-surface">
-      <div className="flex flex-wrap items-center gap-3 bg-gradient-to-r from-[#0a1a4f] via-[#1435a8] to-[#2a5cff] px-4 py-4 text-white">
-        <TeamBadge team={innings.battingTeam} size={40} />
-        <div className="min-w-0 flex-1">
-          <Link
-            href={`/teams/${innings.battingTeam.id}`}
-            className="line-clamp-2 text-[16px] font-semibold leading-tight text-white transition-opacity hover:opacity-80"
-          >
-            {innings.battingTeam.name}
-          </Link>
-          <p className="mt-0.5 text-[12px] text-white/70">
-            {innings.declared ? "Declared" : innings.followOn ? "Following on" : "Innings"}
-            {innings.target ? ` · Target ${innings.target}` : ""}
-            {innings.isCurrent ? " · Current" : ""}
-          </p>
-        </div>
-        <div className="text-right">
-          <p className="tnum font-display text-[28px] font-bold leading-none tracking-[-0.02em] text-white">
-            {innings.runs}/{innings.wickets}
-          </p>
-          <p className="tnum mt-1.5 text-[12px] text-white/70">
-            {formatOvers(innings.overs)} ov · RR {innings.runRate.toFixed(2)}
-          </p>
-        </div>
-      </div>
+    <Disclosure
+      forceOpen={innings.isCurrent}
+      summary={
+        <>
+          <TeamBadge team={innings.battingTeam} size={34} />
+          <div className="min-w-0 flex-1">
+            <span className="line-clamp-2 text-[13px] font-extrabold uppercase leading-tight tracking-[-0.02em] text-white">
+              {innings.battingTeam.name}
+            </span>
+            <p className="mt-0.5 text-[10px] uppercase tracking-[0.08em] text-white/65">
+              {innings.declared ? "Declared" : innings.followOn ? "Following on" : "Innings"}
+              {innings.target ? ` · Target ${innings.target}` : ""}
+              {innings.isCurrent ? " · In play" : ""}
+            </p>
+          </div>
+          <div className="text-right">
+            <p className="dnum !text-[30px] text-white">
+              {innings.runs}-{innings.wickets}
+            </p>
+            <p className="dcell mt-1 text-white/65">
+              {formatOvers(innings.overs)} ov · RR {innings.runRate.toFixed(2)}
+            </p>
+          </div>
+        </>
+      }
+    >
 
       {innings.batsmen.length > 0 ? (
         <>
           <SectionBar
             title="Batting"
             aside={
-              topBatter && topScore > 0 ? (
-                <>
-                  Top <strong className="mono text-ink">{topScore}</strong> · {topBatter.name}
-                </>
-              ) : null
+              topBatter && topScore > 0
+                ? `Top ${topScore} · ${topBatter.name}`
+                : undefined
             }
           />
           <div className="table-scroll">
-            <table className="w-full table-fixed text-left text-xs sm:text-[13px]">
-              <thead className="border-b border-line-strong bg-surface2/35 text-[10px] font-bold uppercase tracking-[0.1em] text-faint">
+            <table className="dtable">
+              <thead className="dhead">
                 <tr>
-                  <th className="px-3 py-2 font-semibold sm:px-4">Batter</th>
-                  <th className="w-[52px] px-1.5 py-2 text-right font-semibold sm:px-2">R</th>
-                  <th className="w-[44px] px-1.5 py-2 text-right font-semibold sm:px-2">B</th>
-                  <th className="hidden w-[44px] px-1.5 py-2 text-right font-semibold sm:table-cell sm:px-2">4s</th>
-                  <th className="hidden w-[44px] px-1.5 py-2 text-right font-semibold sm:table-cell sm:px-2">6s</th>
-                  <th className="w-[62px] px-3 py-2 text-right font-semibold sm:px-4">SR</th>
+                  <th data-lead>Batter</th>
+                  <th className="w-[46px] text-right" data-trail>R</th>
+                  <th className="w-[38px] text-right">B</th>
+                  <th className="hidden w-[38px] text-right sm:table-cell">4s</th>
+                  <th className="hidden w-[38px] text-right sm:table-cell">6s</th>
+                  <th className="w-[56px] text-right" data-trail>SR</th>
                 </tr>
               </thead>
               <tbody>
@@ -291,57 +339,45 @@ function InningsCard({ innings, overs }: { innings: InningsDetail; overs?: Innin
                   return (
                     <tr
                       key={`${batter.id}-${index}`}
-                      className={cn(
-                        "border-b border-line/60 transition-colors last:border-0 hover:bg-accent/[0.04]",
-                        isTop && "bg-accent/[0.04]"
-                      )}
+                      className="drow"
+                      data-hot={isTop ? "" : undefined}
                     >
-                      <td className="px-3 py-2.5 sm:px-4">
-                        <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 [&_a]:text-[14px] [&_a]:font-bold [&_a]:text-ink">
+                      <td data-lead>
+                        <div className="flex flex-wrap items-center gap-1.5">
                           <PlayerLink id={batter.id} name={batter.name} />
                           {batter.isCaptain ? <Tag>C</Tag> : null}
                           {batter.isKeeper ? <Tag>WK</Tag> : null}
-                          {batter.runs >= 100 ? <Tag tone="gold">100</Tag> : batter.runs >= 50 ? <Tag tone="accent">50</Tag> : null}
-                          {batter.isOut ? null : <Tag tone="accent">Not out</Tag>}
+                          {batter.runs >= 100 ? (
+                            <Tag tone="milestone">100</Tag>
+                          ) : batter.runs >= 50 ? (
+                            <Tag tone="milestone">50</Tag>
+                          ) : null}
+                          {batter.isOut ? null : <Tag tone="unbeaten">Not out</Tag>}
                         </div>
                         {batter.isOut && batter.outDesc ? (
-                          <p className="mt-1 line-clamp-2 text-[11px] leading-snug text-faint sm:text-xs">
-                            {batter.outDesc}
-                          </p>
-                        ) : null}
-                        {batter.fours > 0 || batter.sixes > 0 ? (
-                          <p className="mt-1.5 flex items-center gap-3 text-[11px] font-semibold text-muted sm:hidden">
-                            {batter.fours > 0 ? (
-                              <span className="inline-flex items-center gap-1">
-                                <i className="h-1.5 w-1.5 rounded-full bg-[#2f74d0]" />
-                                {batter.fours}×4
-                              </span>
-                            ) : null}
-                            {batter.sixes > 0 ? (
-                              <span className="inline-flex items-center gap-1">
-                                <i className="h-1.5 w-1.5 rounded-full bg-[#16a34a]" />
-                                {batter.sixes}×6
-                              </span>
-                            ) : null}
-                          </p>
+                          <p className="dnote line-clamp-2">{batter.outDesc}</p>
                         ) : null}
                       </td>
                       <td
-                        className={cn(
-                          "tnum px-1.5 py-2.5 text-right text-[16px] font-semibold leading-none sm:px-2",
-                          isTop && "text-accent"
-                        )}
+                        className={cn("dnum text-right", isTop && "text-accent")}
+                        data-trail
                       >
                         {batter.runs}
                       </td>
-                      <td className="px-1.5 py-2.5 text-right tabular-nums text-muted sm:px-2">{batter.balls}</td>
-                      <td className="hidden px-1.5 py-2.5 text-right tabular-nums text-muted sm:table-cell sm:px-2">{batter.fours}</td>
-                      <td className="hidden px-1.5 py-2.5 text-right tabular-nums text-muted sm:table-cell sm:px-2">{batter.sixes}</td>
+                      <td className="dcell text-right">{batter.balls}</td>
+                      <td className="dcell hidden text-right sm:table-cell">
+                        {batter.fours}
+                      </td>
+                      <td className="dcell hidden text-right sm:table-cell">
+                        {batter.sixes}
+                      </td>
                       <td
                         className={cn(
-                          "px-3 py-2.5 text-right tabular-nums sm:px-4",
-                          hot ? "font-semibold text-live" : slow ? "text-wkt" : "text-muted"
+                          "dcell text-right",
+                          hot && "font-bold text-live",
+                          slow && "text-wkt"
                         )}
+                        data-trail
                       >
                         {batter.strikeRate.toFixed(2)}
                       </td>
@@ -354,35 +390,33 @@ function InningsCard({ innings, overs }: { innings: InningsDetail; overs?: Innin
         </>
       ) : null}
 
-      <div className="border-t border-line bg-sage/35 px-4 py-3 text-xs text-muted">
-        <div className="flex flex-wrap justify-between gap-2">
-          <span>
-            Extras <strong className="text-ink">{innings.extras.total}</strong>
-            {extras ? <span className="text-faint"> ({extras})</span> : null}
-          </span>
-          <span>
-            Total{" "}
-            <strong className="mono font-bold text-ink">
-              {innings.runs}/{innings.wickets}
-            </strong>
-            <span className="text-faint"> ({formatOvers(innings.overs)} ov)</span>
-          </span>
+      <dl className="figs !py-2.5">
+        <div>
+          <dt>Extras</dt>
+          <dd className="font-bold">{innings.extras.total}</dd>
+          {extras ? <span className="dcell text-faint">({extras})</span> : null}
+          <span className="leaders" />
+          <dt>Total</dt>
+          <dd className="dnum text-[15px]">
+            {innings.runs}-{innings.wickets}
+          </dd>
+          <span className="dcell">({formatOvers(innings.overs)} ov)</span>
         </div>
-      </div>
+      </dl>
 
       {innings.bowlers.length > 0 ? (
         <>
           <SectionBar title="Bowling" aside={`${innings.bowlers.length} bowlers`} />
           <div className="table-scroll">
-            <table className="w-full table-fixed text-left text-xs sm:text-[13px]">
-              <thead className="border-b border-line-strong bg-surface2/35 text-[10px] font-bold uppercase tracking-[0.1em] text-faint">
+            <table className="dtable">
+              <thead className="dhead">
                 <tr>
-                  <th className="px-3 py-2 font-semibold sm:px-4">Bowler</th>
-                  <th className="w-[44px] px-1.5 py-2 text-right font-semibold sm:px-2">O</th>
-                  <th className="hidden w-[44px] px-1.5 py-2 text-right font-semibold sm:table-cell sm:px-2">M</th>
-                  <th className="w-[44px] px-1.5 py-2 text-right font-semibold sm:px-2">R</th>
-                  <th className="w-[52px] px-1.5 py-2 text-right font-semibold sm:px-2">W</th>
-                  <th className="w-[62px] px-3 py-2 text-right font-semibold sm:px-4">Econ</th>
+                  <th data-lead>Bowler</th>
+                  <th className="w-[46px] text-right">O</th>
+                  <th className="hidden w-[38px] text-right sm:table-cell">M</th>
+                  <th className="w-[42px] text-right">R</th>
+                  <th className="w-[46px] text-right" data-trail>W</th>
+                  <th className="w-[56px] text-right" data-trail>Econ</th>
                 </tr>
               </thead>
               <tbody>
@@ -391,45 +425,42 @@ function InningsCard({ innings, overs }: { innings: InningsDetail; overs?: Innin
                   const econTone =
                     bowled.length > 1 && bowler.overs > 0
                       ? bowler.economy === bestEcon
-                        ? "font-semibold text-live"
-                        : bowler.economy === worstEcon && worstEcon - bestEcon >= 2
+                        ? "font-bold text-live"
+                        : bowler.economy === worstEcon &&
+                            worstEcon - bestEcon >= 2
                           ? "text-wkt"
-                          : "text-muted"
-                      : "text-muted";
+                          : ""
+                      : "";
                   return (
                     <tr
                       key={`${bowler.id}-${index}`}
-                      className={cn(
-                        "border-b border-line/60 transition-colors last:border-0 hover:bg-accent/[0.04]",
-                        isBest && "bg-accent/[0.04]"
-                      )}
+                      className="drow"
+                      data-hot={isBest ? "" : undefined}
                     >
-                      <td className="px-3 py-2.5 sm:px-4">
-                        <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 [&_a]:text-[14px] [&_a]:font-bold [&_a]:text-ink">
+                      <td data-lead>
+                        <div className="flex flex-wrap items-center gap-1.5">
                           <PlayerLink id={bowler.id} name={bowler.name} />
-                          {isBest ? <Tag tone="accent">Best</Tag> : null}
+                          {isBest ? <Tag tone="milestone">Best</Tag> : null}
                         </div>
+                        {bowler.wides || bowler.noBalls ? (
+                          <p className="dnote">
+                            {bowler.wides ? `${bowler.wides} wd` : ""}
+                            {bowler.wides && bowler.noBalls ? " · " : ""}
+                            {bowler.noBalls ? `${bowler.noBalls} nb` : ""}
+                          </p>
+                        ) : null}
                       </td>
-                      <td className="px-1.5 py-2.5 text-right tabular-nums text-muted sm:px-2">{formatOvers(bowler.overs)}</td>
-                      <td className="hidden px-1.5 py-2.5 text-right tabular-nums text-muted sm:table-cell sm:px-2">{bowler.maidens}</td>
-                      <td className="px-1.5 py-2.5 text-right tabular-nums text-muted sm:px-2">{bowler.runs}</td>
-                      <td className="px-1.5 py-2.5 text-right sm:px-2">
-                        {bowler.wickets > 0 ? (
-                          <span
-                            className={cn(
-                              "mono inline-grid h-7 min-w-7 place-items-center rounded px-1.5 text-[15px] font-bold",
-                              bowler.wickets >= 3
-                                ? "bg-accent text-accent-ink"
-                                : "bg-accent-soft text-accent"
-                            )}
-                          >
-                            {bowler.wickets}
-                          </span>
-                        ) : (
-                          <span className="mono text-[15px] text-faint">0</span>
-                        )}
+                      <td className="dcell text-right">{formatOvers(bowler.overs)}</td>
+                      <td className="dcell hidden text-right sm:table-cell">
+                        {bowler.maidens}
                       </td>
-                      <td className={cn("px-3 py-2.5 text-right tabular-nums sm:px-4", econTone)}>
+                      <td className="dcell text-right">{bowler.runs}</td>
+                      <td className="text-right" data-trail>
+                        <span className="wktchip" data-heavy={bowler.wickets >= 3 ? "" : undefined}>
+                          {bowler.wickets}
+                        </span>
+                      </td>
+                      <td className={cn("dcell text-right", econTone)} data-trail>
                         {bowler.economy.toFixed(2)}
                       </td>
                     </tr>
@@ -446,16 +477,26 @@ function InningsCard({ innings, overs }: { innings: InningsDetail; overs?: Innin
       <OverScroller overs={overs} />
       <WicketStrip innings={innings} />
       <Partnerships innings={innings} />
-    </section>
+    </Disclosure>
   );
 }
 
-export function ScorecardView({ detail, overs }: { detail: MatchDetail; overs?: MatchOvers | null }) {
+export function ScorecardView({
+  detail,
+  overs,
+}: {
+  detail: MatchDetail;
+  overs?: MatchOvers | null;
+}) {
   if (detail.innings.length === 0) {
     return (
       <EmptyState
         title="Scorecard not available yet"
-        description={detail.summary.state === "upcoming" ? "The match has not started. The full scorecard will appear after the first ball." : "The scorecard is not available for this match."}
+        description={
+          detail.summary.state === "upcoming"
+            ? "The match has not started. The full scorecard will appear after the first ball."
+            : "The scorecard is not available for this match."
+        }
         actionHref={`/series/${detail.series.id}`}
         actionLabel="View series"
         className="mt-4"
@@ -471,11 +512,14 @@ export function ScorecardView({ detail, overs }: { detail: MatchDetail; overs?: 
           <InningsCard
             key={`${innings.id}-${index}`}
             innings={innings}
-            overs={overs?.innings.find((item) => item.inningsId === innings.id) ?? overs?.innings[index]}
+            overs={
+              overs?.innings.find((item) => item.inningsId === innings.id) ??
+              overs?.innings[index]
+            }
           />
         ))}
-        <p className="text-xs text-faint">
-          Scorecard updated from the live feed. Batting and bowling figures may lag by a delivery.
+        <p className="text-[10px] uppercase tracking-[0.08em] text-faint">
+          Scorecard polled from the live feed. Figures may lag by a delivery.
         </p>
       </div>
     </div>

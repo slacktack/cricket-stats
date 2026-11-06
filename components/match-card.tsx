@@ -10,13 +10,13 @@ import {
   teamScoreText,
 } from "@/lib/match-display";
 import { cn } from "@/lib/utils";
-import { FormatPill, LiveDot } from "@/components/ui/pills";
+import { FormatPill } from "@/components/ui/pills";
 import { TeamBadge } from "@/components/ui/team-badge";
 
 const TONES = {
   accent: "text-accent",
   live: "text-live",
-  win: "text-win",
+  win: "text-ink",
 };
 
 export function InsightChips({
@@ -30,14 +30,22 @@ export function InsightChips({
   if (insights.length === 0) return null;
   return (
     <dl
-      className={cn("flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px]", className)}
+      className={cn(
+        "mcard-rule flex flex-wrap items-baseline gap-x-4 gap-y-1 border-t px-3.5 pt-2 text-[10px] uppercase tracking-[0.08em]",
+        className
+      )}
       suppressHydrationWarning
     >
       {insights.map((item) => (
         <div key={item.label} className="flex items-baseline gap-1.5">
-          <dt className="text-faint">{item.label}</dt>
+          <dt className="mcard-mute text-faint">{item.label}</dt>
           {item.value ? (
-            <dd className={cn("tnum font-semibold text-ink", item.tone && TONES[item.tone])}>
+            <dd
+              className={cn(
+                "mcard-ink tnum font-bold text-ink",
+                item.tone && TONES[item.tone]
+              )}
+            >
               {item.value}
             </dd>
           ) : null}
@@ -47,6 +55,7 @@ export function InsightChips({
   );
 }
 
+/** A match as a printed sheet: band, two score lines with leaders, status. */
 export function MatchCard({
   match,
   showSeries = false,
@@ -68,108 +77,101 @@ export function MatchCard({
   const meta = showSeries
     ? `${match.seriesName} · ${match.description}`
     : match.description || match.seriesName;
-  const pad = compact ? "px-3.5" : "px-4";
 
   return (
     <Link
       href={`/match/${match.id}`}
       aria-label={`${matchTitle(match)} — ${matchStatusText(match)}`}
-      className={cn(
-        "group flex h-full min-w-0 flex-col rounded-xl border border-line bg-surface transition-colors duration-150 hover:border-line-strong",
-        className
-      )}
+      data-rv=""
+      className={cn("mcard group", className)}
     >
-      <div className={cn("flex h-11 items-center gap-2", pad)}>
+      <div className="flex h-10 items-center gap-2 border-b border-line px-3.5">
         <FormatPill format={matchFormat(match)} />
-        <span className="min-w-0 flex-1 truncate text-[12px] text-muted">{meta}</span>
+        <span className="mcard-mute min-w-0 flex-1 truncate text-[10px] uppercase tracking-[0.08em] text-muted">
+          {meta}
+        </span>
         {live ? (
-          <span className="inline-flex shrink-0 items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.06em] text-live">
-            <LiveDot />
+          <span className="mcard-live inline-flex shrink-0 items-center gap-1 bg-live px-1.5 text-[9px] font-extrabold uppercase leading-[17px] tracking-[0.1em] text-[#0a1400]">
+            <span className="mcard-dot h-[5px] w-[5px] rounded-full bg-[#0a1400] animate-pulse-dot" />
             Live
           </span>
         ) : (
-          <span
-            className={cn(
-              "shrink-0 text-[11px] font-semibold uppercase tracking-[0.06em]",
-              done ? "text-faint" : "text-aqua"
-            )}
-          >
+          <span className="mcard-mute shrink-0 text-[9px] font-bold uppercase tracking-[0.1em] text-faint">
             {done ? "Result" : "Upcoming"}
           </span>
         )}
       </div>
 
-      <div className={cn("space-y-2.5 pb-3", pad)}>
+      <div className="pt-0.5">
         {match.teams.map((team) => {
           const score = teamScoreText(match, team);
           const overs = teamOversText(match, team);
           const isCurrent = currentTeamId === team.id;
           const isWinner = done && match.winnerTeamId === team.id;
           const isLoser = done && !!match.winnerTeamId && !isWinner;
-          const yetToBat = score === "Yet to bat";
-          const placeholder = score === "—";
+          const plain = score === "Yet to bat" || score === "—";
+
           return (
             <div
               key={team.id}
-              className={cn("flex min-w-0 items-center gap-3", isLoser && "opacity-55")}
+              className={cn(
+                "mcard-rule flex min-w-0 items-baseline gap-2.5 border-b px-3.5 py-2 last:border-b-0",
+                isLoser && "opacity-50"
+              )}
             >
-              <TeamBadge team={team} size={compact ? 28 : 32} />
-              <div className="min-w-0 flex-1">
-                <p className="flex items-center gap-1.5 text-[15px] font-semibold leading-5 text-ink">
-                  <span className="truncate">{team.shortName}</span>
-                  {isCurrent ? (
-                    <span aria-label="Batting" className="h-1.5 w-1.5 shrink-0 rounded-full bg-live" />
-                  ) : null}
-                </p>
-                <p className="truncate text-[12px] leading-4 text-faint">{team.name}</p>
-              </div>
-              <div className="flex shrink-0 items-baseline gap-2">
-                {overs ? <span className="tnum text-[12px] text-faint">{overs}</span> : null}
-                {!hasScores ? null : yetToBat ? (
-                  <span className="text-[12px] text-faint">Yet to bat</span>
-                ) : placeholder ? (
-                  <span className="text-[13px] text-faint">—</span>
-                ) : (
+              <TeamBadge team={team} size={compact ? 18 : 20} />
+              <p className="mcard-ink shrink-0 text-[14px] font-bold uppercase leading-none tracking-[-0.03em] text-ink">
+                {team.shortName}
+                {isCurrent ? (
                   <span
-                    className={cn(
-                      "tnum whitespace-nowrap font-display font-semibold tracking-[-0.02em] text-ink",
-                      compact ? "text-[17px]" : "text-[19px]",
-                      isWinner && "text-win"
-                    )}
-                  >
-                    {score}
-                  </span>
+                    aria-label="Batting"
+                    className="mcard-dot ml-1 inline-block h-[6px] w-[6px] rounded-full bg-live align-middle"
+                  />
+                ) : null}
+              </p>
+              <span className="leaders" />
+              {overs ? (
+                <span className="mcard-mute tnum shrink-0 text-[10px] text-faint">
+                  {overs}
+                </span>
+              ) : null}
+              <span
+                className={cn(
+                  "mcard-ink tnum shrink-0 whitespace-nowrap text-right font-bold leading-none tracking-[-0.04em] text-ink",
+                  compact ? "text-[17px]" : "text-[19px]",
+                  (plain || !hasScores) && "text-[11px] font-medium text-faint",
+                  isWinner && "underline decoration-2 underline-offset-4"
                 )}
-              </div>
+              >
+                {!hasScores
+                  ? "—"
+                  : score === "Yet to bat"
+                    ? "Yet to bat"
+                    : score === "—"
+                      ? "—"
+                      : score}
+              </span>
             </div>
           );
         })}
       </div>
 
-      <InsightChips match={match} className={cn("pb-3", pad)} />
+      <InsightChips match={match} />
 
-      <div
-        className={cn(
-          "mt-auto flex min-h-11 items-center gap-2 border-t border-line py-2.5",
-          pad
-        )}
-      >
+      <div className="mcard-rule mt-auto flex min-h-10 items-center gap-2 border-t px-3.5 py-2">
         <p
-          className={cn(
-            "min-w-0 flex-1 truncate text-[13px]",
-            live ? "font-medium text-ink" : done ? "font-medium text-win" : "text-muted"
-          )}
+          className="mcard-ink min-w-0 flex-1 truncate text-[12px] font-medium text-ink"
           title={matchStatusText(match)}
           suppressHydrationWarning
         >
           {matchStatusText(match)}
         </p>
         {match.venue?.city ? (
-          <span className="hidden shrink-0 text-[12px] text-faint sm:inline">
+          <span className="mcard-mute hidden shrink-0 text-[10px] uppercase tracking-[0.06em] text-faint sm:inline">
             {match.venue.city}
           </span>
         ) : null}
-        <ChevronRight className="h-4 w-4 shrink-0 text-faint transition-transform duration-150 group-hover:translate-x-0.5" />
+        <ChevronRight className="mcard-mute h-4 w-4 shrink-0 text-faint transition-transform duration-150 group-hover:translate-x-0.5" />
       </div>
     </Link>
   );

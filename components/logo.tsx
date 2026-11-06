@@ -37,21 +37,18 @@ export function Logo({
     <Link
       href="/"
       aria-label="Chauka home"
-      className={cn(
-        "group flex shrink-0 items-center gap-2 rounded-lg",
-        className
-      )}
+      className={cn("group flex shrink-0 items-center gap-2.5", className)}
     >
       <span
         className={cn(
-          "grid h-8 w-8 place-items-center rounded-full bg-accent text-accent-ink transition-transform duration-300 group-hover:rotate-[24deg]",
-          variant === "panel" && "ring-2 ring-panel-ink/10"
+          "logo-mark grid h-7 w-7 shrink-0 place-items-center bg-slab text-white transition-transform duration-300 group-hover:rotate-[18deg]",
+          variant === "panel" && "ring-1 ring-panel-ink/25"
         )}
       >
-        <BallMark className="h-5 w-5" />
+        <BallMark className="h-[18px] w-[18px]" />
       </span>
-      <span className="font-display text-[22px] font-bold leading-none tracking-[-0.02em]">
-        chauka
+      <span className="text-[19px] font-extrabold leading-none tracking-[-0.05em] uppercase">
+        Chauka
       </span>
     </Link>
   );
