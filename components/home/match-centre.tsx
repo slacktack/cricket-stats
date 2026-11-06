@@ -570,7 +570,7 @@ export function MatchStage({ match }: { match: MatchSummary }) {
       {match.state !== "upcoming" ? (
         <>
           <div
-            className="mt-5 flex items-end gap-0 border-b border-line"
+            className="mt-5 flex flex-wrap items-end gap-0 border-b border-line"
             role="tablist"
           >
             {(

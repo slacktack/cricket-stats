@@ -245,7 +245,7 @@ export function HomeFeed({
         </label>
 
         <div
-          className="mt-3 flex items-end border-b border-line"
+          className="no-scrollbar mt-3 flex min-w-0 items-end overflow-x-auto border-b border-line"
           role="tablist"
           aria-label="Match state"
         >

@@ -29,11 +29,12 @@ function issueOf(now: Date): string {
 }
 
 /** What sits in the right-hand column of a contents row. */
-function scoreLine(match: MatchSummary): string {
+function scoreLine(match: MatchSummary): ReactNode {
   if (match.state === "upcoming") {
     const day = relativeDayLabel(match.startTime);
-    /* "Today" is the common case and it is pure noise in a narrow column. */
-    const time = formatTime(match.startTime);
+    /* "Today" is the common case and the zone is set in the rail — neither
+       earns its width in a two-column index. */
+    const time = formatTime(match.startTime, false);
     return day === "Today" ? time : `${day} · ${time}`;
   }
   if (match.state === "completed" && match.winnerTeamId) {
@@ -44,7 +45,14 @@ function scoreLine(match: MatchSummary): string {
   /* A live match that has not started its innings only has a status sentence,
      which is far too long for this column — fall back to the format. */
   if (!innings) return matchFormat(match);
-  return `${innings.runs}-${innings.wickets}${innings.overs ? ` (${innings.overs})` : ""}`;
+  return (
+    <>
+      {innings.runs}-{innings.wickets}
+      {innings.overs ? (
+        <span className="cover-ov"> ({innings.overs})</span>
+      ) : null}
+    </>
+  );
 }
 
 function IndexList({
