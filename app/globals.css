@@ -2139,6 +2139,19 @@ html:not(.dark) .stock::after {
   }
 }
 
+/* The wordmark: a dot field, sized like the issue figure it replaced. */
+.cover-dots {
+  height: clamp(110px, 15vw, 230px);
+  font-family: var(--font-display), var(--font-sans), sans-serif;
+  margin-left: -6px;
+}
+
+@media (min-width: 1024px) {
+  .cover-no {
+    grid-column: -2 / -1;
+  }
+}
+
 .cover-tag {
   font-family: var(--font-display), var(--font-sans), sans-serif;
   font-size: clamp(28px, 4.4vw, 62px);

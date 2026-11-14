@@ -15,18 +15,7 @@ import {
   timeAgo,
 } from "@/lib/utils";
 import { Lines, d } from "@/components/motion";
-
-/** ISO week number, because this page is published, not streamed. */
-function issueOf(now: Date): string {
-  const date = new Date(
-    Date.UTC(now.getFullYear(), now.getMonth(), now.getDate())
-  );
-  date.setUTCDate(date.getUTCDate() + 4 - (date.getUTCDay() || 7));
-  const start = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
-  return pad(
-    Math.ceil(((date.getTime() - start.getTime()) / 86400000 + 1) / 7)
-  );
-}
+import { DotMatrix } from "@/components/ui/dot-matrix";
 
 /** What sits in the right-hand column of a contents row. */
 function scoreLine(match: MatchSummary): ReactNode {
@@ -112,7 +101,6 @@ export function IssueCover({
 }) {
   /* Read off the feed's own clock, so server and client agree what issue this is. */
   const stamp = updatedAt || Date.now();
-  const issue = issueOf(new Date(stamp));
 
   const byState = (state: MatchSummary["state"]) =>
     matches.filter((match) => match.state === state).sort(sortByStateThenTime);
@@ -145,7 +133,7 @@ export function IssueCover({
   return (
     <section className="cover" aria-label="Today's cricket, at a glance">
       <div className="cover-top">
-        <Lines as="h1" className="cover-mast" lines={["Chauka"]} />
+        <h1 className="sr-only">Chauka</h1>
         <p className="cover-note" data-rv="" style={d(1)}>
           The live cricket desk
           <br />
@@ -157,7 +145,6 @@ export function IssueCover({
           Every format, every ground
         </p>
         <p className="cover-no" data-rv="" style={d(3)}>
-          Issue {issue}
           <span>
             {formatDate(stamp, {
               weekday: "long",
@@ -170,9 +157,9 @@ export function IssueCover({
 
       <div className="cover-mid">
         <div className="min-w-0">
-          <p className="cover-num" aria-hidden="true">
-            {issue}
-          </p>
+          <div className="cover-dots">
+            <DotMatrix text="chauka" />
+          </div>
           <Lines
             as="p"
             className="cover-tag mt-4"
