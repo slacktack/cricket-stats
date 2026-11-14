@@ -6,6 +6,8 @@ const nextConfig = {
   },
   devIndicators: false,
   images: {
+    // Vercel's free optimizer quota ran out; flags load straight from Cricbuzz.
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",
